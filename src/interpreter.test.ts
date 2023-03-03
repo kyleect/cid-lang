@@ -131,89 +131,63 @@ describe("Interpreter", () => {
 
   describe("conditionals", () => {
     it("should call = when true", () => {
-      const scanner = new Scanner("(= 30 30)");
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(true);
+      expectInputReturns(`(= 30 30)`, true);
     });
 
     it("should call = when false", () => {
-      const scanner = new Scanner("(= 30 12)");
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(false);
+      expectInputReturns(`(= 30 12)`, false);
     });
 
     it("should call not", () => {
-      const scanner = new Scanner("(not #t)");
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(false);
+      expectInputReturns(`(not #t)`, false);
     });
 
     it("should call number? when true", () => {
-      const scanner = new Scanner("(number? 1)");
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      debugger;
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(true);
+      expectInputReturns(`(number? 1)`, true);
     });
 
     it("should call number? when true", () => {
-      const scanner = new Scanner(`(number? "Hello World")`);
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(false);
+      expectInputReturns(`(number? "Hello World")`, false);
     });
 
     it("should call list? when true", () => {
-      const scanner = new Scanner(`(list? ())`);
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(true);
+      expectInputReturns(`(list? ())`, true);
     });
 
     it("should call list? when false", () => {
-      const scanner = new Scanner(`(list? 1)`);
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
+      expectInputReturns(`(list? 1)`, false);
+    });
+  });
 
-      const expressions = parser.parse();
+  describe("variables", () => {
+    it("should define a global variable", () => {
+      expectInputReturns("(define x 5)(define y 10)\n(+ x y)", 15);
+    });
 
-      const interpreter = new Interpreter();
+    it("should set an existing global variable", () => {
+      expectInputReturns("(define x 5)\n(set! x 10)\nx", 10);
+    });
 
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(false);
+    it("should throw if set is called on undefined variable", () => {
+      expect(() => interpretInput("(set! x 5)")).toThrow(
+        "Unknown identifier: x"
+      );
     });
   });
 });
+
+function interpretInput(input: string): unknown {
+  const scanner = new Scanner(input);
+  const tokens = scanner.scan();
+  const parser = new Parser(tokens);
+
+  const expressions = parser.parse();
+
+  const interpreter = new Interpreter();
+
+  return interpreter.interpretAll(expressions);
+}
+
+function expectInputReturns(input: string, expectedOutput: unknown) {
+  expect(interpretInput(input)).toStrictEqual(expectedOutput);
+}

@@ -3,7 +3,7 @@ import { Expr } from "./parser";
 export class Interpreter {
   static NULL_VALUE = [];
 
-  private env: Map<string, Function>;
+  private env: Map<string, unknown>;
 
   constructor() {
     this.env = new Map(
@@ -45,7 +45,7 @@ export class Interpreter {
     return result;
   }
 
-  interpret(expr: Expr, env): unknown {
+  interpret(expr: Expr, env?: typeof this.env): unknown {
     if (Expr.IsLiteral(expr)) {
       return expr.value;
     }
@@ -72,6 +72,21 @@ export class Interpreter {
         return callee(args);
       }
       throw new Error(`Cannot call ${callee}`);
+    }
+
+    if (Expr.isDefine(expr)) {
+      const value = this.interpret(expr.value, env);
+      env.set(expr.token.getLexeme(), value);
+      return;
+    }
+
+    if (Expr.isSet(expr)) {
+      const value = this.interpret(expr.value, env);
+      if (env.has(expr.token.getLexeme())) {
+        env.set(expr.token.getLexeme(), value);
+        return;
+      }
+      throw new Error(`Unknown identifier: ${expr.token.getLexeme()}`);
     }
 
     debugger;

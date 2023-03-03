@@ -17,6 +17,14 @@ export class Expr {
     return new IfExpr(test, consequent, alternative);
   }
 
+  static Define(token: Token, value: unknown): DefineExpr {
+    return new DefineExpr(token, value);
+  }
+
+  static Set(token: Token, value: unknown): SetExpr {
+    return new SetExpr(token, value);
+  }
+
   static IsCall(expression: Expr): expression is CallExpr {
     return expression instanceof CallExpr;
   }
@@ -31,6 +39,14 @@ export class Expr {
 
   static IsIf(expression: Expr): expression is IfExpr {
     return expression instanceof IfExpr;
+  }
+
+  static isDefine(expression: Expr): expression is DefineExpr {
+    return expression instanceof DefineExpr;
+  }
+
+  static isSet(expression: Expr): expression is SetExpr {
+    return expression instanceof SetExpr;
   }
 }
 
@@ -54,6 +70,18 @@ class LiteralExpr extends Expr {
 
 class IfExpr extends Expr {
   constructor(public test, public consequent, public alternative) {
+    super();
+  }
+}
+
+class DefineExpr extends Expr {
+  constructor(public token: Token, public value: unknown) {
+    super();
+  }
+}
+
+class SetExpr extends Expr {
+  constructor(public token: Token, public value: unknown) {
     super();
   }
 }
@@ -90,6 +118,8 @@ export class Parser {
 
       const token = this.peek();
       if (token.getLexeme() === "if") return this.if();
+      if (token.getLexeme() === "define") return this.define();
+      if (token.getLexeme() === "set!") return this.set();
       return this.call();
     }
     return this.atom();
@@ -158,5 +188,21 @@ export class Parser {
 
   private advance(): Token {
     return this.tokens[this.current++];
+  }
+
+  private define(): DefineExpr {
+    this.advance(); // move past the "define" token
+    const name = this.consume(TokenType.Symbol);
+    const value = this.expression();
+    this.consume(TokenType.RightBracket);
+    return Expr.Define(name, value);
+  }
+
+  private set(): SetExpr {
+    this.advance(); // move past the "set!" token
+    const name = this.consume(TokenType.Symbol);
+    const value = this.expression();
+    this.consume(TokenType.RightBracket);
+    return Expr.Set(name, value);
   }
 }
