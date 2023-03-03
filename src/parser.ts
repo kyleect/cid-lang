@@ -16,6 +16,22 @@ export class Expr {
   static If(test, consequent, alternative): IfExpr {
     return new IfExpr(test, consequent, alternative);
   }
+
+  static IsCall(expression: Expr): expression is CallExpr {
+    return expression instanceof CallExpr;
+  }
+
+  static IsSymbol(expression: Expr): expression is SymbolExpr {
+    return expression instanceof SymbolExpr;
+  }
+
+  static IsLiteral(expression: Expr): expression is LiteralExpr {
+    return expression instanceof LiteralExpr;
+  }
+
+  static IsIf(expression: Expr): expression is IfExpr {
+    return expression instanceof IfExpr;
+  }
 }
 
 class CallExpr extends Expr {
@@ -25,19 +41,19 @@ class CallExpr extends Expr {
 }
 
 class SymbolExpr extends Expr {
-  constructor(private token: Token) {
+  constructor(public token: Token) {
     super();
   }
 }
 
 class LiteralExpr extends Expr {
-  constructor(private value: unknown) {
+  constructor(public value: unknown) {
     super();
   }
 }
 
 class IfExpr extends Expr {
-  constructor(private test, private consequent, private alternative) {
+  constructor(public test, public consequent, public alternative) {
     super();
   }
 }
@@ -49,7 +65,7 @@ export class Parser {
 
   constructor(private tokens: Token[]) {}
 
-  public parse() {
+  public parse(): Expr[] {
     const expressions = [];
     while (!this.isAtEnd()) {
       const expr = this.expression();
