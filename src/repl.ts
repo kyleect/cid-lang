@@ -8,11 +8,16 @@ const inputs: string[] = [];
 function run(input: string) {
   inputs.push(input);
 
-  const scanner = new Scanner(inputs.join("\n"));
-  const parser = new Parser(scanner.scan());
-  const expressions = parser.parse();
-  const interpreter = new Interpreter();
-  return interpreter.interpretAll(expressions);
+  try {
+    const scanner = new Scanner(inputs.join("\n"));
+    const parser = new Parser(scanner.scan());
+    const expressions = parser.parse();
+    const interpreter = new Interpreter();
+    return interpreter.interpretAll(expressions);
+  } catch (e) {
+    inputs.pop();
+    console.log(`Error with input: ${e}`);
+  }
 }
 
 repl.start({

@@ -86,11 +86,11 @@ export class Interpreter {
         env.set(expr.token.getLexeme(), value);
         return;
       }
-      throw new Error(`Unknown identifier: ${expr.token.getLexeme()}`);
+      throw new SyntaxError(`Unknown identifier: ${expr.token.getLexeme()}`);
     }
 
     debugger;
 
-    throw new Error(`Invalid expression: ${expr}`);
+    throw new SyntaxError(`Invalid expression: ${expr}`);
   }
 }
