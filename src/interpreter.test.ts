@@ -8,6 +8,10 @@ describe("Interpreter", () => {
       expectInputReturns("1", 1);
     });
 
+    it("should return value of negative number atom", () => {
+      expectInputReturns("-1", -1);
+    });
+
     it("should return value of list atom", () => {
       expectInputReturns(`"Hello World!"`, "Hello World!");
     });

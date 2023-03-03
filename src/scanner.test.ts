@@ -45,6 +45,13 @@ describe("Scanner", () => {
       ]);
     });
 
+    it("should return token for negative digits", () => {
+      expectInputReturns("-123", [
+        Token.Number("-123", -123),
+        Token.Eof()
+      ]);
+    });
+
     it("should return token for digits with dot", () => {
       expectInputReturns("123.45", [
         Token.Number("123.45", 123.45),
