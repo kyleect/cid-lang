@@ -10,10 +10,22 @@ export enum TokenType {
 
 export class Token {
   constructor(
-    private tokenType: TokenType,
-    private lexeme: string,
-    private literal: unknown
+    private readonly tokenType: TokenType,
+    private readonly lexeme: string,
+    private readonly literal: unknown
   ) {}
+
+  public getTokenType(): TokenType {
+    return this.tokenType;
+  }
+
+  public getLexeme(): string {
+    return this.lexeme;
+  }
+
+  public getLiteral(): unknown {
+    return this.literal;
+  }
 
   static LeftBracket(): Token {
     return new Token(TokenType.LeftBracket, "(", null);
