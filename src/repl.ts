@@ -3,8 +3,12 @@ import { Interpreter } from "./interpreter";
 import { Parser } from "./parser";
 import { Scanner } from "./scanner";
 
+const inputs: string[] = [];
+
 function run(input: string) {
-  const scanner = new Scanner(input);
+  inputs.push(input);
+
+  const scanner = new Scanner(inputs.join("\n"));
   const parser = new Parser(scanner.scan());
   const expressions = parser.parse();
   const interpreter = new Interpreter();

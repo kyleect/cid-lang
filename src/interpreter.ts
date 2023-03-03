@@ -45,7 +45,7 @@ export class Interpreter {
     return result;
   }
 
-  interpret(expr: Expr, env?: typeof this.env): unknown {
+  interpret(expr: Expr, env: typeof this.env): unknown {
     if (Expr.IsLiteral(expr)) {
       return expr.value;
     }
