@@ -5,127 +5,45 @@ import { Scanner } from "./scanner";
 describe("Interpreter", () => {
   describe("atoms", () => {
     it("should return value of number atom", () => {
-      const scanner = new Scanner("1");
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(1);
+      expectInputReturns("1", 1);
     });
 
     it("should return value of list atom", () => {
-      const scanner = new Scanner('"Hello World!"');
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(
-        "Hello World!"
-      );
+      expectInputReturns(`"Hello World!"`, "Hello World!");
     });
 
     it("should return value of list atom", () => {
-      const scanner = new Scanner("(list 1 2 3)");
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual([1, 2, 3]);
+      expectInputReturns(`(list 1 2 3)`, [1, 2, 3]);
     });
 
     it("should return value of true boolean atom", () => {
-      const scanner = new Scanner("#t");
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(true);
+      expectInputReturns(`#t`, true);
     });
 
     it("should return value of false boolean atom", () => {
-      const scanner = new Scanner("#f");
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(false);
+      expectInputReturns(`#f`, false);
     });
 
     it("should return value of false boolean atom", () => {
-      const scanner = new Scanner("()");
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual([]);
+      expectInputReturns(`()`, []);
     });
   });
 
   describe("operators", () => {
     it("should call *", () => {
-      const scanner = new Scanner("(* 5 6)");
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(30);
+      expectInputReturns(`(* 5 6)`, 30);
     });
 
     it("should call +", () => {
-      const scanner = new Scanner("(+ 5 6)");
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(11);
+      expectInputReturns(`(+ 5 6)`, 11);
     });
 
     it("should call /", () => {
-      const scanner = new Scanner("(/ 30 6)");
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(5);
+      expectInputReturns(`(/ 30 6)`, 5);
     });
 
     it("should call -", () => {
-      const scanner = new Scanner("(- 30 5)");
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      expect(interpreter.interpretAll(expressions)).toStrictEqual(25);
+      expectInputReturns(`(- 30 5)`, 25);
     });
   });
 
