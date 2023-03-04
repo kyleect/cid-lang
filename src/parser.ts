@@ -1,6 +1,10 @@
 import { Token, TokenType } from "./token";
 
 export class Expr {
+  toString(): string {
+    return `<Expr>`;
+  }
+
   static Call(callee, args): CallExpr {
     return new CallExpr(callee, args);
   }
@@ -23,6 +27,10 @@ export class Expr {
 
   static Set(token: Token, value: unknown): SetExpr {
     return new SetExpr(token, value);
+  }
+
+  static Let(bindings: LetBindingNode[], body: Expr[]): LetExpr {
+    return new LetExpr(bindings, body);
   }
 
   static IsCall(expression: Expr): expression is CallExpr {
@@ -48,11 +56,19 @@ export class Expr {
   static isSet(expression: Expr): expression is SetExpr {
     return expression instanceof SetExpr;
   }
+
+  static isLet(expression: Expr): expression is LetExpr {
+    return expression instanceof LetExpr;
+  }
 }
 
 class CallExpr extends Expr {
   constructor(public callee, public args) {
     super();
+  }
+
+  toString(): string {
+    return `<CallExpr callee=${this.callee}; args=${this.args}>`;
   }
 }
 
@@ -60,11 +76,19 @@ class SymbolExpr extends Expr {
   constructor(public token: Token) {
     super();
   }
+
+  toString(): string {
+    return `<SymbolExpr token=${this.token}>`;
+  }
 }
 
 class LiteralExpr extends Expr {
   constructor(public value: unknown) {
     super();
+  }
+
+  toString(): string {
+    return `<LiteralExpr value=${this.value}>`;
   }
 }
 
@@ -78,11 +102,45 @@ class DefineExpr extends Expr {
   constructor(public token: Token, public value: unknown) {
     super();
   }
+
+  toString(): string {
+    return `<DefineExpr token=${this.token}; value=${this.value}>`;
+  }
 }
 
 class SetExpr extends Expr {
   constructor(public token: Token, public value: unknown) {
     super();
+  }
+
+  toString(): string {
+    return `<SetExpr token=${this.token}; value=${this.value}>`;
+  }
+}
+
+class LetExpr extends Expr {
+  constructor(public bindings: LetBindingNode[], public body: Expr[]) {
+    super();
+  }
+
+  toString(): string {
+    return `<LetExpr bindings=${this.bindings}; body=${this.body}>`;
+  }
+
+  bindingsToMap(): Map<string, unknown> {
+    return new Map(
+      this.bindings.map((binding) => {
+        return [binding.name.getLexeme(), binding.value];
+      })
+    );
+  }
+}
+
+export class LetBindingNode {
+  constructor(public name: Token, public value: Expr) {}
+
+  toString(): string {
+    return `<LetBindingNode name=${this.name}; value=${this.value}>`;
   }
 }
 
@@ -110,7 +168,7 @@ export class Parser {
     return this.tokens[this.current];
   }
 
-  private expression() {
+  private expression(): Expr {
     if (this.match(TokenType.LeftBracket)) {
       if (this.match(TokenType.RightBracket)) {
         return Expr.Literal(Parser.NULL_VALUE);
@@ -120,6 +178,7 @@ export class Parser {
       if (token.getLexeme() === "if") return this.if();
       if (token.getLexeme() === "define") return this.define();
       if (token.getLexeme() === "set!") return this.set();
+      if (token.getLexeme() === "let") return this.let();
       return this.call();
     }
     return this.atom();
@@ -204,5 +263,30 @@ export class Parser {
     const value = this.expression();
     this.consume(TokenType.RightBracket);
     return Expr.Set(name, value);
+  }
+
+  let() {
+    this.advance(); // move past the "let" token
+    this.consume(TokenType.LeftBracket);
+
+    const bindings = [];
+    while (!this.match(TokenType.RightBracket)) {
+      bindings.push(this.letBinding());
+    }
+
+    const body = [];
+    while (!this.match(TokenType.RightBracket)) {
+      body.push(this.expression());
+    }
+
+    return new LetExpr(bindings, body);
+  }
+
+  letBinding() {
+    this.consume(TokenType.LeftBracket);
+    const name = this.consume(TokenType.Symbol);
+    const value = this.expression();
+    this.consume(TokenType.RightBracket);
+    return new LetBindingNode(name, value);
   }
 }

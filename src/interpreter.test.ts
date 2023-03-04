@@ -91,6 +91,16 @@ describe("Interpreter", () => {
         "Unknown identifier: x"
       );
     });
+
+    it("should define local variables", () => {
+      expectInputReturns("(define x 1)\n(let ((x 2) (y 4)))\nx", 1);
+    });
+
+    it("should throw when referencing local variables out of scope", () => {
+      expect(() =>
+        interpretInput("(define x 1)\n(let ((x 2) (y 4)))\ny")
+      ).toThrow("Unknown identifier: y");
+    });
   });
 });
 

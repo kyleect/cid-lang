@@ -54,4 +54,8 @@ export class Token {
   static Eof(): Token {
     return new Token(TokenType.Eof, "", null);
   }
+
+  toString(): string {
+    return `<Token type=${this.tokenType}; lexeme=${this.lexeme}; literal=${this.literal}>`;
+  }
 }

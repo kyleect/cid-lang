@@ -1,37 +1,43 @@
+import exp from "constants";
+import { Environment } from "./env";
 import { Expr } from "./parser";
+import { Token } from "./token";
 
 export class Interpreter {
   static NULL_VALUE = [];
 
-  private env: Map<string, unknown>;
+  private env: Environment;
 
   constructor() {
-    this.env = new Map(
-      Object.entries({
-        "*": ([a, b]) => a * b,
-        "+": ([a, b]) => {
-          return a + b;
-        },
-        "/": ([a, b]) => a / b,
-        "-": ([a, b]) => a - b,
-        "=": ([a, b]) => a === b,
-        remainder: ([a, b]) => a % b,
-        ">=": ([a, b]) => a >= b,
-        "<=": ([a, b]) => a <= b,
-        not: ([arg]) => !arg,
-        "string-length": ([str]) => str.length,
-        "string-append": ([a, b]) => a + b,
-        list: (args) => args,
-        "null?": ([arg]) => arg === Interpreter.NULL_VALUE,
-        "list?": ([arg]) => Array.isArray(arg),
-        "number?": ([arg]) => Number.isInteger(arg),
-        "procedure?": ([arg]) => arg instanceof Function,
-        car: ([arg]) => arg[0],
-        cdr: ([arg]) =>
-          arg.length > 1 ? arg.slice(1) : Interpreter.NULL_VALUE,
-        cons: ([a, b]) => [a, ...b],
-        display: ([arg]) => console.log(arg),
-      })
+    this.env = new Environment(
+      new Map(
+        Object.entries({
+          "*": ([a, b]) => a * b,
+          "+": ([a, b]) => {
+            return a + b;
+          },
+          "/": ([a, b]) => a / b,
+          "-": ([a, b]) => a - b,
+          "=": ([a, b]) => a === b,
+          remainder: ([a, b]) => a % b,
+          ">=": ([a, b]) => a >= b,
+          "<=": ([a, b]) => a <= b,
+          not: ([arg]) => !arg,
+          "string-length": ([str]) => str.length,
+          "string-append": ([a, b]) => a + b,
+          list: (args) => args,
+          "null?": ([arg]) => arg === Interpreter.NULL_VALUE,
+          "list?": ([arg]) => Array.isArray(arg),
+          "number?": ([arg]) => Number.isInteger(arg),
+          "procedure?": ([arg]) => arg instanceof Function,
+          car: ([arg]) => arg[0],
+          cdr: ([arg]) =>
+            arg.length > 1 ? arg.slice(1) : Interpreter.NULL_VALUE,
+          cons: ([a, b]) => [a, ...b],
+          display: ([arg]) => console.log(arg),
+        })
+      ),
+      null
     );
   }
 
@@ -77,6 +83,7 @@ export class Interpreter {
     if (Expr.isDefine(expr)) {
       const value = this.interpret(expr.value, env);
       env.set(expr.token.getLexeme(), value);
+      debugger;
       return;
     }
 
@@ -89,8 +96,21 @@ export class Interpreter {
       throw new SyntaxError(`Unknown identifier: ${expr.token.getLexeme()}`);
     }
 
+    if (Expr.isLet(expr)) {
+      const bindings = expr.bindingsToMap();
+      debugger;
+      const letEnv = new Environment(bindings, env);
+
+      let result;
+
+      for (const exprInBody of expr.body) {
+        result = this.interpret(exprInBody, letEnv);
+      }
+      return result;
+    }
+
     debugger;
 
-    throw new SyntaxError(`Invalid expression: ${expr}`);
+    throw new SyntaxError(`Invalid expression:\n${expr}`);
   }
 }
