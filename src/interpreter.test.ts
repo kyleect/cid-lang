@@ -101,6 +101,26 @@ describe("Interpreter", () => {
         interpretInput("(define x 1)\n(let ((x 2) (y 4)))\ny")
       ).toThrow("Unknown identifier: y");
     });
+
+    it("should use variables across scopes", () => {
+      const scanner = new Scanner(
+        "(define max 100)\n(let ((min 10)) (display min) (display max))"
+      );
+      const tokens = scanner.scan();
+      const parser = new Parser(tokens);
+
+      const expressions = parser.parse();
+
+      const interpreter = new Interpreter();
+
+      const displaySpy = jest.fn();
+
+      interpreter.envSet("display", displaySpy);
+
+      interpreter.interpretAll(expressions);
+
+      expect(displaySpy.mock.calls).toEqual([[[10]], [[100]]]);
+    });
   });
 });
 

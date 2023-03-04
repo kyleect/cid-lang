@@ -11,20 +11,18 @@ export class Environment {
   // Sets the variable value in the
   // environment where it was defined
   set(name: string, value: unknown) {
-    debugger;
     if (this.values.has(name) || !this.enclosing) {
       this.values.set(name, value);
     } else if (this.enclosing) {
       this.enclosing.set(name, value);
     } else {
-      debugger;
       throw new SyntaxError(`Unknown identifier: ${name}`);
     }
   }
 
   // Looks up the variable in the environment
   // as well as its enclosing environments
-  get(name: string) {
+  get(name: string): unknown {
     if (this.values.has(name)) {
       return this.values.get(name);
     } else if (this.enclosing) {

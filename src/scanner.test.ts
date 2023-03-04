@@ -4,31 +4,19 @@ import { Token } from "./token";
 describe("Scanner", () => {
   describe("individual tokens", () => {
     it("should return token for left braket", () => {
-      expectInputReturns("(", [
-        Token.LeftBracket(),
-        Token.Eof()
-      ]);
+      expectInputReturns("(", [Token.LeftBracket(), Token.Eof()]);
     });
 
     it("should return token for right braket", () => {
-      expectInputReturns(")", [
-        Token.RightBracket(),
-        Token.Eof()
-      ]);
+      expectInputReturns(")", [Token.RightBracket(), Token.Eof()]);
     });
 
     it("should return token for true boolean", () => {
-      expectInputReturns("#t", [
-        Token.Boolean("#t", true),
-        Token.Eof()
-      ]);
+      expectInputReturns("#t", [Token.Boolean("#t", true), Token.Eof()]);
     });
 
     it("should return token for false boolean", () => {
-      expectInputReturns("#f", [
-        Token.Boolean("#f", false),
-        Token.Eof()
-      ]);
+      expectInputReturns("#f", [Token.Boolean("#f", false), Token.Eof()]);
     });
 
     it("should return token for quoted string", () => {
@@ -39,10 +27,7 @@ describe("Scanner", () => {
     });
 
     it("should return token for digits", () => {
-      expectInputReturns("123", [
-        Token.Number("123", 123),
-        Token.Eof()
-      ]);
+      expectInputReturns("123", [Token.Number("123", 123), Token.Eof()]);
     });
 
     it("should return token for digits with dot", () => {
@@ -53,10 +38,7 @@ describe("Scanner", () => {
     });
 
     it("should return token for symbols", () => {
-      expectInputReturns("abcd", [
-        Token.Symbol("abcd"),
-        Token.Eof()
-      ]);
+      expectInputReturns("abcd", [Token.Symbol("abcd"), Token.Eof()]);
     });
 
     it("should throw with unknown token", () => {
@@ -86,6 +68,29 @@ describe("Scanner", () => {
         Token.Number("2", 2),
         Token.RightBracket(),
         Token.Number("3", 3),
+        Token.RightBracket(),
+        Token.Eof(),
+      ]);
+    });
+
+    it("should be a valid expression", () => {
+      expectInputReturns("(let ((min 10)) (display min) (display max))", [
+        Token.LeftBracket(),
+        Token.Symbol("let"),
+        Token.LeftBracket(),
+        Token.LeftBracket(),
+        Token.Symbol("min"),
+        Token.Number("10", 10),
+        Token.RightBracket(),
+        Token.RightBracket(),
+        Token.LeftBracket(),
+        Token.Symbol("display"),
+        Token.Symbol("min"),
+        Token.RightBracket(),
+        Token.LeftBracket(),
+        Token.Symbol("display"),
+        Token.Symbol("max"),
+        Token.RightBracket(),
         Token.RightBracket(),
         Token.Eof(),
       ]);

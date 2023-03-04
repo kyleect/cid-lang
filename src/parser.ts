@@ -127,12 +127,12 @@ class LetExpr extends Expr {
     return `<LetExpr bindings=${this.bindings}; body=${this.body}>`;
   }
 
-  bindingsToMap(): Map<string, unknown> {
+  bindingsToMap(): ReturnType<Map<string, unknown>["entries"]> {
     return new Map(
       this.bindings.map((binding) => {
         return [binding.name.getLexeme(), binding.value];
       })
-    );
+    ).entries();
   }
 }
 

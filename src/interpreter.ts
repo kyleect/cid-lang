@@ -1,7 +1,5 @@
-import exp from "constants";
 import { Environment } from "./env";
 import { Expr } from "./parser";
-import { Token } from "./token";
 
 export class Interpreter {
   static NULL_VALUE = [];
@@ -41,6 +39,33 @@ export class Interpreter {
     );
   }
 
+  /**
+   * Set a variable in the environment
+   * @param name Name of variable in environment
+   * @param value Value to set
+   */
+  public envSet(name: string, value: unknown) {
+    this.env.set(name, value);
+  }
+
+  /**
+   * Gets variable value from environment or throws
+   * @param name Name of variable in environment
+   * @returns Variable value in environment
+   */
+  public envGet(name: string): unknown {
+    return this.env.get(name);
+  }
+
+  /**
+   * Returns if variable is defined in environment
+   * @param name Name of variable in environment
+   * @returns Boolean if variable is in environment
+   */
+  public envHas(name: string): boolean {
+    return this.env.has(name);
+  }
+
   interpretAll(expressions: Expr[]): unknown {
     let result: unknown;
 
@@ -57,10 +82,7 @@ export class Interpreter {
     }
 
     if (Expr.IsSymbol(expr)) {
-      if (env.has(expr.token.getLexeme())) {
-        return env.get(expr.token.getLexeme());
-      }
-      throw new SyntaxError(`Unknown identifier: ${expr.token.getLexeme()}`);
+      return env.get(expr.token.getLexeme());
     }
 
     if (Expr.IsIf(expr)) {
@@ -73,17 +95,20 @@ export class Interpreter {
 
     if (Expr.IsCall(expr)) {
       const callee = this.interpret(expr.callee, env);
+
       const args = expr.args.map((arg) => this.interpret(arg, env));
-      if (callee instanceof Function) {
+
+      if (typeof callee === "function") {
         return callee(args);
       }
+
       throw new Error(`Cannot call ${callee}`);
     }
 
     if (Expr.isDefine(expr)) {
       const value = this.interpret(expr.value, env);
       env.set(expr.token.getLexeme(), value);
-      debugger;
+
       return;
     }
 
@@ -97,9 +122,16 @@ export class Interpreter {
     }
 
     if (Expr.isLet(expr)) {
-      const bindings = expr.bindingsToMap();
-      debugger;
-      const letEnv = new Environment(bindings, env);
+      const bindingEntries = expr.bindingsToMap();
+
+      const interpretedBindings: [string, unknown][] = Array.from(
+        bindingEntries
+      ).map<[string, unknown]>((entry) => [
+        entry[0] as string,
+        this.interpret(entry[1], env),
+      ]);
+
+      const letEnv = new Environment(new Map(interpretedBindings), env);
 
       let result;
 
@@ -108,8 +140,6 @@ export class Interpreter {
       }
       return result;
     }
-
-    debugger;
 
     throw new SyntaxError(`Invalid expression:\n${expr}`);
   }
