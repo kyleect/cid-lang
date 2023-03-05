@@ -39,8 +39,14 @@ export class Token {
     return new Token(TokenType.Symbol, lexeme, null);
   }
 
-  static Number(lexeme: string, literal: number): Token {
-    return new Token(TokenType.Number, lexeme, literal);
+  static Number(lexeme: string, literal?: number): Token {
+    const numericValue = Number.parseFloat(lexeme);
+
+    if (Number.isNaN(numericValue)) {
+      throw new SyntaxError(`Invalid lexeme for a number token: '${lexeme}'`);
+    }
+
+    return new Token(TokenType.Number, lexeme, literal ?? numericValue);
   }
 
   static Boolean(lexeme: string, literal: boolean): Token {
@@ -55,7 +61,7 @@ export class Token {
     return new Token(TokenType.Eof, "", null);
   }
 
-  toString(): string {
-    return `<Token type=${this.tokenType}; lexeme=${this.lexeme}; literal=${this.literal}>`;
+  public toString(): string {
+    return `<Token type='${this.tokenType}'; lexeme='${this.lexeme}'; literal=${this.literal}>`;
   }
 }
