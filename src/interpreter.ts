@@ -27,6 +27,7 @@ export class Interpreter {
           "null?": ([arg]) => arg === Interpreter.NULL_VALUE,
           "list?": ([arg]) => Array.isArray(arg),
           "number?": ([arg]) => Number.isInteger(arg),
+          "string?": ([arg]) => typeof arg === "string",
           "procedure?": ([arg]) => arg instanceof Function,
           car: ([arg]) => arg[0],
           cdr: ([arg]) =>

@@ -60,6 +60,14 @@ describe("Interpreter", () => {
       expectInputReturns(`(not #t)`, false);
     });
 
+    it("should call string? when true", () => {
+      expectInputReturns(`(string? "Hello")`, true);
+    });
+
+    it("should call string? when false", () => {
+      expectInputReturns(`(string? 1)`, false);
+    });
+
     it("should call number? when true", () => {
       expectInputReturns(`(number? 1)`, true);
     });

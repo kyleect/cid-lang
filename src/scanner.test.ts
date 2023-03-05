@@ -21,7 +21,7 @@ describe("Scanner", () => {
 
     it("should return token for quoted string", () => {
       expectInputReturns('"Hello World"', [
-        Token.String('"Hello World', "Hello World"),
+        Token.String("Hello World"),
         Token.Eof(),
       ]);
     });

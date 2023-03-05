@@ -67,16 +67,8 @@ describe("Token", () => {
 
   describe("String", () => {
     it("should stringify String token", () => {
-      expect(
-        Token.String('"expectedString"', "expectedString").toString()
-      ).toBe(
-        "<Token type='String'; lexeme='\"expectedString\"'; literal=expectedString>"
-      );
-    });
-
-    it("should throw if literal value it not a string", () => {
-      expect(() => Token.String('"123"', 123 as any)).toThrow(
-        "Invalid literal value for string token: 123"
+      expect(Token.String("expectedString").toString()).toBe(
+        "<Token type='String'; lexeme='expectedString'; literal=expectedString>"
       );
     });
   });

@@ -57,12 +57,12 @@ export class Token {
     return new Token(TokenType.Boolean, lexeme, literal);
   }
 
-  static String(lexeme: string, literal: string): Token {
-    if (typeof literal !== "string") {
-      throw Error(`Invalid literal value for string token: ${literal}`);
+  static String(lexeme: string): Token {
+    if (typeof lexeme !== "string") {
+      throw SyntaxError(`Lexeme is a non-string for string token: ${lexeme}`);
     }
 
-    return new Token(TokenType.String, lexeme, literal);
+    return new Token(TokenType.String, lexeme, lexeme);
   }
 
   static Eof(): Token {

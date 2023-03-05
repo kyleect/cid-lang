@@ -37,10 +37,14 @@ export class Scanner {
             break;
           }
         case '"':
+          debugger;
           while (this.peek() !== '"' && !this.isAtEnd()) {
+            debugger;
             this.advance();
           }
+          debugger;
           const literal = this.source.slice(this.start + 1, this.current);
+          debugger;
           this.addToken(TokenType.String, literal);
           this.advance();
           break;
@@ -149,11 +153,7 @@ export class Scanner {
         break;
 
       case TokenType.String:
-        if (typeof literal !== "string") {
-          throw Error(`Invalid literal value for string token: ${literal}`);
-        }
-
-        token = Token.String(lexeme, literal);
+        token = Token.String(lexeme.substring(1));
         break;
 
       case TokenType.Eof:
