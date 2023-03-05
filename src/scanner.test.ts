@@ -27,14 +27,11 @@ describe("Scanner", () => {
     });
 
     it("should return token for digits", () => {
-      expectInputReturns("123", [Token.Number("123", 123), Token.Eof()]);
+      expectInputReturns("123", [Token.Number("123"), Token.Eof()]);
     });
 
     it("should return token for digits with dot", () => {
-      expectInputReturns("123.45", [
-        Token.Number("123.45", 123.45),
-        Token.Eof(),
-      ]);
+      expectInputReturns("123.45", [Token.Number("123.45"), Token.Eof()]);
     });
 
     it("should return token for symbols", () => {
@@ -51,8 +48,8 @@ describe("Scanner", () => {
       expectInputReturns("(+ 1 2)", [
         Token.LeftBracket(),
         Token.Symbol("+"),
-        Token.Number("1", 1),
-        Token.Number("2", 2),
+        Token.Number("1"),
+        Token.Number("2"),
         Token.RightBracket(),
         Token.Eof(),
       ]);
@@ -64,10 +61,10 @@ describe("Scanner", () => {
         Token.Symbol("-"),
         Token.LeftBracket(),
         Token.Symbol("+"),
-        Token.Number("1", 1),
-        Token.Number("2", 2),
+        Token.Number("1"),
+        Token.Number("2"),
         Token.RightBracket(),
-        Token.Number("3", 3),
+        Token.Number("3"),
         Token.RightBracket(),
         Token.Eof(),
       ]);
@@ -80,7 +77,7 @@ describe("Scanner", () => {
         Token.LeftBracket(),
         Token.LeftBracket(),
         Token.Symbol("min"),
-        Token.Number("10", 10),
+        Token.Number("10"),
         Token.RightBracket(),
         Token.RightBracket(),
         Token.LeftBracket(),

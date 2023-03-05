@@ -33,7 +33,7 @@ describe("Token", () => {
     });
 
     it("should stringify Number token", () => {
-      expect(Token.Number("123", 123).toString()).toBe(
+      expect(Token.Number("123").toString()).toBe(
         "<Token type='Number'; lexeme='123'; literal=123>"
       );
     });
@@ -41,14 +41,6 @@ describe("Token", () => {
     it("should throw if lexeme is not a number", () => {
       expect(() => Token.Number('"notANumber"')).toThrow(
         new SyntaxError(`Invalid lexeme for a number token: '\"notANumber\"'`)
-      );
-    });
-
-    it("should throw if lexeme and literal don't match if passed", () => {
-      expect(() => Token.Number("123", 456)).toThrow(
-        new SyntaxError(
-          `Mismatched lexeme and literal value for number token: 123 vs 456`
-        )
       );
     });
   });
@@ -65,14 +57,26 @@ describe("Token", () => {
         "<Token type='Boolean'; lexeme='#t'; literal=true>"
       );
     });
+
+    it("should throw if literal value it not a boolean", () => {
+      expect(() => Token.Boolean("#t", 123 as any)).toThrow(
+        "Invalid literal value for boolean token: 123"
+      );
+    });
   });
 
   describe("String", () => {
-    it("should stringify LeftBracket token", () => {
+    it("should stringify String token", () => {
       expect(
         Token.String('"expectedString"', "expectedString").toString()
       ).toBe(
         "<Token type='String'; lexeme='\"expectedString\"'; literal=expectedString>"
+      );
+    });
+
+    it("should throw if literal value it not a string", () => {
+      expect(() => Token.String('"123"', 123 as any)).toThrow(
+        "Invalid literal value for string token: 123"
       );
     });
   });

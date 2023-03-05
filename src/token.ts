@@ -39,29 +39,29 @@ export class Token {
     return new Token(TokenType.Symbol, lexeme, null);
   }
 
-  static Number(lexeme: string, literal?: number): Token {
+  static Number(lexeme: string): Token {
     const numericValue = Number.parseFloat(lexeme);
 
     if (Number.isNaN(numericValue)) {
       throw new SyntaxError(`Invalid lexeme for a number token: '${lexeme}'`);
     }
 
-    if (literal ?? false) {
-      if (literal !== numericValue) {
-        throw new SyntaxError(
-          `Mismatched lexeme and literal value for number token: ${lexeme} vs ${literal}`
-        );
-      }
-    }
-
-    return new Token(TokenType.Number, lexeme, literal ?? numericValue);
+    return new Token(TokenType.Number, lexeme, numericValue);
   }
 
   static Boolean(lexeme: string, literal: boolean): Token {
+    if (typeof literal !== "boolean") {
+      throw Error(`Invalid literal value for boolean token: ${literal}`);
+    }
+
     return new Token(TokenType.Boolean, lexeme, literal);
   }
 
   static String(lexeme: string, literal: string): Token {
+    if (typeof literal !== "string") {
+      throw Error(`Invalid literal value for string token: ${literal}`);
+    }
+
     return new Token(TokenType.String, lexeme, literal);
   }
 

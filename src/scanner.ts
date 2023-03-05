@@ -118,9 +118,52 @@ export class Scanner {
     return this.source[this.current];
   }
 
-  addToken(tokenType: TokenType, literal) {
+  addToken(tokenType: TokenType, literal: unknown) {
     const lexeme = this.source.slice(this.start, this.current);
-    const token = new Token(tokenType, lexeme, literal);
+
+    let token: Token;
+
+    switch (tokenType) {
+      case TokenType.LeftBracket:
+        token = Token.LeftBracket();
+        break;
+
+      case TokenType.RightBracket:
+        token = Token.RightBracket();
+        break;
+
+      case TokenType.Symbol:
+        token = Token.Symbol(lexeme);
+        break;
+
+      case TokenType.Number:
+        token = Token.Number(lexeme);
+        break;
+
+      case TokenType.Boolean:
+        if (typeof literal !== "boolean") {
+          throw Error(`Invalid literal value for boolean token: ${literal}`);
+        }
+
+        token = Token.Boolean(lexeme, literal);
+        break;
+
+      case TokenType.String:
+        if (typeof literal !== "string") {
+          throw Error(`Invalid literal value for string token: ${literal}`);
+        }
+
+        token = Token.String(lexeme, literal);
+        break;
+
+      case TokenType.Eof:
+        token = Token.Eof();
+        break;
+
+      default:
+        break;
+    }
+
     this.tokens.push(token);
   }
 }
