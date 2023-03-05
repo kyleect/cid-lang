@@ -46,6 +46,14 @@ export class Token {
       throw new SyntaxError(`Invalid lexeme for a number token: '${lexeme}'`);
     }
 
+    if (literal ?? false) {
+      if (literal !== numericValue) {
+        throw new SyntaxError(
+          `Mismatched lexeme and literal value for number token: ${lexeme} vs ${literal}`
+        );
+      }
+    }
+
     return new Token(TokenType.Number, lexeme, literal ?? numericValue);
   }
 

@@ -39,8 +39,16 @@ describe("Token", () => {
     });
 
     it("should throw if lexeme is not a number", () => {
-      expect(() => Token.Number('"notANumber"', 123)).toThrow(
+      expect(() => Token.Number('"notANumber"')).toThrow(
         new SyntaxError(`Invalid lexeme for a number token: '\"notANumber\"'`)
+      );
+    });
+
+    it("should throw if lexeme and literal don't match if passed", () => {
+      expect(() => Token.Number("123", 456)).toThrow(
+        new SyntaxError(
+          `Mismatched lexeme and literal value for number token: 123 vs 456`
+        )
       );
     });
   });
