@@ -33,6 +33,10 @@ export class Expr {
     return new LetExpr(bindings, body);
   }
 
+  static Lambda(params: [], body: Expr[]): LambdaExpr {
+    return new LambdaExpr(params, body);
+  }
+
   static IsCall(expression: Expr): expression is CallExpr {
     return expression instanceof CallExpr;
   }
@@ -60,10 +64,14 @@ export class Expr {
   static isLet(expression: Expr): expression is LetExpr {
     return expression instanceof LetExpr;
   }
+
+  static isLambda(expression: Expr): expression is LambdaExpr {
+    return expression instanceof LambdaExpr;
+  }
 }
 
 class CallExpr extends Expr {
-  constructor(public callee, public args) {
+  constructor(public callee, public args: unknown[]) {
     super();
   }
 
@@ -144,6 +152,16 @@ export class LetBindingNode {
   }
 }
 
+export class LambdaExpr extends Expr {
+  constructor(public params: Token[], public body: Expr[]) {
+    super();
+  }
+
+  toString(): string {
+    return `<Lambda params=${this.params}; body=${this.body}>`;
+  }
+}
+
 export class Parser {
   static NULL_VALUE = [];
 
@@ -179,6 +197,7 @@ export class Parser {
       if (token.getLexeme() === "define") return this.define();
       if (token.getLexeme() === "set!") return this.set();
       if (token.getLexeme() === "let") return this.let();
+      if (token.getLexeme() === "lambda") return this.lambda();
       return this.call();
     }
     return this.atom();
@@ -288,5 +307,22 @@ export class Parser {
     const value = this.expression();
     this.consume(TokenType.RightBracket);
     return new LetBindingNode(name, value);
+  }
+
+  lambda(): LambdaExpr {
+    this.advance(); // move past the "lambda" token
+    this.consume(TokenType.LeftBracket);
+
+    const params: Token[] = [];
+    while (!this.match(TokenType.RightBracket)) {
+      params.push(this.consume(TokenType.Symbol));
+    }
+
+    const body: Expr[] = [];
+    while (!this.match(TokenType.RightBracket)) {
+      body.push(this.expression());
+    }
+
+    return new LambdaExpr(params, body);
   }
 }

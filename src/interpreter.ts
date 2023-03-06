@@ -1,5 +1,5 @@
 import { Environment } from "./env";
-import { Expr } from "./parser";
+import { Expr, LambdaExpr } from "./parser";
 
 export class Interpreter {
   static NULL_VALUE = [];
@@ -77,7 +77,7 @@ export class Interpreter {
     return result;
   }
 
-  interpret(expr: Expr, env: typeof this.env): unknown {
+  interpret(expr: Expr, env: Environment): unknown {
     if (Expr.IsLiteral(expr)) {
       return expr.value;
     }
@@ -97,7 +97,12 @@ export class Interpreter {
     if (Expr.IsCall(expr)) {
       const callee = this.interpret(expr.callee, env);
 
-      const args = expr.args.map((arg) => this.interpret(arg, env));
+      const args: unknown[] = expr.args.map((arg) => this.interpret(arg, env));
+
+      if (callee instanceof Procedure) {
+        debugger;
+        return callee.call(this, args);
+      }
 
       if (typeof callee === "function") {
         return callee(args);
@@ -114,6 +119,8 @@ export class Interpreter {
     }
 
     if (Expr.isSet(expr)) {
+      debugger;
+
       const value = this.interpret(expr.value, env);
       if (env.has(expr.token.getLexeme())) {
         env.set(expr.token.getLexeme(), value);
@@ -142,6 +149,32 @@ export class Interpreter {
       return result;
     }
 
+    if (Expr.isLambda(expr)) {
+      debugger;
+      return new Procedure(expr, env);
+    }
+
     throw new SyntaxError(`Invalid expression:\n${expr}`);
+  }
+}
+
+class Procedure {
+  constructor(private declaration: LambdaExpr, private closure: Environment) {}
+
+  call(interpreter: Interpreter, args: unknown[]) {
+    const entries = this.declaration.params.map<[string, unknown]>(
+      (token, argIdx) => [token.getLexeme(), args[argIdx]]
+    );
+
+    debugger;
+
+    const lambdaEnv = new Map(entries);
+
+    const env = new Environment(lambdaEnv, this.closure);
+    let result;
+    for (const expr of this.declaration.body) {
+      result = interpreter.interpret(expr, env);
+    }
+    return result;
   }
 }

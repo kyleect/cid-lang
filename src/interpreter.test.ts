@@ -130,6 +130,46 @@ describe("Interpreter", () => {
       expect(displaySpy.mock.calls).toEqual([[[10]], [[100]]]);
     });
   });
+
+  describe("lambdas", () => {
+    it("should work", () => {
+      expectInputReturns(
+        `(define square (lambda (x) (* x x)))
+         (define result (square (square 5)))
+         result`,
+        625
+      );
+    });
+
+    it("should work with closures", () => {
+      expectInputReturns(
+        `(define count 0)
+         (define increment (lambda ()
+           (set! count (+ count 1))))
+         
+         (increment)
+         (increment)
+         count`,
+        2
+      );
+    });
+
+    it("should use current closure values at call time", () => {
+      expectInputReturns(
+        `(define count 0)
+         (define increment (lambda ()
+           (set! count (+ count 1))))
+         
+         (increment)
+
+         (set! count 10)
+
+         (increment)
+         count`,
+        11
+      );
+    });
+  });
 });
 
 function interpretInput(input: string): unknown {
