@@ -15,10 +15,10 @@ export class Scanner {
       const char = this.advance();
       switch (char) {
         case "(":
-          this.addToken(TokenType.LeftBracket, null);
+          this.addToken(TokenType.LeftBracket);
           break;
         case ")":
-          this.addToken(TokenType.RightBracket, null);
+          this.addToken(TokenType.RightBracket);
           break;
         case " ":
         case "\r":
@@ -63,7 +63,7 @@ export class Scanner {
             while (this.isIdentifier(this.peek())) {
               this.advance();
             }
-            this.addToken(TokenType.Symbol, null);
+            this.addToken(TokenType.Symbol);
             break;
           }
 
@@ -122,7 +122,7 @@ export class Scanner {
     return this.source[this.current];
   }
 
-  addToken(tokenType: TokenType, literal: unknown) {
+  addToken(tokenType: TokenType, literal: unknown = null) {
     const lexeme = this.source.slice(this.start, this.current);
 
     let token: Token;
