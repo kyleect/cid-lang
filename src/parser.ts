@@ -33,7 +33,7 @@ export class Expr {
     return new LetExpr(bindings, body);
   }
 
-  static Lambda(params: [], body: Expr[]): LambdaExpr {
+  static Lambda(params: Token[], body: Expr[]): LambdaExpr {
     return new LambdaExpr(params, body);
   }
 
@@ -132,7 +132,7 @@ class LetExpr extends Expr {
   }
 
   toString(): string {
-    return `<LetExpr bindings=${this.bindings}; body=${this.body}>`;
+    return `<LetExpr bindings=[${this.bindings}]; body=[${this.body}]>`;
   }
 
   bindingsToMap(): ReturnType<Map<string, unknown>["entries"]> {
@@ -158,7 +158,7 @@ export class LambdaExpr extends Expr {
   }
 
   toString(): string {
-    return `<Lambda params=${this.params}; body=${this.body}>`;
+    return `<Lambda params=[${this.params}]; body=[${this.body}]>`;
   }
 }
 

@@ -69,6 +69,70 @@ describe("Parser", () => {
   });
 });
 
+describe("Expr", () => {
+  describe("SymbolExpr", () => {
+    it("should stringify", () => {
+      expect(Expr.Symbol(Token.Symbol("expected")).toString()).toBe(
+        `<SymbolExpr token=${Token.Symbol("expected")}>`
+      );
+    });
+  });
+
+  describe("LiteralExpr", () => {
+    it("should stringify", () => {
+      expect(Expr.Literal(123).toString()).toBe("<LiteralExpr value=123>");
+    });
+  });
+
+  describe("DefineExpr", () => {
+    it("should stringify", () => {
+      expect(Expr.Define(Token.Symbol("expected"), 123).toString()).toBe(
+        `<DefineExpr token=${Token.Symbol("expected")}; value=123>`
+      );
+    });
+  });
+
+  describe("SetExpr", () => {
+    it("should stringify", () => {
+      expect(Expr.Set(Token.Symbol("expected"), 123).toString()).toBe(
+        `<SetExpr token=${Token.Symbol("expected")}; value=123>`
+      );
+    });
+  });
+
+  describe("LetExpr", () => {
+    it("should stringify", () => {
+      expect(
+        Expr.Let(
+          [new LetBindingNode(Token.Symbol("expected"), Expr.Literal(123))],
+          [
+            Expr.Symbol(Token.Symbol("expected")),
+            Expr.Symbol(Token.Symbol("expected")),
+          ]
+        ).toString()
+      ).toBe(
+        `<LetExpr bindings=[<LetBindingNode name=<Token type='Symbol'; lexeme='expected'; literal=null>; value=<LiteralExpr value=123>>]; body=[<SymbolExpr token=<Token type='Symbol'; lexeme='expected'; literal=null>>,<SymbolExpr token=<Token type='Symbol'; lexeme='expected'; literal=null>>]>`
+      );
+    });
+  });
+
+  describe("LambdaExpr", () => {
+    it("should stringify", () => {
+      expect(
+        Expr.Lambda(
+          [Token.Symbol("expected")],
+          [
+            Expr.Symbol(Token.Symbol("expected")),
+            Expr.Symbol(Token.Symbol("expected")),
+          ]
+        ).toString()
+      ).toBe(
+        `<Lambda params=[<Token type='Symbol'; lexeme='expected'; literal=null>]; body=[<SymbolExpr token=<Token type='Symbol'; lexeme='expected'; literal=null>>,<SymbolExpr token=<Token type='Symbol'; lexeme='expected'; literal=null>>]>`
+      );
+    });
+  });
+});
+
 function parseInput(input: string): Expr[] {
   const scanner = new Scanner(input);
   const tokens = scanner.scan();
