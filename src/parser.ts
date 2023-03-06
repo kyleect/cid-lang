@@ -71,7 +71,7 @@ export class Expr {
 }
 
 class CallExpr extends Expr {
-  constructor(public callee, public args: unknown[]) {
+  constructor(public callee: unknown, public args: unknown[]) {
     super();
   }
 

@@ -35,8 +35,7 @@ export class Interpreter {
           cons: ([a, b]) => [a, ...b],
           display: ([arg]) => console.log(arg),
         })
-      ),
-      null
+      )
     );
   }
 

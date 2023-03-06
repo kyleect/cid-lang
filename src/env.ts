@@ -1,7 +1,7 @@
 export class Environment {
   constructor(
     private values: Map<string, unknown>,
-    private enclosing: Environment
+    private enclosing?: Environment
   ) {}
 
   define(name: string, value: unknown) {
@@ -33,6 +33,6 @@ export class Environment {
   }
 
   has(name: string): boolean {
-    return this.values.has(name) || this.enclosing?.has(name);
+    return this.values.has(name) || (this.enclosing?.has(name) ?? false);
   }
 }
