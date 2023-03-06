@@ -71,7 +71,7 @@ export class Scanner {
       }
     }
 
-    this.tokens.push(new Token(TokenType.Eof, "", null));
+    this.addToken(TokenType.Eof);
     return this.tokens;
   }
 
@@ -158,9 +158,6 @@ export class Scanner {
 
       case TokenType.Eof:
         token = Token.Eof();
-        break;
-
-      default:
         break;
     }
 

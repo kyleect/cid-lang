@@ -70,6 +70,14 @@ describe("Parser", () => {
 });
 
 describe("Expr", () => {
+  describe("CallExpr", () => {
+    it("should stringify", () => {
+      expect(Expr.Call(Token.Symbol("expected"), []).toString()).toBe(
+        `<CallExpr callee=${Token.Symbol("expected")}; args=[]>`
+      );
+    });
+  });
+
   describe("SymbolExpr", () => {
     it("should stringify", () => {
       expect(Expr.Symbol(Token.Symbol("expected")).toString()).toBe(

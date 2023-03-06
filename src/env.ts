@@ -3,11 +3,6 @@ export class Environment {
     private values: Map<string, unknown>,
     private enclosing?: Environment
   ) {}
-
-  define(name: string, value: unknown) {
-    this.values.set(name, value);
-  }
-
   // Sets the variable value in the
   // environment where it was defined
   set(name: string, value: unknown) {

@@ -83,6 +83,14 @@ describe("Interpreter", () => {
     it("should call list? when false", () => {
       expectInputReturns(`(list? 1)`, false);
     });
+
+    it("should call if when true", () => {
+      expectInputReturns(`(if (>= 10 1) "Hello" "World")`, "Hello");
+    });
+
+    it("should call if when false", () => {
+      expectInputReturns(`(if (>= 1 10) "Hello" "World")`, "World");
+    });
   });
 
   describe("variables", () => {

@@ -76,7 +76,7 @@ class CallExpr extends Expr {
   }
 
   toString(): string {
-    return `<CallExpr callee=${this.callee}; args=${this.args}>`;
+    return `<CallExpr callee=${this.callee}; args=[${this.args}]>`;
   }
 }
 
