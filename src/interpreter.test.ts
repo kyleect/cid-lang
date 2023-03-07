@@ -109,7 +109,11 @@ describe("Interpreter", () => {
     });
 
     it("should define local variables", () => {
-      expectInputReturns("(define x 1)\n(let ((x 2) (y 4)))\nx", 1);
+      expectInputReturns(`
+        (define x 1)
+        (let ((x 2) (y 4)) (set! x 100))
+        x
+      `, 1);
     });
 
     it("should throw when referencing local variables out of scope", () => {
@@ -149,6 +153,15 @@ describe("Interpreter", () => {
       );
     });
 
+    it("should work with no body expressions", () => {
+      expectInputReturns(
+        `(define square (lambda (x)))
+         (define result (square (square 5)))
+         result`,
+        undefined
+      );
+    });
+
     it("should work with closures", () => {
       expectInputReturns(
         `(define count 0)
@@ -176,6 +189,18 @@ describe("Interpreter", () => {
          count`,
         11
       );
+    });
+
+    it('should have tail call optimization applied', () => {
+      expectInputReturns(`
+      (define sum-to
+        (lambda (n acc)
+          (if (= n 0)
+            acc
+            (sum-to (- n 1) (+ n acc)))))
+      
+      (sum-to 100000 0)
+      `, 5000050000)
     });
   });
 });

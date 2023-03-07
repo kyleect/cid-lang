@@ -37,14 +37,12 @@ export class Scanner {
             break;
           }
         case '"':
-          debugger;
           while (this.peek() !== '"' && !this.isAtEnd()) {
-            debugger;
             this.advance();
           }
-          debugger;
+
           const literal = this.source.slice(this.start + 1, this.current);
-          debugger;
+
           this.addToken(TokenType.String, literal);
           this.advance();
           break;

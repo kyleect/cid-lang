@@ -77,103 +77,104 @@ export class Interpreter {
   }
 
   interpret(expr: Expr, env: Environment): unknown {
-    if (Expr.IsLiteral(expr)) {
-      return expr.value;
-    }
-
-    if (Expr.IsSymbol(expr)) {
-      return env.get(expr.token.getLexeme());
-    }
-
-    if (Expr.IsIf(expr)) {
-      const test = this.interpret(expr.test, env);
-      if (test !== false) {
-        return this.interpret(expr.consequent, env);
-      }
-      return this.interpret(expr.alternative, env);
-    }
-
-    if (Expr.IsCall(expr)) {
-      const callee = this.interpret(expr.callee, env);
-
-      const args: unknown[] = expr.args.map((arg) => this.interpret(arg, env));
-
-      if (callee instanceof Procedure) {
-        debugger;
-        return callee.call(this, args);
+    while (true) {
+      if (Expr.IsLiteral(expr)) {
+        return expr.value;
       }
 
-      if (typeof callee === "function") {
-        return callee(args);
+      if (Expr.IsSymbol(expr)) {
+        return env.get(expr.token.getLexeme());
       }
 
-      throw new Error(`Cannot call ${callee}`);
-    }
+      if (Expr.IsIf(expr)) {
+        const test = this.interpret(expr.test, env);
+        expr = test !== false ? expr.consequent : expr.alternative;
 
-    if (Expr.isDefine(expr)) {
-      const value = this.interpret(expr.value, env);
-      env.set(expr.token.getLexeme(), value);
+        continue;
+      }
 
-      return;
-    }
+      if (Expr.IsCall(expr)) {
+        const callee = this.interpret(expr.callee, env);
+        const args: unknown[] = expr.args.map((arg) => this.interpret(arg, env));
 
-    if (Expr.isSet(expr)) {
-      debugger;
+        if (callee instanceof Procedure) {
+          const lambdaParamValuePairs = new Map(callee.declaration.params.map(
+            (token, argIdx) => [token.getLexeme(), args[argIdx]]
+          ));
 
-      const value = this.interpret(expr.value, env);
-      if (env.has(expr.token.getLexeme())) {
+          const callEnv = new Environment(lambdaParamValuePairs, callee.closure);
+
+          if (callee.declaration.body.length === 0) {
+            return undefined;
+          }
+
+          for (const exprInBody of callee.declaration.body.slice(0, -1)) {
+            this.interpret(exprInBody, callEnv);
+          }
+
+          expr = callee.declaration.body[callee.declaration.body.length - 1];
+          env = callEnv;
+
+          continue;
+        }
+
+        if (typeof callee === "function") {
+          return callee(args);
+        }
+
+        throw new Error(`Cannot call ${callee}`);
+      }
+
+      if (Expr.isDefine(expr)) {
+        const value = this.interpret(expr.value, env);
         env.set(expr.token.getLexeme(), value);
+
         return;
       }
-      throw new SyntaxError(`Unknown identifier: ${expr.token.getLexeme()}`);
-    }
 
-    if (Expr.isLet(expr)) {
-      const bindingEntries = expr.bindingsToMap();
-
-      const interpretedBindings: [string, unknown][] = Array.from(
-        bindingEntries
-      ).map<[string, unknown]>((entry) => [
-        entry[0] as string,
-        this.interpret(entry[1], env),
-      ]);
-
-      const letEnv = new Environment(new Map(interpretedBindings), env);
-
-      let result;
-
-      for (const exprInBody of expr.body) {
-        result = this.interpret(exprInBody, letEnv);
+      if (Expr.isSet(expr)) {
+        const value = this.interpret(expr.value, env);
+        if (env.has(expr.token.getLexeme())) {
+          env.set(expr.token.getLexeme(), value);
+          return;
+        }
+        throw new SyntaxError(`Unknown identifier: ${expr.token.getLexeme()}`);
       }
-      return result;
-    }
 
-    if (Expr.isLambda(expr)) {
-      debugger;
-      return new Procedure(expr, env);
-    }
+      if (Expr.isLet(expr)) {
+        const bindingEntries = expr.bindingsToMap();
 
-    throw new SyntaxError(`Invalid expression:\n${expr}`);
+        const interpretedBindings: [string, unknown][] = Array.from(
+          bindingEntries
+        ).map<[string, unknown]>((entry) => [
+          entry[0] as string,
+          this.interpret(entry[1], env),
+        ]);
+
+        const letEnv = new Environment(new Map(interpretedBindings), env);
+
+        if (expr.body.length === 0) {
+          return undefined;
+        }
+
+        for (const exprInBody of expr.body.slice(0, -1)) {
+          this.interpret(exprInBody, letEnv);
+        }
+
+        expr = expr.body[expr.body.length - 1];
+        env = letEnv;
+        continue;
+      }
+
+      if (Expr.isLambda(expr)) {
+        return new Procedure(expr, env);
+      }
+
+      throw new SyntaxError(`Invalid expression:\n${expr}`);
+    }
   }
 }
 
 class Procedure {
-  constructor(private declaration: LambdaExpr, private closure: Environment) {}
-
-  call(interpreter: Interpreter, args: unknown[]) {
-    const entries = this.declaration.params.map<[string, unknown]>(
-      (token, argIdx) => [token.getLexeme(), args[argIdx]]
-    );
-
-    debugger;
-
-    const lambdaEnv = new Map(entries);
-
-    const env = new Environment(lambdaEnv, this.closure);
-    let result;
-    for (const expr of this.declaration.body) {
-      result = interpreter.interpret(expr, env);
-    }
-    return result;
-  }
+  constructor(public declaration: LambdaExpr, public closure: Environment) { }
 }
