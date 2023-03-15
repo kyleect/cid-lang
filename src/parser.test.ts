@@ -13,21 +13,25 @@ describe("Parser", () => {
 
   it("should return quoted expression", () => {
     expectInputReturns("(quote (+ 1 1))", [
-      Expr.Quote(Expr.Call(Expr.Symbol(Token.Symbol("+")), [
-        Expr.Literal(1),
-        Expr.Literal(1)
-      ]))
+      Expr.Quote(
+        Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+          Expr.Literal(1),
+          Expr.Literal(1),
+        ])
+      ),
     ]);
   });
 
   it("should return nested quoted expression", () => {
     expectInputReturns("(quote (quote (+ 1 1)))", [
       Expr.Quote(
-        Expr.Quote(Expr.Call(Expr.Symbol(Token.Symbol("+")), [
-          Expr.Literal(1),
-          Expr.Literal(1)
-        ]))
-      )
+        Expr.Quote(
+          Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+            Expr.Literal(1),
+            Expr.Literal(1),
+          ])
+        )
+      ),
     ]);
   });
 
@@ -96,23 +100,24 @@ describe("Parser", () => {
 describe("Expr", () => {
   describe("CallExpr", () => {
     it("should stringify", () => {
-      expect(Expr.Call(Expr.Symbol(Token.Symbol("expected")), []).toString()).toBe(
-        `(expected)`
-      );
+      expect(
+        Expr.Call(Expr.Symbol(Token.Symbol("expected")), []).toString()
+      ).toBe(`(expected)`);
     });
 
     it("should stringify when args present", () => {
-      expect(Expr.Call(Expr.Symbol(Token.Symbol("expectedFn")), [Expr.Literal(123), Expr.Symbol(Token.Symbol("expectedArg"))]).toString()).toBe(
-        `(expectedFn 123 expectedArg)`
-      );
+      expect(
+        Expr.Call(Expr.Symbol(Token.Symbol("expectedFn")), [
+          Expr.Literal(123),
+          Expr.Symbol(Token.Symbol("expectedArg")),
+        ]).toString()
+      ).toBe(`(expectedFn 123 expectedArg)`);
     });
   });
 
   describe("SymbolExpr", () => {
     it("should stringify", () => {
-      expect(Expr.Symbol(Token.Symbol("expected")).toString()).toBe(
-        `expected`
-      );
+      expect(Expr.Symbol(Token.Symbol("expected")).toString()).toBe(`expected`);
     });
   });
 
@@ -148,9 +153,7 @@ describe("Expr", () => {
             Expr.Symbol(Token.Symbol("expected")),
           ]
         ).toString()
-      ).toBe(
-        `(let ((expected 123)) expected expected)`
-      );
+      ).toBe(`(let ((expected 123)) expected expected)`);
     });
   });
 
@@ -164,18 +167,14 @@ describe("Expr", () => {
             Expr.Symbol(Token.Symbol("expected")),
           ]
         ).toString()
-      ).toBe(
-        `(lambda (expected) expected expected)`
-      );
+      ).toBe(`(lambda (expected) expected expected)`);
     });
   });
 
-  describe('QuoteExpr', () => {
+  describe("QuoteExpr", () => {
     it("should stringify", () => {
-      expect(parseInput("(quote (+ 1 1))").toString())
-        .toBe("(+ 1 1)");
+      expect(parseInput("(quote (+ 1 1))").toString()).toBe("(+ 1 1)");
     });
-  
   });
 });
 

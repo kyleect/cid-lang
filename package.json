@@ -14,7 +14,8 @@
     "build": "tsup src/index.ts src/repl.ts --shims --dts --sourcemap --format esm,cjs",
     "test": "jest",
     "coverage": "npm test -- --coverage --collectCoverageFrom=\"./src/**\"",
-    "start": "node dist/repl.js"
+    "start": "node dist/repl.js",
+    "format": "npx prettier --write ."
   },
   "author": "Kylee Tilley",
   "license": "MIT",
@@ -23,10 +24,10 @@
     "@types/node": "^17.0.21",
     "expect": "^27.5.1",
     "jest": "^27.5.1",
+    "prettier": "^2.8.4",
     "ts-jest": "^27.1.3",
     "ts-node": "^10.7.0",
     "tsup": "^6.0.1",
     "typescript": "^4.6.2"
-  },
-  "dependencies": {}
+  }
 }

@@ -7,7 +7,7 @@ export class Interpreter {
   private env: Environment;
 
   constructor() {
-    this.env = new Environment(
+    const env = new Environment(
       new Map(
         Object.entries({
           "*": ([a, b]) => a * b,
@@ -34,10 +34,12 @@ export class Interpreter {
             arg.length > 1 ? arg.slice(1) : Interpreter.NULL_VALUE,
           cons: ([a, b]) => [a, ...b],
           display: ([arg]) => console.log(arg),
-          quote: ([arg]) => arg
+          quote: ([arg]) => arg,
         })
       )
     );
+
+    this.env = env;
   }
 
   /**
@@ -110,14 +112,22 @@ export class Interpreter {
 
       if (Expr.IsCall(expr)) {
         const callee = this.interpret(expr.callee, env);
-        const args: unknown[] = expr.args.map((arg) => this.interpret(arg, env));
+        const args: unknown[] = expr.args.map((arg) =>
+          this.interpret(arg, env)
+        );
 
         if (callee instanceof Procedure) {
-          const lambdaParamValuePairs = new Map(callee.declaration.params.map(
-            (token, argIdx) => [token.getLexeme(), args[argIdx]]
-          ));
+          const lambdaParamValuePairs = new Map(
+            callee.declaration.params.map((token, argIdx) => [
+              token.getLexeme(),
+              args[argIdx],
+            ])
+          );
 
-          const callEnv = new Environment(lambdaParamValuePairs, callee.closure);
+          const callEnv = new Environment(
+            lambdaParamValuePairs,
+            callee.closure
+          );
 
           if (callee.declaration.body.length === 0) {
             return undefined;
@@ -195,5 +205,5 @@ export class Interpreter {
 }
 
 class Procedure {
-  constructor(public declaration: LambdaExpr, public closure: Environment) { }
+  constructor(public declaration: LambdaExpr, public closure: Environment) {}
 }

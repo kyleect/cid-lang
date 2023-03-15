@@ -98,9 +98,9 @@ class CallExpr extends Expr {
   }
 
   toString(): string {
-    const args = this.args.join(' ');
+    const args = this.args.join(" ");
 
-    return `(${this.callee}${args.length ? ` ${this.args.join(' ')}` : ''})`;
+    return `(${this.callee}${args.length ? ` ${this.args.join(" ")}` : ""})`;
   }
 }
 
@@ -156,7 +156,7 @@ class LetExpr extends Expr {
   }
 
   toString(): string {
-    return `(let (${this.bindings.join(' ')}) ${this.body.join(' ')})`;
+    return `(let (${this.bindings.join(" ")}) ${this.body.join(" ")})`;
   }
 
   bindingsToMap(): ReturnType<Map<string, unknown>["entries"]> {
@@ -182,7 +182,9 @@ export class LambdaExpr extends Expr {
   }
 
   toString(): string {
-    return `(lambda (${this.params.map(token => token.getLexeme()).join(' ')}) ${this.body.join(' ')})`;
+    return `(lambda (${this.params
+      .map((token) => token.getLexeme())
+      .join(" ")}) ${this.body.join(" ")})`;
   }
 }
 
@@ -368,10 +370,10 @@ export class Parser {
 
   private quote(): QuoteExpr {
     this.advance(); // move past the "quote" token
-    
+
     const value = this.expression();
     this.consume(TokenType.RightBracket);
-    
+
     return new QuoteExpr(value);
   }
 }

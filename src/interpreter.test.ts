@@ -109,11 +109,14 @@ describe("Interpreter", () => {
     });
 
     it("should define local variables", () => {
-      expectInputReturns(`
+      expectInputReturns(
+        `
         (define x 1)
         (let ((x 2) (y 4)) (set! x 100))
         x
-      `, 1);
+      `,
+        1
+      );
     });
 
     it("should throw when referencing local variables out of scope", () => {
@@ -191,8 +194,9 @@ describe("Interpreter", () => {
       );
     });
 
-    it('should have tail call optimization applied', () => {
-      expectInputReturns(`
+    it("should have tail call optimization applied", () => {
+      expectInputReturns(
+        `
       (define sum-to
         (lambda (n acc)
           (if (= n 0)
@@ -200,51 +204,61 @@ describe("Interpreter", () => {
             (sum-to (- n 1) (+ n acc)))))
       
       (sum-to 100000 0)
-      `, 5000050000)
+      `,
+        5000050000
+      );
     });
 
-    it.skip('should work with this example', () => {
-      expectInputReturns(`
+    it.skip("should work with this example", () => {
+      expectInputReturns(
+        `
       (define first car)
       (define rest cdr)
 
       (define count (lambda (item L) (if L (+ (= item (first L)) (count item (rest L))) 0)))
 
       (count 0 (list 0 1 2 3 0 0))
-      `, 3);
+      `,
+        3
+      );
     });
   });
 
-  describe('quote', () => {
-    it('should return list when quoting empty parans', () => {
+  describe("quote", () => {
+    it("should return list when quoting empty parans", () => {
       debugger;
       expectInputReturns(`(quote ())`, []);
     });
 
-    it('should return list with values', () => {
+    it("should return list with values", () => {
       debugger;
       expectInputReturns(`(quote (list 1 2 3))`, "(list 1 2 3)");
     });
 
-    it('should return list with values when quote is nested', () => {
+    it("should return list with values when quote is nested", () => {
       debugger;
-      expectInputReturns(`(quote (quote (list 1 2 3)))`, "(quote (list 1 2 3))");
+      expectInputReturns(
+        `(quote (quote (list 1 2 3)))`,
+        "(quote (list 1 2 3))"
+      );
     });
 
-    it('should return symbol', () => {
+    it("should return symbol", () => {
       expectInputReturns(`(quote a)`, "a");
     });
 
-    it('should return expression argument without evaluating it', () => {
+    it("should return expression argument without evaluating it", () => {
       expectInputReturns(`(quote (+ 1 1))`, "(+ 1 1)");
     });
-  
 
-    it('should also work on this', () => {
-      expectInputReturns(`
+    it("should also work on this", () => {
+      expectInputReturns(
+        `
       (define range (lambda (a b) (if (= a b) (quote ()) (cons a (range (+ a 1) b)))))
       (range 0 10)
-      `, [0,1,2,3,4,5,6,7,8,9])
+      `,
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      );
     });
   });
 });
