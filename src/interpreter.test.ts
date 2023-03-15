@@ -291,10 +291,7 @@ describe("Interpreter", () => {
     });
 
     it("should return list with values when quote is nested", () => {
-      expectInputReturns(
-        `''(list 1 2 3)`,
-        "(quote (list 1 2 3))"
-      );
+      expectInputReturns(`''(list 1 2 3)`, "(quote (list 1 2 3))");
     });
 
     it("should return symbol", () => {

@@ -159,7 +159,7 @@ class LetExpr extends Expr {
 }
 
 export class LetBindingNode {
-  constructor(public name: Token, public value: Expr) { }
+  constructor(public name: Token, public value: Expr) {}
 
   toString(): string {
     return `(${this.name.getLexeme()} ${this.value})`;
@@ -197,7 +197,7 @@ export class Parser {
 
   private current = 0;
 
-  constructor(private tokens: Token[]) { }
+  constructor(private tokens: Token[]) {}
 
   public parse(): Expr[] {
     const expressions = [];

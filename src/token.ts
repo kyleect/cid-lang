@@ -14,7 +14,7 @@ export class Token {
     private readonly tokenType: TokenType,
     private readonly lexeme: string,
     private readonly literal: unknown
-  ) { }
+  ) {}
 
   public getTokenType(): TokenType {
     return this.tokenType;

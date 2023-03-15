@@ -5,7 +5,7 @@ export class Scanner {
   private current = 0;
   private tokens: Token[] = [];
 
-  constructor(private source: string) { }
+  constructor(private source: string) {}
 
   scan() {
     while (!this.isAtEnd()) {
