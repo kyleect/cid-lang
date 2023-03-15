@@ -5,10 +5,6 @@ export class Expr {
     return `<Expr>`;
   }
 
-  static Null(): NullExpr {
-    return new NullExpr();
-  }
-
   static Call(callee, args): CallExpr {
     return new CallExpr(callee, args);
   }
@@ -43,6 +39,10 @@ export class Expr {
 
   static Quote(value: Expr): QuoteExpr {
     return new QuoteExpr(value);
+  }
+
+  static IsExpr(expression: Expr): expression is Expr {
+    return expression instanceof Expr;
   }
 
   static IsCall(expression: Expr): expression is CallExpr {
@@ -80,17 +80,8 @@ export class Expr {
   static isQuote(expression: Expr): expression is QuoteExpr {
     return expression instanceof QuoteExpr;
   }
-
-  static isNull(expression: Expr): expression is NullExpr {
-    return expression instanceof NullExpr;
-  }
 }
 
-class NullExpr extends Expr {
-  toString(): string {
-    return `<NullExpr>`;
-  }
-}
 
 class CallExpr extends Expr {
   constructor(public callee: Expr, public args: unknown[]) {
@@ -194,7 +185,6 @@ export class QuoteExpr extends Expr {
   }
 
   toString(): string {
-    debugger;
     if (Expr.isQuote(this.value)) {
       return `(quote ${this.value})`;
     }

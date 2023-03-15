@@ -39,6 +39,16 @@ export class Interpreter {
       )
     );
 
+    env.set("eval", ([arg]) => {
+      if (Expr.IsExpr(arg)) {
+        if (Expr.isQuote(arg)) {
+          return this.interpret(arg.value, this.env);
+        }
+
+        return this.interpret(arg, this.env);
+      }
+    });
+
     this.env = env;
   }
 
@@ -76,7 +86,7 @@ export class Interpreter {
       result = this.interpret(expr, this.env);
     }
 
-    return result;
+    return Expr.IsExpr(result) ? result.toString() : result;
   }
 
   interpret(expr: Expr, env: Environment): unknown {
@@ -89,10 +99,10 @@ export class Interpreter {
         }
 
         if (Expr.isQuote(expr.value)) {
-          return expr.toString();
+          return expr;
         }
 
-        return expr.value.toString();
+        return expr.value;
       }
 
       if (Expr.IsLiteral(expr)) {
@@ -193,10 +203,6 @@ export class Interpreter {
 
       if (Expr.isLambda(expr)) {
         return new Procedure(expr, env);
-      }
-
-      if (Expr.isNull(expr)) {
-        return [];
       }
 
       throw new SyntaxError(`Invalid expression:\n${expr}`);

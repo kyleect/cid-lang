@@ -197,8 +197,10 @@ describe("Interpreter", () => {
     it("should have tail call optimization applied", () => {
       expectInputReturns(
         `
+      (define a 0)
       (define sum-to
         (lambda (n acc)
+          (set! a (+ a 1))
           (if (= n 0)
             acc
             (sum-to (- n 1) (+ n acc)))))
@@ -226,17 +228,14 @@ describe("Interpreter", () => {
 
   describe("quote", () => {
     it("should return list when quoting empty parans", () => {
-      debugger;
       expectInputReturns(`(quote ())`, []);
     });
 
     it("should return list with values", () => {
-      debugger;
       expectInputReturns(`(quote (list 1 2 3))`, "(list 1 2 3)");
     });
 
     it("should return list with values when quote is nested", () => {
-      debugger;
       expectInputReturns(
         `(quote (quote (list 1 2 3)))`,
         "(quote (list 1 2 3))"
@@ -249,6 +248,25 @@ describe("Interpreter", () => {
 
     it("should return expression argument without evaluating it", () => {
       expectInputReturns(`(quote (+ 1 1))`, "(+ 1 1)");
+    });
+
+    it("should with with eval", () => {
+      expectInputReturns(
+        `
+      (define q (quote (quote (+ 1 1))))
+      (eval (eval q))`,
+        2
+      );
+    });
+
+    it("should work with eval 2", () => {
+      expectInputReturns(
+        `
+      (define a (quote (list 1 2)))
+      (eval a)
+      `,
+        [1, 2]
+      );
     });
 
     it("should also work on this", () => {
