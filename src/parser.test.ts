@@ -175,6 +175,10 @@ describe("Expr", () => {
     it("should stringify", () => {
       expect(parseInput("(quote (+ 1 1))").toString()).toBe("(+ 1 1)");
     });
+
+    it("should stringify using ' quote", () => {
+      expect(parseInput("'(+ 1 1)").toString()).toBe("(+ 1 1)");
+    });
   });
 });
 

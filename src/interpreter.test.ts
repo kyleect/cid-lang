@@ -280,6 +280,60 @@ describe("Interpreter", () => {
       );
     });
   });
+
+  describe("short quote", () => {
+    it("should return list when quoting empty parans", () => {
+      expectInputReturns(`'()`, []);
+    });
+
+    it("should return list with values", () => {
+      expectInputReturns(`'(list 1 2 3)`, "(list 1 2 3)");
+    });
+
+    it("should return list with values when quote is nested", () => {
+      expectInputReturns(
+        `''(list 1 2 3)`,
+        "(quote (list 1 2 3))"
+      );
+    });
+
+    it("should return symbol", () => {
+      expectInputReturns(`'a`, "a");
+    });
+
+    it("should return expression argument without evaluating it", () => {
+      expectInputReturns(`'(+ 1 1)`, "(+ 1 1)");
+    });
+
+    it("should with with eval", () => {
+      expectInputReturns(
+        `
+      (define q ''(+ 1 1))
+      (eval (eval q))`,
+        2
+      );
+    });
+
+    it("should work with eval 2", () => {
+      expectInputReturns(
+        `
+      (define a '(list 1 2))
+      (eval a)
+      `,
+        [1, 2]
+      );
+    });
+
+    it("should also work on this", () => {
+      expectInputReturns(
+        `
+      (define range (lambda (a b) (if (= a b) '() (cons a (range (+ a 1) b)))))
+      (range 0 10)
+      `,
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      );
+    });
+  });
 });
 
 function interpretInput(input: string): unknown {

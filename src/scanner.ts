@@ -5,7 +5,7 @@ export class Scanner {
   private current = 0;
   private tokens: Token[] = [];
 
-  constructor(private source: string) {}
+  constructor(private source: string) { }
 
   scan() {
     while (!this.isAtEnd()) {
@@ -19,6 +19,9 @@ export class Scanner {
           break;
         case ")":
           this.addToken(TokenType.RightBracket);
+          break;
+        case "'":
+          this.addToken(TokenType.Quote);
           break;
         case " ":
         case "\r":
@@ -136,6 +139,10 @@ export class Scanner {
 
       case TokenType.RightBracket:
         token = Token.RightBracket();
+        break;
+
+      case TokenType.Quote:
+        token = Token.Quote();
         break;
 
       case TokenType.Symbol:

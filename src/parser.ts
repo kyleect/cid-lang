@@ -159,7 +159,7 @@ class LetExpr extends Expr {
 }
 
 export class LetBindingNode {
-  constructor(public name: Token, public value: Expr) {}
+  constructor(public name: Token, public value: Expr) { }
 
   toString(): string {
     return `(${this.name.getLexeme()} ${this.value})`;
@@ -197,7 +197,7 @@ export class Parser {
 
   private current = 0;
 
-  constructor(private tokens: Token[]) {}
+  constructor(private tokens: Token[]) { }
 
   public parse(): Expr[] {
     const expressions = [];
@@ -231,6 +231,11 @@ export class Parser {
       if (token.getLexeme() === "quote") return this.quote();
       return this.call();
     }
+
+    if (this.match(TokenType.Quote)) {
+      return this.shortquote();
+    }
+
     return this.atom();
   }
 
@@ -362,6 +367,12 @@ export class Parser {
 
     const value = this.expression();
     this.consume(TokenType.RightBracket);
+
+    return new QuoteExpr(value);
+  }
+
+  private shortquote(): QuoteExpr {
+    const value = this.expression();
 
     return new QuoteExpr(value);
   }

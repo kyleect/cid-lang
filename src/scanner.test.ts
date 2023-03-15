@@ -19,6 +19,10 @@ describe("Scanner", () => {
       expectInputReturns("#f", [Token.Boolean("#f", false), Token.Eof()]);
     });
 
+    it('should return tokens for quoted expression', () => {
+      expectInputReturns("'a", [Token.Quote(), Token.Symbol("a"), Token.Eof()]);
+    })
+
     it("should return token for quoted string", () => {
       expectInputReturns('"Hello World"', [
         Token.String("Hello World"),

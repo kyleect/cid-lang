@@ -1,6 +1,7 @@
 export enum TokenType {
   LeftBracket = "LeftBracket",
   RightBracket = "RightBracket",
+  Quote = "Quote",
   Symbol = "Symbol",
   Number = "Number",
   Boolean = "Boolean",
@@ -13,7 +14,7 @@ export class Token {
     private readonly tokenType: TokenType,
     private readonly lexeme: string,
     private readonly literal: unknown
-  ) {}
+  ) { }
 
   public getTokenType(): TokenType {
     return this.tokenType;
@@ -33,6 +34,10 @@ export class Token {
 
   static RightBracket(): Token {
     return new Token(TokenType.RightBracket, ")", null);
+  }
+
+  static Quote(): Token {
+    return new Token(TokenType.Quote, "'", null);
   }
 
   static Symbol(lexeme: string): Token {
