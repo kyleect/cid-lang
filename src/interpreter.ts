@@ -34,6 +34,7 @@ export class Interpreter {
             arg.length > 1 ? arg.slice(1) : Interpreter.NULL_VALUE,
           cons: ([a, b]) => [a, ...b],
           display: ([arg]) => console.log(arg),
+          quote: ([arg]) => arg
         })
       )
     );
@@ -78,6 +79,20 @@ export class Interpreter {
 
   interpret(expr: Expr, env: Environment): unknown {
     while (true) {
+      if (Expr.isQuote(expr)) {
+        if (Expr.IsLiteral(expr.value)) {
+          if (Array.isArray(expr.value.value)) {
+            return expr.value.value;
+          }
+        }
+
+        if (Expr.isQuote(expr.value)) {
+          return expr.toString();
+        }
+
+        return expr.value.toString();
+      }
+
       if (Expr.IsLiteral(expr)) {
         return expr.value;
       }
@@ -88,7 +103,7 @@ export class Interpreter {
 
       if (Expr.IsIf(expr)) {
         const test = this.interpret(expr.test, env);
-        expr = test !== false ? expr.consequent : expr.alternative;
+        expr = !!test ? expr.consequent : expr.alternative;
 
         continue;
       }
@@ -168,6 +183,10 @@ export class Interpreter {
 
       if (Expr.isLambda(expr)) {
         return new Procedure(expr, env);
+      }
+
+      if (Expr.isNull(expr)) {
+        return [];
       }
 
       throw new SyntaxError(`Invalid expression:\n${expr}`);

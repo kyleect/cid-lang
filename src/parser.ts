@@ -5,6 +5,10 @@ export class Expr {
     return `<Expr>`;
   }
 
+  static Null(): NullExpr {
+    return new NullExpr();
+  }
+
   static Call(callee, args): CallExpr {
     return new CallExpr(callee, args);
   }
@@ -35,6 +39,10 @@ export class Expr {
 
   static Lambda(params: Token[], body: Expr[]): LambdaExpr {
     return new LambdaExpr(params, body);
+  }
+
+  static Quote(value: Expr): QuoteExpr {
+    return new QuoteExpr(value);
   }
 
   static IsCall(expression: Expr): expression is CallExpr {
@@ -68,15 +76,31 @@ export class Expr {
   static isLambda(expression: Expr): expression is LambdaExpr {
     return expression instanceof LambdaExpr;
   }
+
+  static isQuote(expression: Expr): expression is QuoteExpr {
+    return expression instanceof QuoteExpr;
+  }
+
+  static isNull(expression: Expr): expression is NullExpr {
+    return expression instanceof NullExpr;
+  }
+}
+
+class NullExpr extends Expr {
+  toString(): string {
+    return `<NullExpr>`;
+  }
 }
 
 class CallExpr extends Expr {
-  constructor(public callee: unknown, public args: unknown[]) {
+  constructor(public callee: Expr, public args: unknown[]) {
     super();
   }
 
   toString(): string {
-    return `<CallExpr callee=${this.callee}; args=[${this.args}]>`;
+    const args = this.args.join(' ');
+
+    return `(${this.callee}${args.length ? ` ${this.args.join(' ')}` : ''})`;
   }
 }
 
@@ -86,7 +110,7 @@ class SymbolExpr extends Expr {
   }
 
   toString(): string {
-    return `<SymbolExpr token=${this.token}>`;
+    return this.token.getLexeme();
   }
 }
 
@@ -96,7 +120,7 @@ class LiteralExpr extends Expr {
   }
 
   toString(): string {
-    return `<LiteralExpr value=${this.value}>`;
+    return `${this.value}`;
   }
 }
 
@@ -112,7 +136,7 @@ class DefineExpr extends Expr {
   }
 
   toString(): string {
-    return `<DefineExpr token=${this.token}; value=${this.value}>`;
+    return `(define ${this.token.getLexeme()} ${this.value})`;
   }
 }
 
@@ -122,7 +146,7 @@ class SetExpr extends Expr {
   }
 
   toString(): string {
-    return `<SetExpr token=${this.token}; value=${this.value}>`;
+    return `(set! ${this.token.getLexeme()} ${this.value})`;
   }
 }
 
@@ -132,7 +156,7 @@ class LetExpr extends Expr {
   }
 
   toString(): string {
-    return `<LetExpr bindings=[${this.bindings}]; body=[${this.body}]>`;
+    return `(let (${this.bindings.join(' ')}) ${this.body.join(' ')})`;
   }
 
   bindingsToMap(): ReturnType<Map<string, unknown>["entries"]> {
@@ -148,7 +172,7 @@ export class LetBindingNode {
   constructor(public name: Token, public value: Expr) {}
 
   toString(): string {
-    return `<LetBindingNode name=${this.name}; value=${this.value}>`;
+    return `(${this.name.getLexeme()} ${this.value})`;
   }
 }
 
@@ -158,7 +182,22 @@ export class LambdaExpr extends Expr {
   }
 
   toString(): string {
-    return `<Lambda params=[${this.params}]; body=[${this.body}]>`;
+    return `(lambda (${this.params.map(token => token.getLexeme()).join(' ')}) ${this.body.join(' ')})`;
+  }
+}
+
+export class QuoteExpr extends Expr {
+  constructor(public value: Expr) {
+    super();
+  }
+
+  toString(): string {
+    debugger;
+    if (Expr.isQuote(this.value)) {
+      return `(quote ${this.value})`;
+    }
+
+    return this.value.toString();
   }
 }
 
@@ -198,6 +237,7 @@ export class Parser {
       if (token.getLexeme() === "set!") return this.set();
       if (token.getLexeme() === "let") return this.let();
       if (token.getLexeme() === "lambda") return this.lambda();
+      if (token.getLexeme() === "quote") return this.quote();
       return this.call();
     }
     return this.atom();
@@ -324,5 +364,14 @@ export class Parser {
     }
 
     return new LambdaExpr(params, body);
+  }
+
+  private quote(): QuoteExpr {
+    this.advance(); // move past the "quote" token
+    
+    const value = this.expression();
+    this.consume(TokenType.RightBracket);
+    
+    return new QuoteExpr(value);
   }
 }

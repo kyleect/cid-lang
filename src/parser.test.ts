@@ -7,6 +7,30 @@ describe("Parser", () => {
     expectInputReturns("()", [Expr.Literal([])]);
   });
 
+  it("should return literal expression for bracket pair", () => {
+    expectInputReturns("(quote ())", [Expr.Quote(Expr.Literal([]))]);
+  });
+
+  it("should return quoted expression", () => {
+    expectInputReturns("(quote (+ 1 1))", [
+      Expr.Quote(Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+        Expr.Literal(1),
+        Expr.Literal(1)
+      ]))
+    ]);
+  });
+
+  it("should return nested quoted expression", () => {
+    expectInputReturns("(quote (quote (+ 1 1)))", [
+      Expr.Quote(
+        Expr.Quote(Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+          Expr.Literal(1),
+          Expr.Literal(1)
+        ]))
+      )
+    ]);
+  });
+
   it("should return expressions for nested calls", () => {
     expectInputReturns("(+ (+ 1 2) (+ 3 4))", [
       Expr.Call(Expr.Symbol(Token.Symbol("+")), [
@@ -72,8 +96,14 @@ describe("Parser", () => {
 describe("Expr", () => {
   describe("CallExpr", () => {
     it("should stringify", () => {
-      expect(Expr.Call(Token.Symbol("expected"), []).toString()).toBe(
-        `<CallExpr callee=${Token.Symbol("expected")}; args=[]>`
+      expect(Expr.Call(Expr.Symbol(Token.Symbol("expected")), []).toString()).toBe(
+        `(expected)`
+      );
+    });
+
+    it("should stringify when args present", () => {
+      expect(Expr.Call(Expr.Symbol(Token.Symbol("expectedFn")), [Expr.Literal(123), Expr.Symbol(Token.Symbol("expectedArg"))]).toString()).toBe(
+        `(expectedFn 123 expectedArg)`
       );
     });
   });
@@ -81,21 +111,21 @@ describe("Expr", () => {
   describe("SymbolExpr", () => {
     it("should stringify", () => {
       expect(Expr.Symbol(Token.Symbol("expected")).toString()).toBe(
-        `<SymbolExpr token=${Token.Symbol("expected")}>`
+        `expected`
       );
     });
   });
 
   describe("LiteralExpr", () => {
     it("should stringify", () => {
-      expect(Expr.Literal(123).toString()).toBe("<LiteralExpr value=123>");
+      expect(Expr.Literal(123).toString()).toBe("123");
     });
   });
 
   describe("DefineExpr", () => {
     it("should stringify", () => {
       expect(Expr.Define(Token.Symbol("expected"), 123).toString()).toBe(
-        `<DefineExpr token=${Token.Symbol("expected")}; value=123>`
+        `(define expected 123)`
       );
     });
   });
@@ -103,7 +133,7 @@ describe("Expr", () => {
   describe("SetExpr", () => {
     it("should stringify", () => {
       expect(Expr.Set(Token.Symbol("expected"), 123).toString()).toBe(
-        `<SetExpr token=${Token.Symbol("expected")}; value=123>`
+        `(set! expected 123)`
       );
     });
   });
@@ -119,7 +149,7 @@ describe("Expr", () => {
           ]
         ).toString()
       ).toBe(
-        `<LetExpr bindings=[<LetBindingNode name=<Token type='Symbol'; lexeme='expected'; literal=null>; value=<LiteralExpr value=123>>]; body=[<SymbolExpr token=<Token type='Symbol'; lexeme='expected'; literal=null>>,<SymbolExpr token=<Token type='Symbol'; lexeme='expected'; literal=null>>]>`
+        `(let ((expected 123)) expected expected)`
       );
     });
   });
@@ -135,9 +165,17 @@ describe("Expr", () => {
           ]
         ).toString()
       ).toBe(
-        `<Lambda params=[<Token type='Symbol'; lexeme='expected'; literal=null>]; body=[<SymbolExpr token=<Token type='Symbol'; lexeme='expected'; literal=null>>,<SymbolExpr token=<Token type='Symbol'; lexeme='expected'; literal=null>>]>`
+        `(lambda (expected) expected expected)`
       );
     });
+  });
+
+  describe('QuoteExpr', () => {
+    it("should stringify", () => {
+      expect(parseInput("(quote (+ 1 1))").toString())
+        .toBe("(+ 1 1)");
+    });
+  
   });
 });
 

@@ -202,6 +202,50 @@ describe("Interpreter", () => {
       (sum-to 100000 0)
       `, 5000050000)
     });
+
+    it.skip('should work with this example', () => {
+      expectInputReturns(`
+      (define first car)
+      (define rest cdr)
+
+      (define count (lambda (item L) (if L (+ (= item (first L)) (count item (rest L))) 0)))
+
+      (count 0 (list 0 1 2 3 0 0))
+      `, 3);
+    });
+  });
+
+  describe('quote', () => {
+    it('should return list when quoting empty parans', () => {
+      debugger;
+      expectInputReturns(`(quote ())`, []);
+    });
+
+    it('should return list with values', () => {
+      debugger;
+      expectInputReturns(`(quote (list 1 2 3))`, "(list 1 2 3)");
+    });
+
+    it('should return list with values when quote is nested', () => {
+      debugger;
+      expectInputReturns(`(quote (quote (list 1 2 3)))`, "(quote (list 1 2 3))");
+    });
+
+    it('should return symbol', () => {
+      expectInputReturns(`(quote a)`, "a");
+    });
+
+    it('should return expression argument without evaluating it', () => {
+      expectInputReturns(`(quote (+ 1 1))`, "(+ 1 1)");
+    });
+  
+
+    it('should also work on this', () => {
+      expectInputReturns(`
+      (define range (lambda (a b) (if (= a b) (quote ()) (cons a (range (+ a 1) b)))))
+      (range 0 10)
+      `, [0,1,2,3,4,5,6,7,8,9])
+    });
   });
 });
 
