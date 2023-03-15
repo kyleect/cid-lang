@@ -1,3 +1,4 @@
+import { exec } from ".";
 import { Interpreter } from "./interpreter";
 import { Parser } from "./parser";
 import { Scanner } from "./scanner";
@@ -282,15 +283,7 @@ describe("Interpreter", () => {
 });
 
 function interpretInput(input: string): unknown {
-  const scanner = new Scanner(input);
-  const tokens = scanner.scan();
-  const parser = new Parser(tokens);
-
-  const expressions = parser.parse();
-
-  const interpreter = new Interpreter();
-
-  return interpreter.interpretAll(expressions);
+  return exec(input);
 }
 
 function expectInputReturns(input: string, expectedOutput: unknown) {
