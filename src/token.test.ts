@@ -59,7 +59,7 @@ describe("Token", () => {
     });
 
     it("should throw if literal value it not a boolean", () => {
-      expect(() => Token.Boolean("#t", (123 as unknown) as boolean)).toThrow(
+      expect(() => Token.Boolean("#t", 123 as unknown as boolean)).toThrow(
         "Invalid literal value for boolean token: 123"
       );
     });

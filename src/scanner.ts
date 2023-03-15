@@ -48,7 +48,7 @@ export class Scanner {
           );
 
           this.advance();
-          
+
           break;
         default:
           if (this.isDigit(char)) {
