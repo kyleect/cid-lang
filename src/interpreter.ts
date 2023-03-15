@@ -90,6 +90,10 @@ export class Interpreter {
   }
 
   interpret(expr: Expr, env: Environment): unknown {
+    /**
+     * This is disabled for tail call optimization
+     */
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       if (Expr.isQuote(expr)) {
         if (Expr.IsLiteral(expr.value)) {
@@ -115,7 +119,7 @@ export class Interpreter {
 
       if (Expr.IsIf(expr)) {
         const test = this.interpret(expr.test, env);
-        expr = !!test ? expr.consequent : expr.alternative;
+        expr = test ? expr.consequent : expr.alternative;
 
         continue;
       }

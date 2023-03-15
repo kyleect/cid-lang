@@ -1,8 +1,8 @@
 import { Token, TokenType } from "./token";
 
 export class Scanner {
-  private start: number = 0;
-  private current: number = 0;
+  private start = 0;
+  private current = 0;
   private tokens: Token[] = [];
 
   constructor(private source: string) {}
@@ -36,15 +36,19 @@ export class Scanner {
             this.addToken(TokenType.Boolean, false);
             break;
           }
+          break;
         case '"':
           while (this.peek() !== '"' && !this.isAtEnd()) {
             this.advance();
           }
 
-          const literal = this.source.slice(this.start + 1, this.current);
+          this.addToken(
+            TokenType.String,
+            this.source.slice(this.start + 1, this.current)
+          );
 
-          this.addToken(TokenType.String, literal);
           this.advance();
+          
           break;
         default:
           if (this.isDigit(char)) {

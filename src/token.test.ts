@@ -40,7 +40,7 @@ describe("Token", () => {
 
     it("should throw if lexeme is not a number", () => {
       expect(() => Token.Number('"notANumber"')).toThrow(
-        new SyntaxError(`Invalid lexeme for a number token: '\"notANumber\"'`)
+        new SyntaxError(`Invalid lexeme for a number token: '"notANumber"'`)
       );
     });
   });
@@ -59,7 +59,7 @@ describe("Token", () => {
     });
 
     it("should throw if literal value it not a boolean", () => {
-      expect(() => Token.Boolean("#t", 123 as any)).toThrow(
+      expect(() => Token.Boolean("#t", (123 as unknown) as boolean)).toThrow(
         "Invalid literal value for boolean token: 123"
       );
     });
