@@ -286,6 +286,10 @@ describe("Interpreter", () => {
       expectInputReturns(`'()`, []);
     });
 
+    it("should return list when quoting parans with valuess", () => {
+      expectInputReturns(`'(1 2 3)`, "(1 2 3)");
+    });
+
     it("should return list with values", () => {
       expectInputReturns(`'(list 1 2 3)`, "(list 1 2 3)");
     });
@@ -302,7 +306,7 @@ describe("Interpreter", () => {
       expectInputReturns(`'(+ 1 1)`, "(+ 1 1)");
     });
 
-    it("should with with eval", () => {
+    it("should eval double short quoted call expression", () => {
       expectInputReturns(
         `
       (define q ''(+ 1 1))
@@ -311,7 +315,7 @@ describe("Interpreter", () => {
       );
     });
 
-    it("should work with eval 2", () => {
+    it("should eval short quoted list call expression", () => {
       expectInputReturns(
         `
       (define a '(list 1 2))

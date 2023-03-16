@@ -110,6 +110,9 @@ class LiteralExpr extends Expr {
   }
 
   toString(): string {
+    if (Array.isArray(this.value)) {
+      return `(${this.value.join(' ')})`;
+    }
     return `${this.value}`;
   }
 }
@@ -159,7 +162,7 @@ class LetExpr extends Expr {
 }
 
 export class LetBindingNode {
-  constructor(public name: Token, public value: Expr) {}
+  constructor(public name: Token, public value: Expr) { }
 
   toString(): string {
     return `(${this.name.getLexeme()} ${this.value})`;
@@ -197,7 +200,7 @@ export class Parser {
 
   private current = 0;
 
-  constructor(private tokens: Token[]) {}
+  constructor(private tokens: Token[]) { }
 
   public parse(): Expr[] {
     const expressions = [];
@@ -216,10 +219,28 @@ export class Parser {
     return this.tokens[this.current];
   }
 
+  private peekNext(): Token {
+    return this.tokens[this.current + 1];
+  }
+
   private expression(): Expr {
+    if (this.match(TokenType.Quote)) {
+      return this.shortquote();
+    }
+
     if (this.match(TokenType.LeftBracket)) {
       if (this.match(TokenType.RightBracket)) {
         return Expr.Literal(Parser.NULL_VALUE);
+      }
+
+      if (this.match(TokenType.Number) || this.match(TokenType.String) || this.match(TokenType.Boolean)) {
+        const values = [];
+
+        while (!this.match(TokenType.RightBracket) && this.match(TokenType.Number) || this.match(TokenType.String) || this.match(TokenType.Boolean)) {
+          values.push(this.expression());
+        }
+
+        return Expr.Literal(values);
       }
 
       const token = this.peek();
@@ -230,10 +251,6 @@ export class Parser {
       if (token.getLexeme() === "lambda") return this.lambda();
       if (token.getLexeme() === "quote") return this.quote();
       return this.call();
-    }
-
-    if (this.match(TokenType.Quote)) {
-      return this.shortquote();
     }
 
     return this.atom();
@@ -249,6 +266,10 @@ export class Parser {
 
   private check(tokenType): boolean {
     return this.peek().getTokenType() === tokenType;
+  }
+
+  private checkNext(tokenType: TokenType): boolean {
+    return this.peekNext().getTokenType() === tokenType;
   }
 
   private call() {
@@ -372,6 +393,25 @@ export class Parser {
   }
 
   private shortquote(): QuoteExpr {
+    if (this.check(TokenType.LeftBracket)) {
+      if (!this.checkNext(TokenType.Symbol)) {
+        this.advance();
+
+        const values = [];
+        while (!this.match(TokenType.RightBracket)) {
+          const e = this.expression();
+
+          if (Expr.IsLiteral(e)) {
+            values.push(e.value);
+          } else {
+            values.push(e);
+          }
+        }
+
+        return new QuoteExpr(Expr.Literal(values));
+      }
+    }
+
     const value = this.expression();
 
     return new QuoteExpr(value);

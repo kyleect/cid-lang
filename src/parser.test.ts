@@ -11,6 +11,30 @@ describe("Parser", () => {
     expectInputReturns("(quote ())", [Expr.Quote(Expr.Literal([]))]);
   });
 
+  it('sss', () => {
+    expectInputReturns(`
+    (define q '(+ 1 1))
+    (eval q)`,
+      [
+        Expr.Define(
+          Token.Symbol("q"),
+          Expr.Quote(Expr.Call(
+            Expr.Symbol(Token.Symbol("+")),
+            [
+              Expr.Literal(1),
+              Expr.Literal(1)
+            ]
+          ))
+        ),
+        Expr.Call(
+          Expr.Symbol(Token.Symbol("eval")),
+          [
+            Expr.Symbol(Token.Symbol("q"))
+          ]
+        )
+      ]);
+  });
+
   it("should return quoted expression", () => {
     expectInputReturns("(quote (+ 1 1))", [
       Expr.Quote(
