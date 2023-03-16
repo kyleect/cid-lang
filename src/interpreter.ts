@@ -1,5 +1,6 @@
 import { Environment } from "./env";
 import { Expr, LambdaExpr } from "./parser";
+import assert from "node:assert";
 
 export class Interpreter {
   static NULL_VALUE = [];
@@ -35,6 +36,7 @@ export class Interpreter {
           cons: ([a, b]) => [a, ...b],
           display: ([arg]) => console.log(arg),
           quote: ([arg]) => arg,
+          assert: ([a, b]) => assert(a, b),
         })
       )
     );

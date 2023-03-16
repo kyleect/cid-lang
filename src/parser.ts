@@ -417,7 +417,7 @@ export class Parser {
           }
         }
 
-        return new QuoteExpr(Expr.Literal(values));
+        return Expr.Literal(values);
       }
     }
 

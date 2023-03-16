@@ -287,7 +287,7 @@ describe("Interpreter", () => {
     });
 
     it("should return list when quoting parans with valuess", () => {
-      expectInputReturns(`'(1 2 3)`, "(1 2 3)");
+      expectInputReturns(`'(1 2 3)`, [1, 2, 3]);
     });
 
     it("should return list with values", () => {

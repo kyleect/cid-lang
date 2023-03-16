@@ -11,7 +11,7 @@ describe("Parser", () => {
     expectInputReturns("(quote ())", [Expr.Quote(Expr.Literal([]))]);
   });
 
-  it("sss", () => {
+  it("should return a call expression when short quoted", () => {
     expectInputReturns(
       `
     (define q '(+ 1 1))
