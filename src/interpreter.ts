@@ -100,7 +100,7 @@ export class Interpreter {
       if (Expr.isQuote(expr)) {
         if (Expr.IsLiteral(expr.value)) {
           if (Array.isArray(expr.value.value)) {
-            return expr.value.value.length === 0 ? [] : expr.value;
+            return expr.value.value.length === 0 ? Interpreter.NULL_VALUE : expr.value;
           }
         }
 
@@ -217,5 +217,5 @@ export class Interpreter {
 }
 
 class Procedure {
-  constructor(public declaration: LambdaExpr, public closure: Environment) {}
+  constructor(public declaration: LambdaExpr, public closure: Environment) { }
 }
