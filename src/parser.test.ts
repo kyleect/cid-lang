@@ -201,6 +201,75 @@ describe("Expr", () => {
     it("should stringify using ' quote", () => {
       expect(parseInput("'(+ 1 1)").toString()).toBe("(+ 1 1)");
     });
+
+    it("should return quoted call expression", () => {
+      expectInputReturns(`'(+ 1 1)`, [
+        Expr.Quote(
+          Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+            Expr.Literal(1),
+            Expr.Literal(1),
+          ])
+        ),
+      ]);
+    });
+
+    it("should return nested quoted call expression", () => {
+      expectInputReturns(`''(+ 1 1)`, [
+        Expr.Quote(
+          Expr.Quote(
+            Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+              Expr.Literal(1),
+              Expr.Literal(1),
+            ])
+          )
+        ),
+      ]);
+    });
+
+    it("should return nested quoted call expression", () => {
+      expectInputReturns(`'''(+ 1 1)`, [
+        Expr.Quote(
+          Expr.Quote(
+            Expr.Quote(
+              Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+                Expr.Literal(1),
+                Expr.Literal(1),
+              ])
+            )
+          )
+        ),
+      ]);
+    });
+
+    it("should return quoted list expression", () => {
+      expectInputReturns(`'(1 a "Hello")`, [
+        Expr.Quote(
+          Expr.Literal([
+            Expr.Literal(1),
+            Expr.Symbol(Token.Symbol("a")),
+            Expr.Literal("Hello"),
+          ])
+        ),
+      ]);
+    });
+
+    it("should return nested quoted list expression", () => {
+      expectInputReturns(`''(1 1)`, [
+        Expr.Quote(
+          Expr.Quote(Expr.Literal([Expr.Literal(1), Expr.Literal(1)]))
+        ),
+      ]);
+    });
+
+    it("should return nested quoted list expression", () => {
+      expectInputReturns(`'''(1 1)`, [
+        Expr.Quote(
+          Expr.Quote(
+            Expr.Quote(Expr.Literal([Expr.Literal(1), Expr.Literal(1)]))
+          )
+        ),
+      ]);
+    });
   });
 });
 

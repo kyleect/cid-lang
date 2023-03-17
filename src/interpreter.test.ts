@@ -237,10 +237,7 @@ describe("Interpreter", () => {
     });
 
     it("should return list with values when quote is nested", () => {
-      expectInputReturns(
-        `(quote (quote (list 1 2 3)))`,
-        "(quote (list 1 2 3))"
-      );
+      expectInputReturns(`(quote (quote (list 1 2 3)))`, "'(list 1 2 3)");
     });
 
     it("should return symbol", () => {
@@ -287,7 +284,7 @@ describe("Interpreter", () => {
     });
 
     it("should return list when quoting parans with valuess", () => {
-      expectInputReturns(`'(1 2 3)`, [1, 2, 3]);
+      expectInputReturns(`'(1 2 3)`, "(1 2 3)");
     });
 
     it("should return list with values", () => {
@@ -295,7 +292,7 @@ describe("Interpreter", () => {
     });
 
     it("should return list with values when quote is nested", () => {
-      expectInputReturns(`''(list 1 2 3)`, "(quote (list 1 2 3))");
+      expectInputReturns(`''(list 1 2 3)`, "'(list 1 2 3)");
     });
 
     it("should return symbol", () => {
@@ -313,6 +310,18 @@ describe("Interpreter", () => {
       (eval (eval q))`,
         2
       );
+    });
+
+    it("app", () => {
+      expectInputReturns(`''(+ 1 1)`, "'(+ 1 1)");
+    });
+
+    it("app2", () => {
+      expectInputReturns(`''(1 1)`, "'(1 1)");
+    });
+
+    it("app3", () => {
+      expectInputReturns(`'''(1 1)`, "''(1 1)");
     });
 
     it("should eval short quoted list call expression", () => {

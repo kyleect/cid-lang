@@ -30,8 +30,8 @@ repl.start({
 function stringify(value) {
   if (value === false) return "#f";
   if (value === true) return "#t";
-  if (Array.isArray(value)) return "(" + value.map(stringify).join(" ") + ")";
-  if (value instanceof Function) return "PrimitiveProcedure";
-  if (typeof value === "string") return `"${value}"`;
-  return String(value);
+  // if (Array.isArray(value)) return "(" + value.map(stringify).join(" ") + ")";
+  if (value instanceof Function) return "function";
+  // if (typeof value === "string") return `"${value}"`;
+  return value;
 }

@@ -188,7 +188,7 @@ export class QuoteExpr extends Expr {
 
   toString(): string {
     if (Expr.isQuote(this.value)) {
-      return `(quote ${this.value})`;
+      return `'${this.value}`;
     }
 
     return this.value.toString();
@@ -215,10 +215,18 @@ export class Parser {
     return this.peek().getTokenType() === TokenType.Eof;
   }
 
+  /**
+   * Returns the current token
+   * @returns Current token
+   */
   private peek(): Token {
     return this.tokens[this.current];
   }
 
+  /**
+   * Return the next token
+   * @returns Next token
+   */
   private peekNext(): Token {
     return this.tokens[this.current + 1];
   }
@@ -265,7 +273,12 @@ export class Parser {
     return this.atom();
   }
 
-  private match(tokenType): boolean {
+  /**
+   * Move to the next token if current token is of the expected token type
+   * @param {TokenType} tokenType The token type to check for
+   * @returns {boolean} Result of the check
+   */
+  private match(tokenType: TokenType): boolean {
     if (this.check(tokenType)) {
       this.current++;
       return true;
@@ -273,10 +286,20 @@ export class Parser {
     return false;
   }
 
-  private check(tokenType): boolean {
+  /**
+   * Check if the current token is of the expected token type
+   * @param {TokenType} tokenType The token type to check for
+   * @returns {boolean} Result of the check
+   */
+  private check(tokenType: TokenType): boolean {
     return this.peek().getTokenType() === tokenType;
   }
 
+  /**
+   * Check if the next token is of the expected token type
+   * @param {TokenType} tokenType The token type to check for
+   * @returns {boolean} Result of the check
+   */
   private checkNext(tokenType: TokenType): boolean {
     return this.peekNext().getTokenType() === tokenType;
   }
@@ -302,7 +325,12 @@ export class Parser {
     return Expr.If(test, consequent, alternative);
   }
 
-  private consume(tokenType) {
+  /**
+   * Move to and return next token if the current token matches expected token type
+   * @param tokenType
+   * @returns {Token}
+   */
+  private consume(tokenType: TokenType): Token {
     if (this.check(tokenType)) {
       return this.advance();
     }
@@ -311,7 +339,11 @@ export class Parser {
     );
   }
 
-  private previous() {
+  /**
+   * Get the previous token
+   * @returns {Token} The previous token
+   */
+  private previous(): Token {
     return this.tokens[this.current - 1];
   }
 
@@ -330,6 +362,10 @@ export class Parser {
     }
   }
 
+  /**
+   * Move to and return the next token
+   * @returns The next token
+   */
   private advance(): Token {
     return this.tokens[this.current++];
   }
@@ -410,14 +446,10 @@ export class Parser {
         while (!this.match(TokenType.RightBracket)) {
           const e = this.expression();
 
-          if (Expr.IsLiteral(e)) {
-            values.push(e.value);
-          } else {
-            values.push(e);
-          }
+          values.push(e);
         }
 
-        return Expr.Literal(values);
+        return Expr.Quote(Expr.Literal(values));
       }
     }
 

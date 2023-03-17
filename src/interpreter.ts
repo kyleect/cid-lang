@@ -1,6 +1,6 @@
 import { Environment } from "./env";
 import { Expr, LambdaExpr } from "./parser";
-import assert from "node:assert";
+import assert from "assert";
 
 export class Interpreter {
   static NULL_VALUE = [];

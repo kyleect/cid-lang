@@ -23,6 +23,16 @@ describe("Scanner", () => {
       expectInputReturns("'a", [Token.Quote(), Token.Symbol("a"), Token.Eof()]);
     });
 
+    it("should return tokens for multiple nested quoted expression", () => {
+      expectInputReturns("'''a", [
+        Token.Quote(),
+        Token.Quote(),
+        Token.Quote(),
+        Token.Symbol("a"),
+        Token.Eof(),
+      ]);
+    });
+
     it("should return token for quoted string", () => {
       expectInputReturns('"Hello World"', [
         Token.String("Hello World"),
