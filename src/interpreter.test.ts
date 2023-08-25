@@ -9,7 +9,7 @@ describe("Interpreter", () => {
       expectInputReturns("1", 1);
     });
 
-    it("should return value of list atom", () => {
+    it("should return value of string atom", () => {
       expectInputReturns(`"Hello World!"`, "Hello World!");
     });
 
@@ -77,12 +77,39 @@ describe("Interpreter", () => {
       expectInputReturns(`(number? "Hello World")`, false);
     });
 
-    it("should call list? when true", () => {
-      expectInputReturns(`(list? ())`, true);
-    });
+    describe("list?", () => {
+      it("should return true with null/empty list", () => {
+        expectInputReturns(`(list? ())`, true);
+      });
 
-    it("should call list? when false", () => {
-      expectInputReturns(`(list? 1)`, false);
+      it("should return false with number", () => {
+        expectInputReturns(`(list? 1)`, false);
+      });
+
+      it("should return false with string", () => {
+        expectInputReturns(`(list? "Hello World")`, false);
+      });
+
+      it("should return false with symbol", () => {
+        expectInputReturns(`(list? 'a)`, false);
+      });
+
+      it("should return true for short quoted list for short quoted list in variable", () => {
+        expectInputReturns(
+          `
+        (define a '(1 2 3))
+        (list? a)`,
+          true
+        );
+      });
+
+      it("should return true for short quoted list", () => {
+        expectInputReturns(`(list? '(1 2 3))`, true);
+      });
+
+      it("should return true for list", () => {
+        expectInputReturns(`(list? (1 2 3))`, true);
+      });
     });
 
     it("should call if when true", () => {
@@ -157,6 +184,15 @@ describe("Interpreter", () => {
       );
     });
 
+    it("should work 2", () => {
+      expectInputReturns(
+        `(define square (lambda (x) x))
+         (define result (square 5))
+         result`,
+        5
+      );
+    });
+
     it("should work with no body expressions", () => {
       expectInputReturns(
         `(define square (lambda (x)))
@@ -195,7 +231,7 @@ describe("Interpreter", () => {
       );
     });
 
-    describe('tail call optimization', () => {
+    describe("tail call optimization", () => {
       it("should have tail call optimization applied; Example: sum-to", () => {
         expectInputReturns(
           `
@@ -237,13 +273,20 @@ describe("Interpreter", () => {
         );
       });
     });
-
   });
 
-  describe('quoting', () => {
+  describe("quoting", () => {
     describe("quote procedure", () => {
       it("should return list when quoting empty parans", () => {
         expectInputReturns(`(quote ())`, []);
+      });
+
+      it("should return lambda when quoting lambda", () => {
+        expectInputReturns(`(quote (lambda (x) x))`, "(lambda (x) x)");
+      });
+
+      it("should return lambda when double quoting lambda", () => {
+        expectInputReturns(`(quote (quote (lambda (x) x)))`, "'(lambda (x) x)");
       });
 
       it("should return list with values", () => {
@@ -317,12 +360,22 @@ describe("Interpreter", () => {
       it("should return the double quoted list expression when triple quoted", () => {
         expectInputReturns(`'''(1 1)`, "''(1 1)");
       });
-
-
     });
   });
 
-  describe('eval', () => {
+  describe("eval", () => {
+    it("should return result of eval", () => {
+      expectInputReturns(`(eval 2)`, 2);
+    });
+
+    it("should return result of eval with quoted value", () => {
+      expectInputReturns(`(eval '2)`, 2);
+    });
+
+    it("should return result of eval when nested", () => {
+      expectInputReturns(`(eval (eval 2))`, 2);
+    });
+
     it("should evaulate quoted expressions from quote procedure: Example: double quoted", () => {
       expectInputReturns(
         `
@@ -370,19 +423,30 @@ describe("Interpreter", () => {
         [1, 2]
       );
     });
+
+    it("should eval a quoted lambda", () => {
+      expectInputReturns(
+        `
+        (define a '(lambda (x) x))
+        (define b ((eval a) 100))
+        b
+      `,
+        100
+      );
+    });
   });
 
-  describe('built in procedures', () => {
-    describe('null?', () => {
-      it('should be null? when quoting empty list', () => {
+  describe("built in procedures", () => {
+    describe("null?", () => {
+      it("should be null? when quoting empty list", () => {
         expectInputReturns(`(null? (quote ()))`, true);
       });
 
-      it('should be null? when quoting empty list', () => {
+      it("should be null? when quoting empty list", () => {
         expectInputReturns(`(null? '())`, true);
       });
     });
-  })
+  });
 });
 
 function interpretInput(input: string): unknown {
