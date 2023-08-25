@@ -1,0 +1,16 @@
+{
+	"name": "scheme-ts",
+	"image": "mcr.microsoft.com/devcontainers/base:debian",
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"Orta.vscode-jest",
+				"esbenp.prettier-vscode"
+			]
+		}
+	},
+	"postCreateCommand": ". ${NVM_DIR}/nvm.sh && nvm install && npm ci"
+}

@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "type": "node",
+      "name": "jest",
+      "request": "launch",
+      "args": [
+        "run",
+        "test",
+        "--",
+        "--runInBand",
+        "--watchAll=false",
+        "--testNamePattern",
+        "${jest.testNamePattern}",
+        "--runTestsByPath",
+        "${jest.testFile}"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "runtimeExecutable": "npm"
+    }
+  ]
+}
