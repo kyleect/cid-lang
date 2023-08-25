@@ -26,7 +26,9 @@ export class Interpreter {
           "string-append": ([a, b]) => a + b,
           list: (args) => args,
           "null?": ([arg]) => arg === Interpreter.NULL_VALUE,
-          "list?": ([arg]) => Array.isArray(arg),
+          "list?": ([arg]) =>
+            Array.isArray(arg) ||
+            (Expr.IsLiteral(arg) && Array.isArray(arg.value)),
           "number?": ([arg]) => Number.isInteger(arg),
           "string?": ([arg]) => typeof arg === "string",
           "procedure?": ([arg]) => arg instanceof Function,
@@ -35,7 +37,6 @@ export class Interpreter {
             arg.length > 1 ? arg.slice(1) : Interpreter.NULL_VALUE,
           cons: ([a, b]) => [a, ...b],
           display: ([arg]) => console.log(arg),
-          quote: ([arg]) => arg,
           assert: ([a, b]) => assert(a, b),
         })
       )
@@ -43,12 +44,10 @@ export class Interpreter {
 
     env.set("eval", ([arg]) => {
       if (Expr.IsExpr(arg)) {
-        if (Expr.isQuote(arg)) {
-          return this.interpret(arg.value, this.env);
-        }
-
         return this.interpret(arg, this.env);
       }
+
+      return arg;
     });
 
     this.env = env;
@@ -91,6 +90,12 @@ export class Interpreter {
     return Expr.IsExpr(result) ? result.toString() : result;
   }
 
+  /**
+   * Interpret an expression in to a value
+   * @param expr Expression to interpret
+   * @param env Environment to use for interpretation
+   * @returns Interpreted value
+   */
   interpret(expr: Expr, env: Environment): unknown {
     /**
      * This is disabled for tail call optimization
@@ -100,7 +105,9 @@ export class Interpreter {
       if (Expr.isQuote(expr)) {
         if (Expr.IsLiteral(expr.value)) {
           if (Array.isArray(expr.value.value)) {
-            return expr.value.value.length === 0 ? Interpreter.NULL_VALUE : expr.value;
+            return expr.value.value.length === 0
+              ? Interpreter.NULL_VALUE
+              : expr.value;
           }
         }
 
@@ -116,7 +123,14 @@ export class Interpreter {
       }
 
       if (Expr.IsSymbol(expr)) {
-        return env.get(expr.token.getLexeme());
+        const v = env.get(expr.token.getLexeme());
+
+        if (Expr.isQuote(v)) {
+          expr = v.value;
+          continue;
+        }
+
+        return v;
       }
 
       if (Expr.IsIf(expr)) {
@@ -217,5 +231,5 @@ export class Interpreter {
 }
 
 class Procedure {
-  constructor(public declaration: LambdaExpr, public closure: Environment) { }
+  constructor(public declaration: LambdaExpr, public closure: Environment) {}
 }
