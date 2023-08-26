@@ -32,9 +32,56 @@ export class Interpreter {
           "number?": ([arg]) => Number.isInteger(arg),
           "string?": ([arg]) => typeof arg === "string",
           "procedure?": ([arg]) => arg instanceof Function,
-          car: ([arg]) => arg[0],
-          cdr: ([arg]) =>
-            arg.length > 1 ? arg.slice(1) : Interpreter.NULL_VALUE,
+          car: ([arg]) => {
+            if (Expr.IsExpr(arg)) {
+              const exprAsList = arg.toList();
+
+              if (!Array.isArray(exprAsList)) {
+                throw new Error(`car only works on list expressions: ${arg}`);
+              }
+
+              if (exprAsList.length === 0) {
+                throw new Error(
+                  `car requires a non empty list expression: ${arg}`
+                );
+              }
+
+              return exprAsList[0];
+            }
+
+            if (!Array.isArray(arg)) {
+              throw new Error(`car only works on list expressions: ${arg}`);
+            }
+
+            if (arg.length === 0) {
+              throw new Error(
+                `car requires a non empty list expression: ${arg}`
+              );
+            }
+
+            return arg[0];
+          },
+          cdr: ([arg]) => {
+            // arg.length > 1 ? arg.slice(1) : Interpreter.NULL_VALUE
+
+            if (Expr.IsExpr(arg)) {
+              const exprAsList = arg.toList();
+
+              if (!Array.isArray(exprAsList)) {
+                throw new Error(`cdr only works on list expressions: ${arg}`);
+              }
+
+              return exprAsList.length > 1
+                ? exprAsList.slice(1)
+                : Interpreter.NULL_VALUE;
+            }
+
+            if (!Array.isArray(arg)) {
+              throw new Error(`cdr only works on list expressions: ${arg}`);
+            }
+
+            return arg.length > 1 ? arg.slice(1) : Interpreter.NULL_VALUE;
+          },
           cons: ([a, b]) => [a, ...b],
           display: ([arg]) => console.log(arg),
           assert: ([a, b]) => assert(a, b),
@@ -96,7 +143,7 @@ export class Interpreter {
    * @param env Environment to use for interpretation
    * @returns Interpreted value
    */
-  private interpret(expr: Expr, env: Environment): unknown {
+  private interpret(expr: unknown, env: Environment): unknown {
     /**
      * This is disabled for tail call optimization
      */

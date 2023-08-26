@@ -454,6 +454,26 @@ describe("Interpreter", () => {
         expectInputReturns(`(null? 0)`, "#f");
       });
     });
+
+    describe("car", () => {
+      it("should return the first element of quoted expression", () => {
+        expectInputReturns("(car '(+ 2 3))", "+");
+      });
+
+      it("should return the first element of list expression", () => {
+        expectInputReturns("(car '(1 2 3))", "1");
+      });
+    });
+
+    describe("cdr", () => {
+      it("should return the rest of elements from quoted expression", () => {
+        expectInputReturns("(cdr '(+ 2 3))", "(2 3)");
+      });
+
+      it("should return the rest of elements from list expression", () => {
+        expectInputReturns("(cdr '(1 2 3))", "(2 3)");
+      });
+    });
   });
 });
 

@@ -1,9 +1,11 @@
 import { Token, TokenType } from "./token";
 
-export class Expr {
+export abstract class Expr {
   toString(): string {
     return `<Expr>`;
   }
+
+  abstract toList(): undefined | unknown[];
 
   static Call(callee, args): CallExpr {
     return new CallExpr(callee, args);
@@ -41,43 +43,43 @@ export class Expr {
     return new QuoteExpr(value);
   }
 
-  static IsExpr(expression: Expr): expression is Expr {
+  static IsExpr(expression: unknown): expression is Expr {
     return expression instanceof Expr;
   }
 
-  static IsCall(expression: Expr): expression is CallExpr {
+  static IsCall(expression: unknown): expression is CallExpr {
     return expression instanceof CallExpr;
   }
 
-  static IsSymbol(expression: Expr): expression is SymbolExpr {
+  static IsSymbol(expression: unknown): expression is SymbolExpr {
     return expression instanceof SymbolExpr;
   }
 
-  static IsLiteral(expression: Expr): expression is LiteralExpr {
+  static IsLiteral(expression: unknown): expression is LiteralExpr {
     return expression instanceof LiteralExpr;
   }
 
-  static IsIf(expression: Expr): expression is IfExpr {
+  static IsIf(expression: unknown): expression is IfExpr {
     return expression instanceof IfExpr;
   }
 
-  static isDefine(expression: Expr): expression is DefineExpr {
+  static isDefine(expression: unknown): expression is DefineExpr {
     return expression instanceof DefineExpr;
   }
 
-  static isSet(expression: Expr): expression is SetExpr {
+  static isSet(expression: unknown): expression is SetExpr {
     return expression instanceof SetExpr;
   }
 
-  static isLet(expression: Expr): expression is LetExpr {
+  static isLet(expression: unknown): expression is LetExpr {
     return expression instanceof LetExpr;
   }
 
-  static isLambda(expression: Expr): expression is LambdaExpr {
+  static isLambda(expression: unknown): expression is LambdaExpr {
     return expression instanceof LambdaExpr;
   }
 
-  static isQuote(expression: Expr): expression is QuoteExpr {
+  static isQuote(expression: unknown): expression is QuoteExpr {
     return expression instanceof QuoteExpr;
   }
 }
@@ -85,6 +87,10 @@ export class Expr {
 class CallExpr extends Expr {
   constructor(public callee: Expr, public args: unknown[]) {
     super();
+  }
+
+  toList(): unknown[] {
+    return [this.callee, ...this.args];
   }
 
   toString(): string {
@@ -99,6 +105,10 @@ class SymbolExpr extends Expr {
     super();
   }
 
+  toList(): unknown[] {
+    return;
+  }
+
   toString(): string {
     return this.token.getLexeme();
   }
@@ -107,6 +117,12 @@ class SymbolExpr extends Expr {
 class LiteralExpr extends Expr {
   constructor(public value: unknown) {
     super();
+  }
+
+  toList(): unknown[] {
+    if (Array.isArray(this.value)) {
+      return this.value;
+    }
   }
 
   toString(): string {
@@ -121,11 +137,19 @@ class IfExpr extends Expr {
   constructor(public test, public consequent, public alternative) {
     super();
   }
+
+  toList(): unknown[] {
+    return [test, this.consequent, this.alternative];
+  }
 }
 
 class DefineExpr extends Expr {
   constructor(public token: Token, public value: unknown) {
     super();
+  }
+
+  toList(): unknown[] {
+    return ["define", this.token.getLexeme(), this.value];
   }
 
   toString(): string {
@@ -138,6 +162,10 @@ class SetExpr extends Expr {
     super();
   }
 
+  toList(): unknown[] {
+    return ["set!", this.token.getLexeme(), this.value];
+  }
+
   toString(): string {
     return `(set! ${this.token.getLexeme()} ${this.value})`;
   }
@@ -146,6 +174,10 @@ class SetExpr extends Expr {
 class LetExpr extends Expr {
   constructor(public bindings: LetBindingNode[], public body: Expr[]) {
     super();
+  }
+
+  toList(): unknown[] {
+    return;
   }
 
   toString(): string {
@@ -174,6 +206,10 @@ export class LambdaExpr extends Expr {
     super();
   }
 
+  toList(): unknown[] {
+    return;
+  }
+
   toString(): string {
     return `(lambda (${this.params
       .map((token) => token.getLexeme())
@@ -184,6 +220,10 @@ export class LambdaExpr extends Expr {
 export class QuoteExpr extends Expr {
   constructor(public value: Expr) {
     super();
+  }
+
+  toList(): unknown[] {
+    return;
   }
 
   toString(): string {
