@@ -87,7 +87,7 @@ export class Interpreter {
       result = this.interpret(expr, this.env);
     }
 
-    return Expr.IsExpr(result) ? result.toString() : result;
+    return result;
   }
 
   /**
@@ -96,7 +96,7 @@ export class Interpreter {
    * @param env Environment to use for interpretation
    * @returns Interpreted value
    */
-  interpret(expr: Expr, env: Environment): unknown {
+  private interpret(expr: Expr, env: Environment): unknown {
     /**
      * This is disabled for tail call optimization
      */
@@ -122,6 +122,7 @@ export class Interpreter {
         if (Array.isArray(expr.value) && expr.value.length === 0) {
           return Interpreter.NULL_VALUE;
         }
+
         return expr.value;
       }
 

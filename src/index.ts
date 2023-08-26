@@ -20,5 +20,25 @@ export function exec(
 
   const results = interpreter.interpretAll(expressions);
 
-  return results;
+  if (typeof results === "string") {
+    return `"${results}"`;
+  }
+
+  if (typeof results === "undefined") {
+    return results;
+  }
+
+  if (Array.isArray(results)) {
+    return `(${results.join(" ")})`;
+  }
+
+  if (results === true) {
+    return "#t";
+  }
+
+  if (results === false) {
+    return "#f";
+  }
+
+  return results.toString();
 }

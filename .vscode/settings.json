@@ -1,5 +1,6 @@
 {
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
-  "jest.jestCommandLine": "npm run test --"
+  "jest.jestCommandLine": "npm run test --",
+  "jest.autoRun": "on-save"
 }

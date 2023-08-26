@@ -6,92 +6,92 @@ import { Scanner } from "./scanner";
 describe("Interpreter", () => {
   describe("atoms", () => {
     it("should return value of number atom", () => {
-      expectInputReturns("1", 1);
+      expectInputReturns("1", "1");
     });
 
     it("should return value of string atom", () => {
-      expectInputReturns(`"Hello World!"`, "Hello World!");
+      expectInputReturns(`"Hello World!"`, '"Hello World!"');
     });
 
     it("should return value of list atom", () => {
-      expectInputReturns(`(list 1 2 3)`, [1, 2, 3]);
+      expectInputReturns(`(list 1 2 3)`, "(1 2 3)");
     });
 
     it("should return value of true boolean atom", () => {
-      expectInputReturns(`#t`, true);
+      expectInputReturns(`#t`, "#t");
     });
 
     it("should return value of false boolean atom", () => {
-      expectInputReturns(`#f`, false);
+      expectInputReturns(`#f`, "#f");
     });
 
     it("should return null for empty list atom", () => {
-      expectInputReturns(`()`, []);
+      expectInputReturns(`()`, "()");
     });
   });
 
   describe("operators", () => {
     it("should call *", () => {
-      expectInputReturns(`(* 5 6)`, 30);
+      expectInputReturns(`(* 5 6)`, "30");
     });
 
     it("should call +", () => {
-      expectInputReturns(`(+ 5 6)`, 11);
+      expectInputReturns(`(+ 5 6)`, "11");
     });
 
     it("should call /", () => {
-      expectInputReturns(`(/ 30 6)`, 5);
+      expectInputReturns(`(/ 30 6)`, "5");
     });
 
     it("should call -", () => {
-      expectInputReturns(`(- 30 5)`, 25);
+      expectInputReturns(`(- 30 5)`, "25");
     });
   });
 
   describe("conditionals", () => {
     it("should call = when true", () => {
-      expectInputReturns(`(= 30 30)`, true);
+      expectInputReturns(`(= 30 30)`, "#t");
     });
 
     it("should call = when false", () => {
-      expectInputReturns(`(= 30 12)`, false);
+      expectInputReturns(`(= 30 12)`, "#f");
     });
 
     it("should call not", () => {
-      expectInputReturns(`(not #t)`, false);
+      expectInputReturns(`(not #t)`, "#f");
     });
 
     it("should call string? when true", () => {
-      expectInputReturns(`(string? "Hello")`, true);
+      expectInputReturns(`(string? "Hello")`, "#t");
     });
 
     it("should call string? when false", () => {
-      expectInputReturns(`(string? 1)`, false);
+      expectInputReturns(`(string? 1)`, "#f");
     });
 
     it("should call number? when true", () => {
-      expectInputReturns(`(number? 1)`, true);
+      expectInputReturns(`(number? 1)`, "#t");
     });
 
     it("should call number? when true", () => {
-      expectInputReturns(`(number? "Hello World")`, false);
+      expectInputReturns(`(number? "Hello World")`, "#f");
     });
 
     describe("list?", () => {
       it("should return true with null/empty list", () => {
-        expectInputReturns(`(list? ())`, true);
+        expectInputReturns(`(list? ())`, "#t");
       });
 
       it("should return false with number", () => {
-        expectInputReturns(`(list? 1)`, false);
+        expectInputReturns(`(list? 1)`, "#f");
       });
 
       it("should return false with string", () => {
-        expectInputReturns(`(list? "Hello World")`, false);
+        expectInputReturns(`(list? "Hello World")`, "#f");
       });
 
       it("should return false with symbol", () => {
-        expectInputReturns(`(list? 'a)`, false);
+        expectInputReturns(`(list? 'a)`, "#f");
       });
 
       it("should return true for short quoted list for short quoted list in variable", () => {
@@ -99,35 +99,35 @@ describe("Interpreter", () => {
           `
         (define a '(1 2 3))
         (list? a)`,
-          true
+          "#t"
         );
       });
 
       it("should return true for short quoted list", () => {
-        expectInputReturns(`(list? '(1 2 3))`, true);
+        expectInputReturns(`(list? '(1 2 3))`, "#t");
       });
 
       it("should return true for list", () => {
-        expectInputReturns(`(list? (1 2 3))`, true);
+        expectInputReturns(`(list? (1 2 3))`, "#t");
       });
     });
 
     it("should call if when true", () => {
-      expectInputReturns(`(if (>= 10 1) "Hello" "World")`, "Hello");
+      expectInputReturns(`(if (>= 10 1) "Hello" "World")`, '"Hello"');
     });
 
     it("should call if when false", () => {
-      expectInputReturns(`(if (>= 1 10) "Hello" "World")`, "World");
+      expectInputReturns(`(if (>= 1 10) "Hello" "World")`, '"World"');
     });
   });
 
   describe("variables", () => {
     it("should define a global variable", () => {
-      expectInputReturns("(define x 5)(define y 10)\n(+ x y)", 15);
+      expectInputReturns("(define x 5)(define y 10)\n(+ x y)", "15");
     });
 
     it("should set an existing global variable", () => {
-      expectInputReturns("(define x 5)\n(set! x 10)\nx", 10);
+      expectInputReturns("(define x 5)\n(set! x 10)\nx", "10");
     });
 
     it("should throw if set is called on undefined variable", () => {
@@ -143,7 +143,7 @@ describe("Interpreter", () => {
         (let ((x 2) (y 4)) (set! x 100))
         x
       `,
-        1
+        "1"
       );
     });
 
@@ -180,7 +180,7 @@ describe("Interpreter", () => {
         `(define square (lambda (x) (* x x)))
          (define result (square (square 5)))
          result`,
-        625
+        "625"
       );
     });
 
@@ -189,7 +189,7 @@ describe("Interpreter", () => {
         `(define square (lambda (x) x))
          (define result (square 5))
          result`,
-        5
+        "5"
       );
     });
 
@@ -211,7 +211,7 @@ describe("Interpreter", () => {
          (increment)
          (increment)
          count`,
-        2
+        "2"
       );
     });
 
@@ -227,7 +227,7 @@ describe("Interpreter", () => {
 
          (increment)
          count`,
-        11
+        "11"
       );
     });
 
@@ -245,7 +245,7 @@ describe("Interpreter", () => {
         
         (sum-to 100000 0)
         `,
-          5000050000
+          "5000050000"
         );
       });
 
@@ -259,7 +259,7 @@ describe("Interpreter", () => {
   
         (count 0 (list 0 1 2 3 0 0))
         `,
-          3
+          "3"
         );
       });
 
@@ -269,7 +269,7 @@ describe("Interpreter", () => {
         (define range (lambda (a b) (if (= a b) '() (cons a (range (+ a 1) b)))))
         (range 0 10)
         `,
-          [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+          "(0 1 2 3 4 5 6 7 8 9)"
         );
       });
     });
@@ -278,7 +278,7 @@ describe("Interpreter", () => {
   describe("quoting", () => {
     describe("quote procedure", () => {
       it("should return list when quoting empty parans", () => {
-        expectInputReturns(`(quote ())`, []);
+        expectInputReturns(`(quote ())`, "()");
       });
 
       it("should return lambda when quoting lambda", () => {
@@ -311,14 +311,14 @@ describe("Interpreter", () => {
         (define range (lambda (a b) (if (= a b) (quote ()) (cons a (range (+ a 1) b)))))
         (range 0 10)
         `,
-          [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+          "(0 1 2 3 4 5 6 7 8 9)"
         );
       });
     });
 
     describe("short quote", () => {
       it("should return list when quoting empty parans", () => {
-        expectInputReturns(`'()`, []);
+        expectInputReturns(`'()`, "()");
       });
 
       it("should return list when double quoting empty parans", () => {
@@ -333,7 +333,7 @@ describe("Interpreter", () => {
         expectInputReturns(`'(list 1 2 3)`, "(list 1 2 3)");
       });
 
-      it("should return list with values when quote is nested", () => {
+      it("should return list with values when shortc quote is nested", () => {
         expectInputReturns(`''(list 1 2 3)`, "'(list 1 2 3)");
       });
 
@@ -365,15 +365,15 @@ describe("Interpreter", () => {
 
   describe("eval", () => {
     it("should return result of eval", () => {
-      expectInputReturns(`(eval 2)`, 2);
+      expectInputReturns(`(eval 2)`, "2");
     });
 
     it("should return result of eval with quoted value", () => {
-      expectInputReturns(`(eval '2)`, 2);
+      expectInputReturns(`(eval '2)`, "2");
     });
 
     it("should return result of eval when nested", () => {
-      expectInputReturns(`(eval (eval 2))`, 2);
+      expectInputReturns(`(eval (eval 2))`, "2");
     });
 
     it("should evaulate quoted expressions from quote procedure: Example: double quoted", () => {
@@ -381,7 +381,7 @@ describe("Interpreter", () => {
         `
       (define q (quote (quote (+ 1 1))))
       (eval (eval q))`,
-        2
+        "2"
       );
     });
 
@@ -391,7 +391,7 @@ describe("Interpreter", () => {
       (define a (quote (list 1 2)))
       (eval a)
       `,
-        [1, 2]
+        "(1 2)"
       );
     });
 
@@ -400,7 +400,7 @@ describe("Interpreter", () => {
         `
       (define q ''(+ 1 1))
       (eval (eval q))`,
-        2
+        "2"
       );
     });
 
@@ -410,7 +410,7 @@ describe("Interpreter", () => {
       (define a '(list 1 2))
       (eval a)
       `,
-        [1, 2]
+        "(1 2)"
       );
     });
 
@@ -420,7 +420,7 @@ describe("Interpreter", () => {
       (define a ''(list 1 2))
       (eval (eval a))
       `,
-        [1, 2]
+        "(1 2)"
       );
     });
 
@@ -431,7 +431,7 @@ describe("Interpreter", () => {
         (define b ((eval a) 100))
         b
       `,
-        100
+        "100"
       );
     });
   });
@@ -439,19 +439,19 @@ describe("Interpreter", () => {
   describe("built in procedures", () => {
     describe("null?", () => {
       it("should be null? when quoting empty list", () => {
-        expectInputReturns(`(null? (quote ()))`, true);
+        expectInputReturns(`(null? (quote ()))`, "#t");
       });
 
       it("should be null? when quoting empty list", () => {
-        expectInputReturns(`(null? '())`, true);
+        expectInputReturns(`(null? '())`, "#t");
       });
 
       it("should be null? when empty params", () => {
-        expectInputReturns(`(null? ())`, true);
+        expectInputReturns(`(null? ())`, "#t");
       });
 
       it("should return false if value is number", () => {
-        expectInputReturns(`(null? 0)`, false);
+        expectInputReturns(`(null? 0)`, "#f");
       });
     });
   });
