@@ -119,6 +119,9 @@ export class Interpreter {
       }
 
       if (Expr.IsLiteral(expr)) {
+        if (Array.isArray(expr.value) && expr.value.length === 0) {
+          return Interpreter.NULL_VALUE;
+        }
         return expr.value;
       }
 

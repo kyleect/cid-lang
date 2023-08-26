@@ -7,8 +7,12 @@ describe("Parser", () => {
     expectInputReturns("()", [Expr.Literal([])]);
   });
 
-  it("should return literal expression for bracket pair", () => {
+  it("should return literal expression for quoted bracket pair", () => {
     expectInputReturns("(quote ())", [Expr.Quote(Expr.Literal([]))]);
+  });
+
+  it("should return literal expression for short quoted bracket pair", () => {
+    expectInputReturns("'()", [Expr.Quote(Expr.Literal([]))]);
   });
 
   it("should return a call expression when short quoted", () => {

@@ -25,7 +25,7 @@ describe("Interpreter", () => {
       expectInputReturns(`#f`, false);
     });
 
-    it("should return value of false boolean atom", () => {
+    it("should return null for empty list atom", () => {
       expectInputReturns(`()`, []);
     });
   });
@@ -444,6 +444,14 @@ describe("Interpreter", () => {
 
       it("should be null? when quoting empty list", () => {
         expectInputReturns(`(null? '())`, true);
+      });
+
+      it("should be null? when empty params", () => {
+        expectInputReturns(`(null? ())`, true);
+      });
+
+      it("should return false if value is number", () => {
+        expectInputReturns(`(null? 0)`, false);
       });
     });
   });
