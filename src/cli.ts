@@ -4,8 +4,14 @@ import { exec } from ".";
 import { readFileSync } from "fs";
 import { SchemeTSExitError } from "./exceptions";
 
-const [_, __, filename] = process.argv;
+const filename = process.argv?.[2];
 
+if (typeof filename === "undefined") {
+  console.log(`Missing filename for *.scm file to run`);
+  process.exit(1);
+}
+
+console.log(`Loading from filename: ${filename}`);
 const file = readFileSync(filename);
 
 const s = file.toString();
