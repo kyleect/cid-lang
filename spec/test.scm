@@ -32,3 +32,9 @@
 (display "-----------")
 (display "Passed:" passed)
 (display "Failed:" failed)
+(display "-----------")
+
+(define exit-code failed)
+
+(display "Exit with code:" exit-code)
+(exit exit-code)
