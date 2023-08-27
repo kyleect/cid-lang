@@ -6,15 +6,16 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "restfile": "dist/repl.js"
+    "schemets": "dist/cli.js"
   },
   "scripts": {
     "tsup": "tsup",
     "dev": "npm run build -- --watch --onSuccess \"npm run start\"",
-    "build": "tsup src/index.ts src/repl.ts --shims --dts --sourcemap --format esm,cjs",
+    "build": "tsup src/index.ts src/repl.ts src/cli.ts --shims --dts --sourcemap --format esm,cjs",
     "test": "jest",
     "coverage": "npm test -- --coverage --collectCoverageFrom=\"./src/**\"",
     "start": "node dist/repl.js",
+    "cli": "node dist/cli.js",
     "format": "npx prettier --write .",
     "lint": "npx eslint .",
     "verify": "npm run test && npm run lint"

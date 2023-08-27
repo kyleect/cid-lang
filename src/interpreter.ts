@@ -21,6 +21,21 @@ export class Interpreter {
           remainder: ([a, b]) => a % b,
           ">=": ([a, b]) => a >= b,
           "<=": ([a, b]) => a <= b,
+          "equal?": ([a, b]) => {
+            if (Expr.IsLiteral(a)) {
+              if (Expr.IsLiteral(b)) {
+                return a.value === b.value;
+              }
+
+              return a.value === b;
+            }
+
+            if (Expr.IsLiteral(b)) {
+              return b.value === a;
+            }
+
+            return a === b;
+          },
           not: ([arg]) => !arg,
           "string-length": ([str]) => str.length,
           "string-append": ([a, b]) => a + b,
@@ -34,7 +49,9 @@ export class Interpreter {
           "procedure?": ([arg]) => arg instanceof Function,
           car: ([arg]) => {
             if (Expr.IsExpr(arg)) {
-              const exprAsList = arg.toList();
+              const exprAsList = Expr.isQuote(arg)
+                ? arg.value.toList()
+                : arg.toList();
 
               if (!Array.isArray(exprAsList)) {
                 throw new Error(`car only works on list expressions: ${arg}`);
@@ -83,7 +100,9 @@ export class Interpreter {
             return arg.length > 1 ? arg.slice(1) : Interpreter.NULL_VALUE;
           },
           cons: ([a, b]) => [a, ...b],
-          display: ([arg]) => console.log(arg),
+          display: (args) => {
+            console.log(...args);
+          },
           assert: ([a, b]) => assert(a, b),
         })
       )

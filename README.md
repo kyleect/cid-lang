@@ -4,16 +4,22 @@
 
 ## Usage
 
+### Library
+
 ```typescript
-import expect from "expect";
-import { exec } from "schemee";
+import { exec } from "scheme-ts";
 
-const env = new Map<string, unknown>();
-env.set("a", 10);
+exec(`
+(define a 100)
+(define b 5)
+(* a b)
+`); // "500"
+```
 
-const result = exec("(* a 5)");
+### CLI
 
-expect(result).toBe(50);
+```bash
+npm run --silent cli -- example.scm
 ```
 
 ## Development
