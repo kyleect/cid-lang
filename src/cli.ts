@@ -2,6 +2,7 @@
 
 import { exec } from ".";
 import { readFileSync } from "fs";
+import { SchemeTSExitError } from "./exceptions";
 
 const [_, __, filename] = process.argv;
 
@@ -9,6 +10,13 @@ const file = readFileSync(filename);
 
 const s = file.toString();
 
-const results = exec(s);
+try {
+  const results = exec(s);
+  console.log(results);
+} catch (e) {
+  if (e instanceof SchemeTSExitError) {
+    process.exit(e.exitCode);
+  }
 
-console.log(results);
+  console.log(`There was an error throw: ${e}`);
+}

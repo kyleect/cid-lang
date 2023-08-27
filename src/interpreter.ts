@@ -1,4 +1,5 @@
 import { Environment } from "./env";
+import { SchemeTSExitError } from "./exceptions";
 import { Expr, LambdaExpr } from "./parser";
 import assert from "assert";
 
@@ -114,6 +115,10 @@ export class Interpreter {
       }
 
       return arg;
+    });
+
+    env.set("exit", ([arg]) => {
+      throw new SchemeTSExitError(arg);
     });
 
     this.env = env;
