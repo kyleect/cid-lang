@@ -65,8 +65,10 @@ describe("Scanner", () => {
       expectInputReturns("abcd", [Token.Symbol("abcd", 0, 0), Token.Eof(1, 0)]);
     });
 
-    it("should throw with unknown token", () => {
-      expect(() => scanInput("╝")).toThrowError(`Unknown token (0, 0): ╝`);
+    it("should throw with invalid character", () => {
+      expect(() => scanInput("╝")).toThrowError(
+        `A syntax error occurred (0, 0): Invalid character: ╝`
+      );
     });
 
     describe("composition", () => {

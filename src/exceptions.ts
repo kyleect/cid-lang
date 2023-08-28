@@ -2,13 +2,11 @@ export class SchemeTSError extends Error {}
 
 export class SchemeTSSyntaxError extends SchemeTSError {
   constructor(
-    public fileName: string,
     public lineNumber: number,
-    public charNumber: number
+    public charNumber: number,
+    message: string
   ) {
-    super(
-      `A syntax error occured in file ${fileName} on line ${lineNumber} at ${charNumber}`
-    );
+    super(`A syntax error occurred (${lineNumber}, ${charNumber}): ${message}`);
   }
 }
 

@@ -30,6 +30,14 @@ export class Token {
     return this.literal;
   }
 
+  public getLineNumber(): number {
+    return this.lineNumber;
+  }
+
+  public getCharNumber(): number {
+    return this.charNumber;
+  }
+
   static LeftBracket(lineNumber: number, charNumber: number): Token {
     return new Token(TokenType.LeftBracket, "(", null, lineNumber, charNumber);
   }

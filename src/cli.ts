@@ -2,7 +2,7 @@
 
 import { exec } from ".";
 import { readFileSync } from "fs";
-import { SchemeTSExitError } from "./exceptions";
+import { SchemeTSExitError, SchemeTSSyntaxError } from "./exceptions";
 
 const filename = process.argv?.[2];
 
@@ -24,5 +24,11 @@ try {
     process.exit(e.exitCode);
   }
 
+  if (e instanceof SchemeTSSyntaxError) {
+    console.log(`${e}`);
+    process.exit(1);
+  }
+
   console.log(`There was an error throw: ${e}`);
+  process.exit(1);
 }

@@ -1,3 +1,4 @@
+import { SchemeTSSyntaxError } from "./exceptions";
 import { Token, TokenType } from "./token";
 
 export class Scanner {
@@ -78,8 +79,10 @@ export class Scanner {
             break;
           }
 
-          throw new SyntaxError(
-            `Unknown token (${this.lineNumber}, ${this.charNumber}): ${char}`
+          throw new SchemeTSSyntaxError(
+            this.lineNumber,
+            this.charNumber,
+            `Invalid character: ${char}`
           );
       }
     }

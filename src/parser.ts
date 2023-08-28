@@ -1,3 +1,4 @@
+import { SchemeTSSyntaxError } from "./exceptions";
 import { Token, TokenType } from "./token";
 
 export abstract class Expr {
@@ -374,8 +375,11 @@ export class Parser {
     if (this.check(tokenType)) {
       return this.advance();
     }
-    throw new SyntaxError(
-      `Unexpected token ${this.previous().getTokenType()}, expected ${tokenType}`
+    const token = this.peek();
+    throw new SchemeTSSyntaxError(
+      token.getLineNumber(),
+      token.getCharNumber(),
+      `Unexpected token ${token.getTokenType()}, expected ${tokenType}`
     );
   }
 
@@ -395,10 +399,15 @@ export class Parser {
       case this.match(TokenType.String):
       case this.match(TokenType.Boolean):
         return Expr.Literal(this.previous().getLiteral());
-      default:
-        throw new SyntaxError(
-          `Unexpected token: ${this.peek().getTokenType()}`
+      default: {
+        const token = this.peek();
+
+        throw new SchemeTSSyntaxError(
+          token.getLineNumber(),
+          token.getCharNumber(),
+          `Unexpected token: ${token.getTokenType()}`
         );
+      }
     }
   }
 

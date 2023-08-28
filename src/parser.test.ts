@@ -3,6 +3,11 @@ import { Scanner } from "./scanner";
 import { Token } from "./token";
 
 describe("Parser", () => {
+  it("should syntax error", () => {
+    expect(() => parseInput("(define 12)")).toThrow(
+      "A syntax error occurred (0, 8): Unexpected token Number, expected Symbol"
+    );
+  });
   it("should return literal expression for bracket pair", () => {
     expectInputReturns("()", [Expr.Literal([])]);
   });
@@ -91,15 +96,13 @@ describe("Parser", () => {
 
   it("should throw for unmatched bracket", () => {
     expect(() => parseInput("(()")).toThrowError(
-      new SyntaxError(`Unexpected token: ${Token.Eof(1, 0).getTokenType()}`)
+      `A syntax error occurred (1, 0): Unexpected token: Eof`
     );
   });
 
   it("should throw for unmatched right bracket", () => {
     expect(() => parseInput(")")).toThrowError(
-      new SyntaxError(
-        `Unexpected token: ${Token.RightBracket(0, 0).getTokenType()}`
-      )
+      `A syntax error occurred (0, 0): Unexpected token: RightBracket`
     );
   });
 
