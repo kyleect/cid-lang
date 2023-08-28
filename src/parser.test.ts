@@ -22,16 +22,16 @@ describe("Parser", () => {
     (eval q)`,
       [
         Expr.Define(
-          Token.Symbol("q"),
+          Token.Symbol("q", 1, 12),
           Expr.Quote(
-            Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+            Expr.Call(Expr.Symbol(Token.Symbol("+", 1, 16)), [
               Expr.Literal(1),
               Expr.Literal(1),
             ])
           )
         ),
-        Expr.Call(Expr.Symbol(Token.Symbol("eval")), [
-          Expr.Symbol(Token.Symbol("q")),
+        Expr.Call(Expr.Symbol(Token.Symbol("eval", 2, 5)), [
+          Expr.Symbol(Token.Symbol("q", 2, 10)),
         ]),
       ]
     );
@@ -40,7 +40,7 @@ describe("Parser", () => {
   it("should return quoted expression", () => {
     expectInputReturns("(quote (+ 1 1))", [
       Expr.Quote(
-        Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+        Expr.Call(Expr.Symbol(Token.Symbol("+", 0, 8)), [
           Expr.Literal(1),
           Expr.Literal(1),
         ])
@@ -52,7 +52,7 @@ describe("Parser", () => {
     expectInputReturns("(quote (quote (+ 1 1)))", [
       Expr.Quote(
         Expr.Quote(
-          Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+          Expr.Call(Expr.Symbol(Token.Symbol("+", 0, 15)), [
             Expr.Literal(1),
             Expr.Literal(1),
           ])
@@ -63,12 +63,12 @@ describe("Parser", () => {
 
   it("should return expressions for nested calls", () => {
     expectInputReturns("(+ (+ 1 2) (+ 3 4))", [
-      Expr.Call(Expr.Symbol(Token.Symbol("+")), [
-        Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+      Expr.Call(Expr.Symbol(Token.Symbol("+", 0, 1)), [
+        Expr.Call(Expr.Symbol(Token.Symbol("+", 0, 4)), [
           Expr.Literal(1),
           Expr.Literal(2),
         ]),
-        Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+        Expr.Call(Expr.Symbol(Token.Symbol("+", 0, 12)), [
           Expr.Literal(3),
           Expr.Literal(4),
         ]),
@@ -79,7 +79,7 @@ describe("Parser", () => {
   it("should return expressions for if", () => {
     expectInputReturns("(if (> 2 1) 3 4)", [
       Expr.If(
-        Expr.Call(Expr.Symbol(Token.Symbol(">")), [
+        Expr.Call(Expr.Symbol(Token.Symbol(">", 0, 5)), [
           Expr.Literal(2),
           Expr.Literal(1),
         ]),
@@ -91,14 +91,14 @@ describe("Parser", () => {
 
   it("should throw for unmatched bracket", () => {
     expect(() => parseInput("(()")).toThrowError(
-      new SyntaxError(`Unexpected token: ${Token.Eof().getTokenType()}`)
+      new SyntaxError(`Unexpected token: ${Token.Eof(1, 0).getTokenType()}`)
     );
   });
 
   it("should throw for unmatched right bracket", () => {
     expect(() => parseInput(")")).toThrowError(
       new SyntaxError(
-        `Unexpected token: ${Token.RightBracket().getTokenType()}`
+        `Unexpected token: ${Token.RightBracket(0, 0).getTokenType()}`
       )
     );
   });
@@ -107,15 +107,15 @@ describe("Parser", () => {
     expectInputReturns("(let ((x 2) (y 4)) (display x) (display y))", [
       Expr.Let(
         [
-          new LetBindingNode(Token.Symbol("x"), Expr.Literal(2)),
-          new LetBindingNode(Token.Symbol("y"), Expr.Literal(4)),
+          new LetBindingNode(Token.Symbol("x", 0, 7), Expr.Literal(2)),
+          new LetBindingNode(Token.Symbol("y", 0, 13), Expr.Literal(4)),
         ],
         [
-          Expr.Call(Expr.Symbol(Token.Symbol("display")), [
-            Expr.Symbol(Token.Symbol("x")),
+          Expr.Call(Expr.Symbol(Token.Symbol("display", 0, 20)), [
+            Expr.Symbol(Token.Symbol("x", 0, 28)),
           ]),
-          Expr.Call(Expr.Symbol(Token.Symbol("display")), [
-            Expr.Symbol(Token.Symbol("y")),
+          Expr.Call(Expr.Symbol(Token.Symbol("display", 0, 32)), [
+            Expr.Symbol(Token.Symbol("y", 0, 40)),
           ]),
         ]
       ),
@@ -127,15 +127,15 @@ describe("Expr", () => {
   describe("CallExpr", () => {
     it("should stringify", () => {
       expect(
-        Expr.Call(Expr.Symbol(Token.Symbol("expected")), []).toString()
+        Expr.Call(Expr.Symbol(Token.Symbol("expected", 0, 0)), []).toString()
       ).toBe(`(expected)`);
     });
 
     it("should stringify when args present", () => {
       expect(
-        Expr.Call(Expr.Symbol(Token.Symbol("expectedFn")), [
+        Expr.Call(Expr.Symbol(Token.Symbol("expectedFn", 0, 1)), [
           Expr.Literal(123),
-          Expr.Symbol(Token.Symbol("expectedArg")),
+          Expr.Symbol(Token.Symbol("expectedArg", 0, 16)),
         ]).toString()
       ).toBe(`(expectedFn 123 expectedArg)`);
     });
@@ -143,7 +143,9 @@ describe("Expr", () => {
 
   describe("SymbolExpr", () => {
     it("should stringify", () => {
-      expect(Expr.Symbol(Token.Symbol("expected")).toString()).toBe(`expected`);
+      expect(Expr.Symbol(Token.Symbol("expected", 0, 0)).toString()).toBe(
+        `expected`
+      );
     });
   });
 
@@ -155,7 +157,7 @@ describe("Expr", () => {
 
   describe("DefineExpr", () => {
     it("should stringify", () => {
-      expect(Expr.Define(Token.Symbol("expected"), 123).toString()).toBe(
+      expect(Expr.Define(Token.Symbol("expected", 0, 8), 123).toString()).toBe(
         `(define expected 123)`
       );
     });
@@ -163,7 +165,7 @@ describe("Expr", () => {
 
   describe("SetExpr", () => {
     it("should stringify", () => {
-      expect(Expr.Set(Token.Symbol("expected"), 123).toString()).toBe(
+      expect(Expr.Set(Token.Symbol("expected", 0, 6), 123).toString()).toBe(
         `(set! expected 123)`
       );
     });
@@ -173,10 +175,15 @@ describe("Expr", () => {
     it("should stringify", () => {
       expect(
         Expr.Let(
-          [new LetBindingNode(Token.Symbol("expected"), Expr.Literal(123))],
           [
-            Expr.Symbol(Token.Symbol("expected")),
-            Expr.Symbol(Token.Symbol("expected")),
+            new LetBindingNode(
+              Token.Symbol("expected", 0, 7),
+              Expr.Literal(123)
+            ),
+          ],
+          [
+            Expr.Symbol(Token.Symbol("expected", 0, 22)),
+            Expr.Symbol(Token.Symbol("expected", 0, 31)),
           ]
         ).toString()
       ).toBe(`(let ((expected 123)) expected expected)`);
@@ -187,10 +194,10 @@ describe("Expr", () => {
     it("should stringify", () => {
       expect(
         Expr.Lambda(
-          [Token.Symbol("expected")],
+          [Token.Symbol("expected", 0, 9)],
           [
-            Expr.Symbol(Token.Symbol("expected")),
-            Expr.Symbol(Token.Symbol("expected")),
+            Expr.Symbol(Token.Symbol("expected", 0, 19)),
+            Expr.Symbol(Token.Symbol("expected", 0, 28)),
           ]
         ).toString()
       ).toBe(`(lambda (expected) expected expected)`);
@@ -209,7 +216,7 @@ describe("Expr", () => {
     it("should return quoted call expression", () => {
       expectInputReturns(`'(+ 1 1)`, [
         Expr.Quote(
-          Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+          Expr.Call(Expr.Symbol(Token.Symbol("+", 0, 2)), [
             Expr.Literal(1),
             Expr.Literal(1),
           ])
@@ -221,7 +228,7 @@ describe("Expr", () => {
       expectInputReturns(`''(+ 1 1)`, [
         Expr.Quote(
           Expr.Quote(
-            Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+            Expr.Call(Expr.Symbol(Token.Symbol("+", 0, 3)), [
               Expr.Literal(1),
               Expr.Literal(1),
             ])
@@ -235,7 +242,7 @@ describe("Expr", () => {
         Expr.Quote(
           Expr.Quote(
             Expr.Quote(
-              Expr.Call(Expr.Symbol(Token.Symbol("+")), [
+              Expr.Call(Expr.Symbol(Token.Symbol("+", 0, 4)), [
                 Expr.Literal(1),
                 Expr.Literal(1),
               ])
@@ -250,7 +257,7 @@ describe("Expr", () => {
         Expr.Quote(
           Expr.Literal([
             Expr.Literal(1),
-            Expr.Symbol(Token.Symbol("a")),
+            Expr.Symbol(Token.Symbol("a", 0, 4)),
             Expr.Literal("Hello"),
           ])
         ),

@@ -1,6 +1,8 @@
 import { Token, TokenType } from "./token";
 
 export class Scanner {
+  private lineNumber = 0;
+  private charNumber = 0;
   private start = 0;
   private current = 0;
   private tokens: Token[] = [];
@@ -15,18 +17,22 @@ export class Scanner {
       const char = this.advance();
       switch (char) {
         case "(":
-          this.addToken(TokenType.LeftBracket);
+          this.addToken(TokenType.LeftBracket, null);
           break;
         case ")":
-          this.addToken(TokenType.RightBracket);
+          this.addToken(TokenType.RightBracket, null);
           break;
         case "'":
-          this.addToken(TokenType.Quote);
+          this.addToken(TokenType.Quote, null);
           break;
         case " ":
-        case "\r":
         case "\t":
+          this.charNumber += 1;
+          break;
+        case "\r":
         case "\n":
+          this.lineNumber += 1;
+          this.charNumber = 0;
           break;
         case "#":
           if (this.peek() === "t") {
@@ -68,15 +74,17 @@ export class Scanner {
             while (this.isIdentifier(this.peek())) {
               this.advance();
             }
-            this.addToken(TokenType.Symbol);
+            this.addToken(TokenType.Symbol, null);
             break;
           }
 
-          throw new SyntaxError(`Unknown token: ${char}`);
+          throw new SyntaxError(
+            `Unknown token (${this.lineNumber}, ${this.charNumber}): ${char}`
+          );
       }
     }
 
-    this.addToken(TokenType.Eof);
+    this.addToken(TokenType.Eof, null);
     return this.tokens;
   }
 
@@ -134,23 +142,28 @@ export class Scanner {
 
     switch (tokenType) {
       case TokenType.LeftBracket:
-        token = Token.LeftBracket();
+        token = Token.LeftBracket(this.lineNumber, this.charNumber);
+        this.charNumber += 1;
         break;
 
       case TokenType.RightBracket:
-        token = Token.RightBracket();
+        token = Token.RightBracket(this.lineNumber, this.charNumber);
+        this.charNumber += 1;
         break;
 
       case TokenType.Quote:
-        token = Token.Quote();
+        token = Token.Quote(this.lineNumber, this.charNumber);
+        this.charNumber += 1;
         break;
 
       case TokenType.Symbol:
-        token = Token.Symbol(lexeme);
+        token = Token.Symbol(lexeme, this.lineNumber, this.charNumber);
+        this.charNumber += lexeme.length;
         break;
 
       case TokenType.Number:
-        token = Token.Number(lexeme);
+        token = Token.Number(lexeme, this.lineNumber, this.charNumber);
+        this.charNumber += lexeme.length;
         break;
 
       case TokenType.Boolean:
@@ -158,15 +171,26 @@ export class Scanner {
           throw Error(`Invalid literal value for boolean token: ${literal}`);
         }
 
-        token = Token.Boolean(lexeme, literal);
+        token = Token.Boolean(
+          lexeme,
+          literal,
+          this.lineNumber,
+          this.charNumber
+        );
+        this.charNumber += lexeme.length;
         break;
 
       case TokenType.String:
-        token = Token.String(lexeme.substring(1));
+        token = Token.String(
+          lexeme.substring(1),
+          this.lineNumber,
+          this.charNumber
+        );
+        this.charNumber += lexeme.length;
         break;
 
       case TokenType.Eof:
-        token = Token.Eof();
+        token = Token.Eof(this.lineNumber + 1, 0);
         break;
     }
 
