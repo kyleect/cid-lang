@@ -1,3 +1,5 @@
+import { SchemeTSSyntaxError } from "./exceptions";
+
 export enum TokenType {
   LeftBracket = "LeftBracket",
   RightBracket = "RightBracket",
@@ -58,7 +60,11 @@ export class Token {
     const numericValue = Number.parseFloat(lexeme);
 
     if (Number.isNaN(numericValue)) {
-      throw new SyntaxError(`Invalid lexeme for a number token: '${lexeme}'`);
+      throw new SchemeTSSyntaxError(
+        lineNumber,
+        charNumber,
+        `Invalid number: '${lexeme}'`
+      );
     }
 
     return new Token(

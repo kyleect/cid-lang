@@ -92,7 +92,9 @@ describe("Token", () => {
       expect(() =>
         Token.Number('"notANumber"', lineNumber, charNumber)
       ).toThrow(
-        new SyntaxError(`Invalid lexeme for a number token: '"notANumber"'`)
+        new SyntaxError(
+          `A syntax error occurred (${lineNumber}, ${charNumber}): Invalid number: '"notANumber"'`
+        )
       );
     });
   });
