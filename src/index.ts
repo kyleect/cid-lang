@@ -1,44 +1,44 @@
-import { Scanner } from "./scanner";
-import { Parser } from "./parser";
-import { Interpreter } from "./interpreter";
+import { StringTokenizer, Tokenizer } from "./tokenizer";
 
 export function exec(
   source: string,
   env?: Map<string, unknown> | undefined
 ): unknown {
-  const scanner = new Scanner(source);
-  const tokens = scanner.scan();
+  const tokenizer: Tokenizer = new StringTokenizer(source);
+  const tokens = tokenizer.tokenize();
 
-  const parser = new Parser(tokens);
-  const expressions = parser.parse();
+  return;
 
-  const interpreter = new Interpreter();
+  // const parser = new Parser(tokens);
+  // const expressions = parser.parse();
 
-  Array.from(env?.entries() ?? []).forEach(([key, value]) => {
-    interpreter.envSet(key, value);
-  });
+  // const interpreter = new Interpreter();
 
-  const results = interpreter.interpretAll(expressions);
+  // Array.from(env?.entries() ?? []).forEach(([key, value]) => {
+  //   interpreter.envSet(key, value);
+  // });
 
-  if (typeof results === "string") {
-    return `"${results}"`;
-  }
+  // const results = interpreter.interpretAll(expressions);
 
-  if (typeof results === "undefined") {
-    return results;
-  }
+  // if (typeof results === "string") {
+  //   return `"${results}"`;
+  // }
 
-  if (Array.isArray(results)) {
-    return `(${results.join(" ")})`;
-  }
+  // if (typeof results === "undefined") {
+  //   return results;
+  // }
 
-  if (results === true) {
-    return "#t";
-  }
+  // if (Array.isArray(results)) {
+  //   return `(${results.join(" ")})`;
+  // }
 
-  if (results === false) {
-    return "#f";
-  }
+  // if (results === true) {
+  //   return "#t";
+  // }
 
-  return results.toString();
+  // if (results === false) {
+  //   return "#f";
+  // }
+
+  // return results.toString();
 }

@@ -4,4 +4,15 @@ module.exports = {
   plugins: ["@typescript-eslint"],
   root: true,
   ignorePatterns: ["dist/**/*.*", ".eslintrc.js", "jest.config.js"],
+  rules: {
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn", // or "error"
+      {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
+      },
+    ],
+  },
 };

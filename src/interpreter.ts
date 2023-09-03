@@ -1,310 +1,126 @@
 import { Environment } from "./env";
-import { SchemeTSExitError } from "./exceptions";
-import { Expr, LambdaExpr } from "./parser";
-import assert from "assert";
+import { SchemeTSError } from "./exceptions";
+import { Expression, isAtomicExpression, isListExpression } from "./expression";
+import { Procedure } from "./procedure";
+import { Sym } from "./symbol";
 
 export class Interpreter {
-  static NULL_VALUE = [];
+  constructor(public env: Environment = Environment.Default()) {}
 
-  private env: Environment;
+  public interpretProgram(program: Expression): Expression {
+    if (isListExpression(program)) {
+      let result: Expression;
 
-  constructor() {
-    const env = new Environment(
-      new Map(
-        Object.entries({
-          "*": ([a, b]) => a * b,
-          "+": ([a, b]) => {
-            return a + b;
-          },
-          "/": ([a, b]) => a / b,
-          "-": ([a, b]) => a - b,
-          "=": ([a, b]) => a === b,
-          remainder: ([a, b]) => a % b,
-          ">=": ([a, b]) => a >= b,
-          "<=": ([a, b]) => a <= b,
-          "equal?": ([a, b]) => {
-            if (Expr.IsLiteral(a)) {
-              if (Expr.IsLiteral(b)) {
-                return a.value === b.value;
-              }
-
-              return a.value === b;
-            }
-
-            if (Expr.IsLiteral(b)) {
-              return b.value === a;
-            }
-
-            return a === b;
-          },
-          not: ([arg]) => !arg,
-          "string-length": ([str]) => str.length,
-          "string-append": ([a, b]) => a + b,
-          list: (args) => args,
-          "null?": ([arg]) => arg === Interpreter.NULL_VALUE,
-          "list?": ([arg]) =>
-            Array.isArray(arg) ||
-            (Expr.IsLiteral(arg) && Array.isArray(arg.value)),
-          "number?": ([arg]) => Number.isInteger(arg),
-          "string?": ([arg]) => typeof arg === "string",
-          "procedure?": ([arg]) => arg instanceof Function,
-          car: ([arg]) => {
-            if (Expr.IsExpr(arg)) {
-              const exprAsList = Expr.isQuote(arg)
-                ? arg.value.toList()
-                : arg.toList();
-
-              if (!Array.isArray(exprAsList)) {
-                throw new Error(`car only works on list expressions: ${arg}`);
-              }
-
-              if (exprAsList.length === 0) {
-                throw new Error(
-                  `car requires a non empty list expression: ${arg}`
-                );
-              }
-
-              return exprAsList[0];
-            }
-
-            if (!Array.isArray(arg)) {
-              throw new Error(`car only works on list expressions: ${arg}`);
-            }
-
-            if (arg.length === 0) {
-              throw new Error(
-                `car requires a non empty list expression: ${arg}`
-              );
-            }
-
-            return arg[0];
-          },
-          cdr: ([arg]) => {
-            // arg.length > 1 ? arg.slice(1) : Interpreter.NULL_VALUE
-
-            if (Expr.IsExpr(arg)) {
-              const exprAsList = arg.toList();
-
-              if (!Array.isArray(exprAsList)) {
-                throw new Error(`cdr only works on list expressions: ${arg}`);
-              }
-
-              return exprAsList.length > 1
-                ? exprAsList.slice(1)
-                : Interpreter.NULL_VALUE;
-            }
-
-            if (!Array.isArray(arg)) {
-              throw new Error(`cdr only works on list expressions: ${arg}`);
-            }
-
-            return arg.length > 1 ? arg.slice(1) : Interpreter.NULL_VALUE;
-          },
-          cons: ([a, b]) => [a, ...b],
-          display: (args) => {
-            console.log(...args);
-          },
-          assert: ([a, b]) => assert(a, b),
-        })
-      )
-    );
-
-    env.set("eval", ([arg]) => {
-      if (Expr.IsExpr(arg)) {
-        return this.interpret(arg, this.env);
+      for (const expression of program) {
+        result = this.interpret(expression);
       }
 
-      return arg;
-    });
-
-    env.set("exit", ([arg]) => {
-      throw new SchemeTSExitError(arg);
-    });
-
-    this.env = env;
-  }
-
-  /**
-   * Set a variable in the environment
-   * @param name Name of variable in environment
-   * @param value Value to set
-   */
-  public envSet(name: string, value: unknown) {
-    this.env.set(name, value);
-  }
-
-  /**
-   * Gets variable value from environment or throws
-   * @param name Name of variable in environment
-   * @returns Variable value in environment
-   */
-  public envGet(name: string): unknown {
-    return this.env.get(name);
-  }
-
-  /**
-   * Returns if variable is defined in environment
-   * @param name Name of variable in environment
-   * @returns Boolean if variable is in environment
-   */
-  public envHas(name: string): boolean {
-    return this.env.has(name);
-  }
-
-  interpretAll(expressions: Expr[]): unknown {
-    let result: unknown;
-
-    for (const expr of expressions) {
-      result = this.interpret(expr, this.env);
+      return result;
     }
 
-    return result;
+    return this.interpret(program);
   }
 
-  /**
-   * Interpret an expression in to a value
-   * @param expr Expression to interpret
-   * @param env Environment to use for interpretation
-   * @returns Interpreted value
-   */
-  private interpret(expr: unknown, env: Environment): unknown {
-    /**
-     * This is disabled for tail call optimization
-     */
+  public interpret(
+    expression: Expression,
+    env: Environment = this.env
+  ): Expression {
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      if (Expr.isQuote(expr)) {
-        if (Expr.IsLiteral(expr.value)) {
-          if (Array.isArray(expr.value.value)) {
-            return expr.value.value.length === 0
-              ? Interpreter.NULL_VALUE
-              : expr.value;
+      if (isAtomicExpression(expression)) {
+        if (expression instanceof Sym) {
+          if (Sym.isKeyword(expression)) {
+            throw new SchemeTSError(
+              `Illegal reference to keyword: ${expression.name}`
+            );
+          }
+
+          const value = this.env.get(expression.name) as Expression;
+
+          if (typeof value === "undefined") {
+            throw new SchemeTSError(`Undefined symbol: ${expression.name}`);
+          }
+
+          return value;
+        }
+
+        return expression;
+      }
+
+      if (isListExpression(expression)) {
+        const [op, ...args] = expression;
+
+        if (op instanceof Sym) {
+          // Keywords
+          if (op === Sym.Quote) {
+            return args[0];
+          }
+
+          if (op === Sym.Define) {
+            const [symbol, expr] = args;
+
+            this.env.set((symbol as Sym).name, this.interpret(expr, env));
+            return;
+          }
+
+          if (op === Sym.Lambda) {
+            const [params, ...body] = args;
+
+            return new Procedure(
+              params as unknown as Sym[],
+              body,
+              this.env
+            ) as unknown as Expression;
+          }
+
+          if (op === Sym.If) {
+            const [test, conseq, alt] = args;
+            const result = this.interpret(test, env);
+
+            expression = result ? conseq : alt;
+            continue;
+          }
+
+          // Built In Functions Or Procedures
+
+          const exps = expression.map((expr) => this.interpret(expr));
+
+          const proc = exps.shift();
+
+          if (typeof proc === "function") {
+            return proc(...exps);
+          }
+
+          if (proc instanceof Procedure) {
+            expression = proc.body;
+
+            let i = 0;
+
+            const entries: [string, Expression | Procedure][] = [];
+
+            for (const _ of exps) {
+              entries.push([proc.params[i].name, exps[i]]);
+              i++;
+            }
+
+            this.env = new Environment(new Map(entries), env);
+
+            continue;
           }
         }
 
-        if (Expr.isQuote(expr.value)) {
-          return expr;
-        }
-
-        return expr.value;
+        // Handle all remaining list expressions
+        return expression.map((e) => this.interpret(e));
       }
 
-      if (Expr.IsLiteral(expr)) {
-        if (Array.isArray(expr.value) && expr.value.length === 0) {
-          return Interpreter.NULL_VALUE;
-        }
+      // Value passed as expression is not a valid expression
 
-        return expr.value;
-      }
+      const expressionStringValue =
+        typeof expression === "symbol" ? String(expression) : expression;
 
-      if (Expr.IsSymbol(expr)) {
-        const v = env.get(expr.token.getLexeme());
-
-        if (Expr.isQuote(v)) {
-          expr = v.value;
-          continue;
-        }
-
-        return v;
-      }
-
-      if (Expr.IsIf(expr)) {
-        const test = this.interpret(expr.test, env);
-        expr = test ? expr.consequent : expr.alternative;
-
-        continue;
-      }
-
-      if (Expr.IsCall(expr)) {
-        const callee = this.interpret(expr.callee, env);
-        const args: unknown[] = expr.args.map((arg) =>
-          this.interpret(arg, env)
-        );
-
-        if (callee instanceof Procedure) {
-          const lambdaParamValuePairs = new Map(
-            callee.declaration.params.map((token, argIdx) => [
-              token.getLexeme(),
-              args[argIdx],
-            ])
-          );
-
-          const callEnv = new Environment(
-            lambdaParamValuePairs,
-            callee.closure
-          );
-
-          if (callee.declaration.body.length === 0) {
-            return undefined;
-          }
-
-          for (const exprInBody of callee.declaration.body.slice(0, -1)) {
-            this.interpret(exprInBody, callEnv);
-          }
-
-          expr = callee.declaration.body[callee.declaration.body.length - 1];
-          env = callEnv;
-
-          continue;
-        }
-
-        if (typeof callee === "function") {
-          return callee(args);
-        }
-
-        throw new Error(`Cannot call ${callee}`);
-      }
-
-      if (Expr.isDefine(expr)) {
-        const value = this.interpret(expr.value, env);
-        env.set(expr.token.getLexeme(), value);
-
-        return;
-      }
-
-      if (Expr.isSet(expr)) {
-        const value = this.interpret(expr.value, env);
-        if (env.has(expr.token.getLexeme())) {
-          env.set(expr.token.getLexeme(), value);
-          return;
-        }
-        throw new SyntaxError(`Unknown identifier: ${expr.token.getLexeme()}`);
-      }
-
-      if (Expr.isLet(expr)) {
-        const bindingEntries = expr.bindingsToMap();
-
-        const interpretedBindings: [string, unknown][] = Array.from(
-          bindingEntries
-        ).map<[string, unknown]>((entry) => [
-          entry[0] as string,
-          this.interpret(entry[1], env),
-        ]);
-
-        const letEnv = new Environment(new Map(interpretedBindings), env);
-
-        if (expr.body.length === 0) {
-          return undefined;
-        }
-
-        for (const exprInBody of expr.body.slice(0, -1)) {
-          this.interpret(exprInBody, letEnv);
-        }
-
-        expr = expr.body[expr.body.length - 1];
-        env = letEnv;
-        continue;
-      }
-
-      if (Expr.isLambda(expr)) {
-        return new Procedure(expr, env);
-      }
-
-      throw new SyntaxError(`Invalid expression:\n${expr}`);
+      throw new SchemeTSError(
+        `Illegal expression. Value is not atomic or list expression: ${expressionStringValue}`
+      );
     }
   }
-}
-
-class Procedure {
-  constructor(public declaration: LambdaExpr, public closure: Environment) {}
 }

@@ -1,486 +1,254 @@
-import { exec } from ".";
+import { Environment } from "./env";
+import { SchemeTSError } from "./exceptions";
+import { Expression } from "./expression";
 import { Interpreter } from "./interpreter";
 import { Parser } from "./parser";
-import { Scanner } from "./scanner";
+import { Procedure } from "./procedure";
+import { Sym } from "./symbol";
+import { Tokenizer } from "./tokenizer";
 
 describe("Interpreter", () => {
-  describe("atoms", () => {
-    it("should return value of number atom", () => {
-      expectInputReturns("1", "1");
+  let env: Environment;
+
+  beforeEach(() => {
+    env = Environment.Default();
+  });
+
+  describe("atomics", () => {
+    it("should intrepret number expressions", () => {
+      expect(interpretExpression("123", env)).toBe(123);
     });
 
-    it("should return value of string atom", () => {
-      expectInputReturns(`"Hello World!"`, '"Hello World!"');
+    it("should intrepret negative number expressions", () => {
+      expect(interpretExpression("-123", env)).toBe(-123);
     });
 
-    it("should return value of list atom", () => {
-      expectInputReturns(`(list 1 2 3)`, "(1 2 3)");
+    it("should intrepret number with decimal expressions", () => {
+      expect(interpretExpression("123.45", env)).toBe(123.45);
     });
 
-    it("should return value of true boolean atom", () => {
-      expectInputReturns(`#t`, "#t");
+    it("should intrepret negative number with decimal expressions", () => {
+      expect(interpretExpression("-123.45", env)).toBe(-123.45);
     });
 
-    it("should return value of false boolean atom", () => {
-      expectInputReturns(`#f`, "#f");
-    });
-
-    it("should return null for empty list atom", () => {
-      expectInputReturns(`()`, "()");
+    it("should intrepret string expressions", () => {
+      expect(interpretExpression('"Hello World"', env)).toBe("Hello World");
     });
   });
 
-  describe("operators", () => {
-    it("should call *", () => {
-      expectInputReturns(`(* 5 6)`, "30");
+  describe("lists", () => {
+    it("should interpret empty parans as a list", () => {
+      expect(interpretExpression("()", env)).toStrictEqual([]);
     });
 
-    it("should call +", () => {
-      expectInputReturns(`(+ 5 6)`, "11");
+    it("should interpret empty parans as a list", () => {
+      expect(interpretExpression("(1)", env)).toStrictEqual([1]);
     });
 
-    it("should call /", () => {
-      expectInputReturns(`(/ 30 6)`, "5");
+    it("should interpret expressions parans as a list", () => {
+      expect(
+        interpretExpression(`(1 2 3 "Hello World" #t #f)`, env)
+      ).toStrictEqual([1, 2, 3, "Hello World", true, false]);
     });
 
-    it("should call -", () => {
-      expectInputReturns(`(- 30 5)`, "25");
-    });
-  });
-
-  describe("conditionals", () => {
-    it("should call = when true", () => {
-      expectInputReturns(`(= 30 30)`, "#t");
+    it("should interpret lists starting with a non keyword, function or procedure symbol", () => {
+      expect(interpretExpression("(define a 1)(a 2 3)", env)).toStrictEqual([
+        1, 2, 3,
+      ]);
     });
 
-    it("should call = when false", () => {
-      expectInputReturns(`(= 30 12)`, "#f");
-    });
-
-    it("should call not", () => {
-      expectInputReturns(`(not #t)`, "#f");
-    });
-
-    it("should call string? when true", () => {
-      expectInputReturns(`(string? "Hello")`, "#t");
-    });
-
-    it("should call string? when false", () => {
-      expectInputReturns(`(string? 1)`, "#f");
-    });
-
-    it("should call number? when true", () => {
-      expectInputReturns(`(number? 1)`, "#t");
-    });
-
-    it("should call number? when true", () => {
-      expectInputReturns(`(number? "Hello World")`, "#f");
-    });
-
-    describe("list?", () => {
-      it("should return true with null/empty list", () => {
-        expectInputReturns(`(list? ())`, "#t");
-      });
-
-      it("should return false with number", () => {
-        expectInputReturns(`(list? 1)`, "#f");
-      });
-
-      it("should return false with string", () => {
-        expectInputReturns(`(list? "Hello World")`, "#f");
-      });
-
-      it("should return false with symbol", () => {
-        expectInputReturns(`(list? 'a)`, "#f");
-      });
-
-      it("should return true for short quoted list for short quoted list in variable", () => {
-        expectInputReturns(
-          `
-        (define a '(1 2 3))
-        (list? a)`,
-          "#t"
-        );
-      });
-
-      it("should return true for short quoted list", () => {
-        expectInputReturns(`(list? '(1 2 3))`, "#t");
-      });
-
-      it("should return true for list", () => {
-        expectInputReturns(`(list? (1 2 3))`, "#t");
-      });
-    });
-
-    it("should call if when true", () => {
-      expectInputReturns(`(if (>= 10 1) "Hello" "World")`, '"Hello"');
-    });
-
-    it("should call if when false", () => {
-      expectInputReturns(`(if (>= 1 10) "Hello" "World")`, '"World"');
+    it("should interpret lists starting with a symbol referencing a function", () => {
+      expect(interpretExpression("(define a +)(a 2 3)", env)).toStrictEqual(5);
     });
   });
 
-  describe("variables", () => {
-    it("should define a global variable", () => {
-      expectInputReturns("(define x 5)(define y 10)\n(+ x y)", "15");
-    });
-
-    it("should set an existing global variable", () => {
-      expectInputReturns("(define x 5)\n(set! x 10)\nx", "10");
-    });
-
-    it("should throw if set is called on undefined variable", () => {
-      expect(() => interpretInput("(set! x 5)")).toThrow(
-        "Unknown identifier: x"
+  describe("symbols", () => {
+    it("should throw if referencing undefined symbol", () => {
+      expect(() => interpretExpression("a", env)).toThrow(
+        new SchemeTSError("Undefined symbol: a")
       );
     });
 
-    it("should define local variables", () => {
-      expectInputReturns(
-        `
-        (define x 1)
-        (let ((x 2) (y 4)) (set! x 100))
-        x
-      `,
-        "1"
-      );
+    it("should not throw if referencing defined symbol", () => {
+      env.set("a", 123);
+
+      expect(interpretExpression("a", env)).toBe(123);
     });
 
-    it("should throw when referencing local variables out of scope", () => {
-      expect(() =>
-        interpretInput("(define x 1)\n(let ((x 2) (y 4)))\ny")
-      ).toThrow("Unknown identifier: y");
-    });
+    describe("keywords", () => {
+      describe("define", () => {
+        it("should throw if referencing keyword define as variable", () => {
+          expect(() => interpretExpression("define", env)).toThrow(
+            new SchemeTSError("Illegal reference to keyword: define")
+          );
+        });
 
-    it("should use variables across scopes", () => {
-      const scanner = new Scanner(
-        "(define max 100)\n(let ((min 10)) (display min) (display max))"
-      );
-      const tokens = scanner.scan();
-      const parser = new Parser(tokens);
-
-      const expressions = parser.parse();
-
-      const interpreter = new Interpreter();
-
-      const displaySpy = jest.fn();
-
-      interpreter.envSet("display", displaySpy);
-
-      interpreter.interpretAll(expressions);
-
-      expect(displaySpy.mock.calls).toEqual([[[10]], [[100]]]);
-    });
-  });
-
-  describe("lambdas", () => {
-    it("should work", () => {
-      expectInputReturns(
-        `(define square (lambda (x) (* x x)))
-         (define result (square (square 5)))
-         result`,
-        "625"
-      );
-    });
-
-    it("should work 2", () => {
-      expectInputReturns(
-        `(define square (lambda (x) x))
-         (define result (square 5))
-         result`,
-        "5"
-      );
-    });
-
-    it("should work with no body expressions", () => {
-      expectInputReturns(
-        `(define square (lambda (x)))
-         (define result (square (square 5)))
-         result`,
-        undefined
-      );
-    });
-
-    it("should work with closures", () => {
-      expectInputReturns(
-        `(define count 0)
-         (define increment (lambda ()
-           (set! count (+ count 1))))
-         
-         (increment)
-         (increment)
-         count`,
-        "2"
-      );
-    });
-
-    it("should use current closure values at call time", () => {
-      expectInputReturns(
-        `(define count 0)
-         (define increment (lambda ()
-           (set! count (+ count 1))))
-         
-         (increment)
-
-         (set! count 10)
-
-         (increment)
-         count`,
-        "11"
-      );
-    });
-
-    describe("tail call optimization", () => {
-      it("should have tail call optimization applied; Example: sum-to", () => {
-        expectInputReturns(
-          `
-        (define a 0)
-        (define sum-to
-          (lambda (n acc)
-            (set! a (+ a 1))
-            (if (= n 0)
-              acc
-              (sum-to (- n 1) (+ n acc)))))
-        
-        (sum-to 100000 0)
-        `,
-          "5000050000"
-        );
+        it("should interpret define expressions", () => {
+          expect(interpretExpression("(define x 123) x", env)).toBe(123);
+        });
       });
 
-      it.skip("should have tail call optimization applied; Example: count", () => {
-        expectInputReturns(
-          `
-        (define first car)
-        (define rest cdr)
-  
-        (define count (lambda (item L) (if L (+ (= item (first L)) (count item (rest L))) 0)))
-  
-        (count 0 (list 0 1 2 3 0 0))
-        `,
-          "3"
-        );
+      describe("quote", () => {
+        it("should interpret quoted number expression", () => {
+          expect(interpretExpression("(quote 123)", env)).toBe(123);
+        });
+
+        it("should interpret quoted call expression", () => {
+          expect(interpretExpression("(quote (+ 1 2))", env)).toStrictEqual([
+            Sym.of("+"),
+            1,
+            2,
+          ]);
+        });
+
+        it("should interpret double quoted call expression", () => {
+          expect(
+            interpretExpression("(quote (quote (+ 1 2)))", env)
+          ).toStrictEqual([Sym.Quote, [Sym.of("+"), 1, 2]]);
+        });
+
+        it("should interpret quoted true boolean expression", () => {
+          expect(interpretExpression("(quote #t)", env)).toBe(true);
+        });
+
+        it("should interpret quoted false boolean expression", () => {
+          expect(interpretExpression("(quote #f)", env)).toBe(false);
+        });
+
+        it("should interpret quoted if expression", () => {
+          expect(
+            interpretExpression("(quote (if #t #f #t))", env)
+          ).toStrictEqual([Sym.If, true, false, true]);
+        });
+
+        it("should throw if referencing keyword quote as variable", () => {
+          expect(() => interpretExpression("quote", env)).toThrow(
+            new SchemeTSError("Illegal reference to keyword: quote")
+          );
+        });
       });
 
-      it("should have tail call optimization applied; Example: range", () => {
-        expectInputReturns(
-          `
-        (define range (lambda (a b) (if (= a b) '() (cons a (range (+ a 1) b)))))
-        (range 0 10)
-        `,
-          "(0 1 2 3 4 5 6 7 8 9)"
-        );
+      describe("lambda", () => {
+        it("should throw if referencing keyword lambda as variable", () => {
+          expect(() => interpretExpression("lambda", env)).toThrow(
+            new SchemeTSError("Illegal reference to keyword: lambda")
+          );
+        });
+
+        it("should interpret lambda expressions", () => {
+          expect(interpretExpression("(lambda (x) x)", env)).toStrictEqual(
+            new Procedure([Sym.of("x")], [Sym.of("x")], env)
+          );
+        });
+      });
+
+      describe("if", () => {
+        it("should interpret if expression: identity boolean", () => {
+          expect(interpretExpression("(if #t #t #f)", env)).toBe(true);
+        });
+
+        it("should interpret if expression: toogle boolean", () => {
+          expect(interpretExpression("(if #t #f #t)", env)).toBe(false);
+        });
+
+        it("should throw if referencing keyword if as variable", () => {
+          expect(() => interpretExpression("if", env)).toThrow(
+            new SchemeTSError("Illegal reference to keyword: if")
+          );
+        });
       });
     });
   });
 
-  describe("quoting", () => {
-    describe("quote procedure", () => {
-      it("should return list when quoting empty parans", () => {
-        expectInputReturns(`(quote ())`, "()");
-      });
-
-      it("should return lambda when quoting lambda", () => {
-        expectInputReturns(`(quote (lambda (x) x))`, "(lambda (x) x)");
-      });
-
-      it("should return lambda when double quoting lambda", () => {
-        expectInputReturns(`(quote (quote (lambda (x) x)))`, "'(lambda (x) x)");
-      });
-
-      it("should return list with values", () => {
-        expectInputReturns(`(quote (list 1 2 3))`, "(list 1 2 3)");
-      });
-
-      it("should return list with values when quote is nested", () => {
-        expectInputReturns(`(quote (quote (list 1 2 3)))`, "'(list 1 2 3)");
-      });
-
-      it("should return symbol", () => {
-        expectInputReturns(`(quote a)`, "a");
-      });
-
-      it("should return expression argument without evaluating it", () => {
-        expectInputReturns(`(quote (+ 1 1))`, "(+ 1 1)");
-      });
-
-      it("should also work on this", () => {
-        expectInputReturns(
-          `
-        (define range (lambda (a b) (if (= a b) (quote ()) (cons a (range (+ a 1) b)))))
-        (range 0 10)
-        `,
-          "(0 1 2 3 4 5 6 7 8 9)"
-        );
-      });
+  describe("built ins", () => {
+    it("should interpret addition call expression", () => {
+      expect(interpretExpression("(+ 10 15)", env)).toBe(25);
     });
 
-    describe("short quote", () => {
-      it("should return list when quoting empty parans", () => {
-        expectInputReturns(`'()`, "()");
+    it("should interpret greater than call expression: is greater than", () => {
+      expect(interpretExpression("(> 10 1)", env)).toBe(true);
+    });
+
+    it("should interpret greater than call expression: is not greater than", () => {
+      expect(interpretExpression("(> 1 10)", env)).toBe(false);
+    });
+
+    it("should interpret greater than call expression: is equal", () => {
+      expect(interpretExpression("(> 10 10)", env)).toBe(false);
+    });
+  });
+
+  describe("booleans", () => {
+    it("should interpret true expression", () => {
+      expect(interpretExpression("#t", env)).toBe(true);
+    });
+
+    it("should interpret false expression", () => {
+      expect(interpretExpression("#f", env)).toBe(false);
+    });
+
+    describe("boolean?", () => {
+      it("should return true for true boolean expressions", () => {
+        expect(interpretExpression("(boolean? #t)", env)).toBe(true);
       });
 
-      it("should return list when double quoting empty parans", () => {
-        expectInputReturns(`''()`, "'()");
+      it("should return true for false boolean expressions", () => {
+        expect(interpretExpression("(boolean? #f)", env)).toBe(true);
       });
 
-      it("should return list when quoting parans with valuess", () => {
-        expectInputReturns(`'(1 2 3)`, "(1 2 3)");
+      it("should return false for truthy number expressions", () => {
+        expect(interpretExpression("(boolean? 1)", env)).toBe(false);
       });
 
-      it("should return list with values", () => {
-        expectInputReturns(`'(list 1 2 3)`, "(list 1 2 3)");
+      it("should return false for falsey number expressions", () => {
+        expect(interpretExpression("(boolean? 0)", env)).toBe(false);
       });
 
-      it("should return list with values when shortc quote is nested", () => {
-        expectInputReturns(`''(list 1 2 3)`, "'(list 1 2 3)");
-      });
-
-      it("should return symbol", () => {
-        expectInputReturns(`'a`, "a");
-      });
-
-      it("should return symbol when double quoting", () => {
-        expectInputReturns(`''a`, "'a");
-      });
-
-      it("should return expression argument without evaluating it", () => {
-        expectInputReturns(`'(+ 1 1)`, "(+ 1 1)");
-      });
-
-      it("should return the quoted call expression when double quoted", () => {
-        expectInputReturns(`''(+ 1 1)`, "'(+ 1 1)");
-      });
-
-      it("should return the quoted list expression when double quoted", () => {
-        expectInputReturns(`''(1 1)`, "'(1 1)");
-      });
-
-      it("should return the double quoted list expression when triple quoted", () => {
-        expectInputReturns(`'''(1 1)`, "''(1 1)");
+      it("should return false for empty list expressions", () => {
+        expect(interpretExpression("(boolean? ())", env)).toBe(false);
       });
     });
   });
 
-  describe("eval", () => {
-    it("should return result of eval", () => {
-      expectInputReturns(`(eval 2)`, "2");
-    });
+  it("should throw on illegal expression value: Error", () => {
+    const interpreter = new Interpreter();
+    const error = new Error("Not a valid value");
 
-    it("should return result of eval with quoted value", () => {
-      expectInputReturns(`(eval '2)`, "2");
-    });
-
-    it("should return result of eval when nested", () => {
-      expectInputReturns(`(eval (eval 2))`, "2");
-    });
-
-    it("should evaulate quoted expressions from quote procedure: Example: double quoted", () => {
-      expectInputReturns(
-        `
-      (define q (quote (quote (+ 1 1))))
-      (eval (eval q))`,
-        "2"
-      );
-    });
-
-    it("should evaulate quoted expressions from quote procedure: Example: list", () => {
-      expectInputReturns(
-        `
-      (define a (quote (list 1 2)))
-      (eval a)
-      `,
-        "(1 2)"
-      );
-    });
-
-    it("should evaulate short quoted expressions: Example: double quoted call expression", () => {
-      expectInputReturns(
-        `
-      (define q ''(+ 1 1))
-      (eval (eval q))`,
-        "2"
-      );
-    });
-
-    it("should eval short quoted expressions; Example: quoted list call expression", () => {
-      expectInputReturns(
-        `
-      (define a '(list 1 2))
-      (eval a)
-      `,
-        "(1 2)"
-      );
-    });
-
-    it("should eval short quoted expressions; Example: double quoted list call expression", () => {
-      expectInputReturns(
-        `
-      (define a ''(list 1 2))
-      (eval (eval a))
-      `,
-        "(1 2)"
-      );
-    });
-
-    it("should eval a quoted lambda", () => {
-      expectInputReturns(
-        `
-        (define a '(lambda (x) x))
-        (define b ((eval a) 100))
-        b
-      `,
-        "100"
-      );
-    });
+    expect(() => interpreter.interpret(error)).toThrow(
+      new SchemeTSError(
+        `Illegal expression. Value is not atomic or list expression: ${error}`
+      )
+    );
   });
 
-  describe("built in procedures", () => {
-    describe("null?", () => {
-      it("should be null? when quoting empty list", () => {
-        expectInputReturns(`(null? (quote ()))`, "#t");
-      });
+  it("should throw on illegal expression value: Javascript Symbol", () => {
+    const interpreter = new Interpreter();
+    const symbol = Symbol("Not a valid value");
 
-      it("should be null? when quoting empty list", () => {
-        expectInputReturns(`(null? '())`, "#t");
-      });
-
-      it("should be null? when empty params", () => {
-        expectInputReturns(`(null? ())`, "#t");
-      });
-
-      it("should return false if value is number", () => {
-        expectInputReturns(`(null? 0)`, "#f");
-      });
-    });
-
-    describe("car", () => {
-      it("should return the first element of quoted expression", () => {
-        expectInputReturns("(car '(+ 2 3))", "+");
-      });
-
-      it("should return the first element of list expression", () => {
-        expectInputReturns("(car '(1 2 3))", "1");
-      });
-    });
-
-    describe("cdr", () => {
-      it("should return the rest of elements from quoted expression", () => {
-        expectInputReturns("(cdr '(+ 2 3))", "(2 3)");
-      });
-
-      it("should return the rest of elements from list expression", () => {
-        expectInputReturns("(cdr '(1 2 3))", "(2 3)");
-      });
-    });
+    // @ts-expect-error Testing
+    expect(() => interpreter.interpret(symbol)).toThrow(
+      new SchemeTSError(
+        `Illegal expression. Value is not atomic or list expression: ${String(
+          symbol
+        )}`
+      )
+    );
   });
 });
 
-function interpretInput(input: string): unknown {
-  return exec(input);
-}
+function interpretExpression(
+  source: string,
+  env: Environment
+): Expression | Procedure | ((...args) => Expression) {
+  const tokenizer = Tokenizer.String(source);
+  const tokens = tokenizer.tokenize();
 
-function expectInputReturns(input: string, expectedOutput: unknown) {
-  expect(interpretInput(input)).toStrictEqual(expectedOutput);
+  const parser = Parser.Token(tokens);
+  const expression = parser.parse();
+
+  const interpreter = new Interpreter(env);
+
+  const value = interpreter.interpretProgram(expression);
+
+  return value;
 }

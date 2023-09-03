@@ -1,8 +1,13 @@
 export class Environment {
   constructor(
-    private values: Map<string, unknown>,
+    private values?: Map<string, unknown>,
     private enclosing?: Environment
-  ) {}
+  ) {
+    if (typeof this.values === "undefined") {
+      this.values = new Map();
+    }
+  }
+
   // Sets the variable value in the
   // environment where it was defined
   set(name: string, value: unknown) {
@@ -22,12 +27,20 @@ export class Environment {
       return this.values.get(name);
     } else if (this.enclosing) {
       return this.enclosing.get(name);
-    } else {
-      throw new SyntaxError(`Unknown identifier: ${name}`);
     }
   }
 
   has(name: string): boolean {
     return this.values.has(name) || (this.enclosing?.has(name) ?? false);
+  }
+
+  static Default(): Environment {
+    const env = new Environment(new Map());
+
+    env.set("+", (a, b) => a + b);
+    env.set(">", (a, b) => a > b);
+    env.set("boolean?", (a) => typeof a === "boolean");
+
+    return env;
   }
 }

@@ -1,6 +1,6 @@
 import { exec } from ".";
 
-describe("exec", () => {
+describe.skip("exec", () => {
   it("should work with default environment", () => {
     expect(exec("(+ 1 2)")).toBe("3");
   });

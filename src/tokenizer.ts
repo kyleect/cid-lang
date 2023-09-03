@@ -1,7 +1,15 @@
 import { SchemeTSSyntaxError } from "./exceptions";
 import { Token, TokenType } from "./token";
 
-export class Scanner {
+export abstract class Tokenizer {
+  abstract tokenize(): Token[];
+
+  public static String(source: string): StringTokenizer {
+    return new StringTokenizer(source);
+  }
+}
+
+export class StringTokenizer {
   private lineNumber = 0;
   private charNumber = 0;
   private start = 0;
@@ -10,7 +18,11 @@ export class Scanner {
 
   constructor(private source: string) {}
 
-  scan() {
+  /**
+   * Tokenize source string
+   * @returns List of tokens from source
+   */
+  public tokenize(): Token[] {
     while (!this.isAtEnd()) {
       // save the index at the start of each new token
       this.start = this.current;
@@ -47,20 +59,41 @@ export class Scanner {
             break;
           }
           break;
-        case '"':
+        case '"': {
+          this.advance();
+
           while (this.peek() !== '"' && !this.isAtEnd()) {
             this.advance();
           }
 
-          this.addToken(
-            TokenType.String,
-            this.source.slice(this.start + 1, this.current)
-          );
+          const value = this.source.slice(this.start + 1, this.current);
 
-          this.advance();
+          this.addToken(TokenType.String, value);
+
+          this.advance(); // Skip past the last double quote
 
           break;
+        }
         default:
+          if (char === "-") {
+            if (this.isDigit(this.peek())) {
+              this.advance();
+            }
+
+            if (this.isDigit(this.peek())) {
+              while (this.isDigitOrDot(this.peek())) {
+                this.advance();
+              }
+              const numberAsString = this.source.slice(
+                this.start,
+                this.current
+              );
+              const literal = parseFloat(numberAsString);
+              this.addToken(TokenType.Number, literal);
+              break;
+            }
+          }
+
           if (this.isDigit(char)) {
             while (this.isDigitOrDot(this.peek())) {
               this.advance();
@@ -92,7 +125,9 @@ export class Scanner {
   }
 
   private isDigit(char: string): boolean {
-    return char >= "0" && char <= "9";
+    return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      .map((n) => n.toString())
+      .includes(char);
   }
 
   private isDigitOrDot(char: string): boolean {
@@ -126,19 +161,19 @@ export class Scanner {
     );
   }
 
-  isAtEnd() {
+  private isAtEnd() {
     return this.current >= this.source.length;
   }
 
-  advance() {
+  private advance() {
     return this.source[this.current++];
   }
 
-  peek() {
+  private peek() {
     return this.source[this.current];
   }
 
-  addToken(tokenType: TokenType, literal: unknown = null) {
+  private addToken(tokenType: TokenType, literal: unknown = null) {
     const lexeme = this.source.slice(this.start, this.current);
 
     let token: Token;
@@ -189,11 +224,11 @@ export class Scanner {
           this.lineNumber,
           this.charNumber
         );
-        this.charNumber += lexeme.length;
+        this.charNumber += lexeme.length + 1;
         break;
 
       case TokenType.Eof:
-        token = Token.Eof(this.lineNumber + 1, 0);
+        token = Token.Eof(this.lineNumber, this.charNumber);
         break;
     }
 
