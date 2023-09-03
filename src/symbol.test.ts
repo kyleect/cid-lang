@@ -18,6 +18,10 @@ describe("Sym", () => {
     expect(Sym.isKeyword(Sym.Quote)).toBe(true);
   });
 
+  it("should return true that set is keyword", () => {
+    expect(Sym.isKeyword(Sym.Set)).toBe(true);
+  });
+
   it("should throw if creating symbol matching keyword: define", () => {
     expect(() => Sym.of("define")).toThrow(
       new SchemeTSError(`Illegal reference to keyword: define`)
@@ -39,6 +43,12 @@ describe("Sym", () => {
   it("should throw if creating symbol matching keyword: if", () => {
     expect(() => Sym.of("if")).toThrow(
       new SchemeTSError(`Illegal reference to keyword: if`)
+    );
+  });
+
+  it("should throw if creating symbol matching keyword: set!", () => {
+    expect(() => Sym.of("set!")).toThrow(
+      new SchemeTSError(`Illegal reference to keyword: set!`)
     );
   });
 });

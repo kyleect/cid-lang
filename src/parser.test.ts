@@ -71,6 +71,16 @@ describe("BaseParser", () => {
     expect(expression[0][0]).toBe(Sym.Define);
   });
 
+  it("should use the same common set symbol", () => {
+    const expression = parseStringToExpressions("(set! a 123)");
+
+    expect(expression).toHaveLength(1);
+
+    expect(expression[0]).toHaveLength(3);
+
+    expect(expression[0][0]).toBe(Sym.Set);
+  });
+
   it("should parse quote expressions", () => {
     expect(parseStringToExpressions("(quote (+ 1 2))")).toStrictEqual([
       [Sym.Quote, [Sym.of("+"), 1, 2]],
@@ -105,6 +115,12 @@ describe("BaseParser", () => {
   it("should parse define expressions", () => {
     expect(parseStringToExpressions("(define a 123)")).toStrictEqual([
       [Sym.Define, Sym.of("a"), 123],
+    ]);
+  });
+
+  it("should parse define expressions", () => {
+    expect(parseStringToExpressions("(set! a 123)")).toStrictEqual([
+      [Sym.Set, Sym.of("a"), 123],
     ]);
   });
 

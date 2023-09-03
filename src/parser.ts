@@ -72,6 +72,9 @@ export class TokenParser implements Parser {
         case lexeme === Sym.If.name:
           expression = Sym.If;
           break;
+        case lexeme === Sym.Set.name:
+          expression = Sym.Set;
+          break;
         default:
           expression = Sym.of(token.getLexeme());
           break;

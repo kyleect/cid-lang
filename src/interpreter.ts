@@ -63,6 +63,19 @@ export class Interpreter {
             return;
           }
 
+          if (op === Sym.Set) {
+            const [symbol, expr] = args;
+
+            if (this.env.get((symbol as Sym).name)) {
+              this.env.set((symbol as Sym).name, this.interpret(expr, env));
+              return;
+            }
+
+            throw new SchemeTSError(
+              "Unable to call set! on undefined symbol: x"
+            );
+          }
+
           if (op === Sym.Lambda) {
             const [params, ...body] = args;
 

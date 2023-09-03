@@ -65,9 +65,17 @@ export class Sym {
   static get If(): Sym {
     return ifSymbol;
   }
+
+  /**
+   * Symbolic variable for set!
+   */
+  static get Set(): Sym {
+    return setSymbol;
+  }
 }
 
 const defineSymbol = Sym.keyword("define");
 const quoteSymbol = Sym.keyword("quote");
 const lambdaSymbol = Sym.keyword("lambda");
 const ifSymbol = Sym.keyword("if");
+const setSymbol = Sym.keyword("set!");

@@ -88,6 +88,20 @@ describe("Interpreter", () => {
         });
       });
 
+      describe("set!", () => {
+        it("should interpret set expressions on defined symbols", () => {
+          expect(interpretExpression("(define x 123)(set! x 100) x", env)).toBe(
+            100
+          );
+        });
+
+        it("should throw on undefined symbols", () => {
+          expect(() => interpretExpression("(set! x 100) x", env)).toThrow(
+            new SchemeTSError("Unable to call set! on undefined symbol: x")
+          );
+        });
+      });
+
       describe("quote", () => {
         it("should interpret quoted number expression", () => {
           expect(interpretExpression("(quote 123)", env)).toBe(123);
