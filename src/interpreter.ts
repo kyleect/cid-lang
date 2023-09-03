@@ -52,6 +52,7 @@ export class Interpreter {
 
         if (op instanceof Sym) {
           // Keywords
+
           if (op === Sym.Quote) {
             return args[0];
           }
@@ -59,15 +60,22 @@ export class Interpreter {
           if (op === Sym.Define) {
             const [symbol, expr] = args;
 
-            this.env.set((symbol as Sym).name, this.interpret(expr, env));
+            const name = (symbol as Sym).name;
+            const value = this.interpret(expr, env);
+
+            this.env.set(name, value);
             return;
           }
 
           if (op === Sym.Set) {
             const [symbol, expr] = args;
 
-            if (this.env.get((symbol as Sym).name)) {
-              this.env.set((symbol as Sym).name, this.interpret(expr, env));
+            const name = (symbol as Sym).name;
+
+            if (this.env.get(name)) {
+              const value = this.interpret(expr, env);
+
+              this.env.set(name, value);
               return;
             }
 
@@ -123,6 +131,7 @@ export class Interpreter {
         }
 
         // Handle all remaining list expressions
+
         return expression.map((e) => this.interpret(e));
       }
 
