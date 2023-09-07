@@ -1,44 +1,25 @@
+import { Expression } from "./expression";
+import { Interpreter } from "./interpreter";
+import { Parser, TokenParser } from "./parser";
 import { StringTokenizer, Tokenizer } from "./tokenizer";
 
 export function exec(
   source: string,
   env?: Map<string, unknown> | undefined
-): unknown {
+): Expression {
   const tokenizer: Tokenizer = new StringTokenizer(source);
   const tokens = tokenizer.tokenize();
 
-  return;
+  const parser = new TokenParser(tokens);
+  const expression = parser.parse();
 
-  // const parser = new Parser(tokens);
-  // const expressions = parser.parse();
+  const interpreter = new Interpreter();
 
-  // const interpreter = new Interpreter();
+  Array.from(env?.entries() ?? []).forEach(([key, value]) => {
+    interpreter.env.set(key, value);
+  });
 
-  // Array.from(env?.entries() ?? []).forEach(([key, value]) => {
-  //   interpreter.envSet(key, value);
-  // });
+  const results = interpreter.interpretProgram(expression);
 
-  // const results = interpreter.interpretAll(expressions);
-
-  // if (typeof results === "string") {
-  //   return `"${results}"`;
-  // }
-
-  // if (typeof results === "undefined") {
-  //   return results;
-  // }
-
-  // if (Array.isArray(results)) {
-  //   return `(${results.join(" ")})`;
-  // }
-
-  // if (results === true) {
-  //   return "#t";
-  // }
-
-  // if (results === false) {
-  //   return "#f";
-  // }
-
-  // return results.toString();
+  return results;
 }

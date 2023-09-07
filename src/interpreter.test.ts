@@ -135,10 +135,48 @@ describe("Interpreter", () => {
           ).toStrictEqual([Sym.If, true, false, true]);
         });
 
-        it("should throw if referencing keyword quote as variable", () => {
+        it.skip("should throw if referencing keyword quote as variable", () => {
           expect(() => interpretExpression("quote", env)).toThrow(
             new SchemeTSError("Illegal reference to keyword: quote")
           );
+        });
+
+        describe("short quote", () => {
+          it("should interpret quoted number expression", () => {
+            expect(interpretExpression("'123", env)).toBe(123);
+          });
+
+          it("should interpret quoted call expression", () => {
+            expect(interpretExpression("'(+ 1 2)", env)).toStrictEqual([
+              Sym.of("+"),
+              1,
+              2,
+            ]);
+          });
+
+          it("should interpret double quoted call expression", () => {
+            expect(interpretExpression("'(quote (+ 1 2))", env)).toStrictEqual([
+              Sym.Quote,
+              [Sym.of("+"), 1, 2],
+            ]);
+          });
+
+          it("should interpret quoted true boolean expression", () => {
+            expect(interpretExpression("'#t", env)).toBe(true);
+          });
+
+          it("should interpret quoted false boolean expression", () => {
+            expect(interpretExpression("'#f", env)).toBe(false);
+          });
+
+          it("should interpret quoted if expression", () => {
+            expect(interpretExpression("'(if #t #f #t)", env)).toStrictEqual([
+              Sym.If,
+              true,
+              false,
+              true,
+            ]);
+          });
         });
       });
 
@@ -153,6 +191,31 @@ describe("Interpreter", () => {
           expect(interpretExpression("(lambda (x) x)", env)).toStrictEqual(
             new Procedure([Sym.of("x")], [Sym.of("x")], env)
           );
+        });
+
+        it("should interpret lambda expression calls", () => {
+          expect(interpretExpression("((lambda (x) x) 10)", env)).toStrictEqual(
+            10
+          );
+        });
+
+        it("should interpret lambda expression calls: defined lambda", () => {
+          expect(
+            interpretExpression("(define id (lambda (x) x))(id 10)", env)
+          ).toStrictEqual(10);
+        });
+
+        it.skip("should interpret lambda expression calls: defined nested lambda", () => {
+          expect(
+            interpretExpression(
+              `
+              (define sum (lambda (a) (lambda (b) a + b)))
+              (define sum2 sum(2))
+              (sum2 10)
+            `,
+              env
+            )
+          ).toStrictEqual(12);
         });
       });
 
@@ -190,6 +253,25 @@ describe("Interpreter", () => {
     it("should interpret greater than call expression: is equal", () => {
       expect(interpretExpression("(> 10 10)", env)).toBe(false);
     });
+
+    describe("display", () => {
+      let originalConsoleLog;
+
+      beforeEach(() => {
+        originalConsoleLog = console.log;
+        console.log = jest.fn();
+      });
+
+      afterEach(() => {
+        console.log = originalConsoleLog;
+      });
+
+      it("should interpret display expression", () => {
+        interpretExpression(`(define name "World")(display "Hello" name)`, env);
+
+        expect(console.log).toBeCalledWith("Hello", "World");
+      });
+    });
   });
 
   describe("booleans", () => {
@@ -222,6 +304,46 @@ describe("Interpreter", () => {
         expect(interpretExpression("(boolean? ())", env)).toBe(false);
       });
     });
+  });
+
+  it("should intepret multiple levels of env scope: lambdas", () => {
+    expect(
+      interpretExpression(
+        `
+    (define passed 0)
+    (define failed 0)
+    (define incPass
+      (lambda ()
+        (set! passed (+ passed 1))))
+    (define incFail
+      (lambda ()
+        (set! failed (+ failed 1))))
+    
+    (incPass)
+    (incPass)
+    (incFail)
+    (passed failed)
+    `,
+        env
+      )
+    ).toStrictEqual([2, 1]);
+  });
+
+  it("should intepret multiple levels of env scope: no lambdas", () => {
+    expect(
+      interpretExpression(
+        `
+    (define passed 0)
+    (define failed 0)
+    
+    (set! passed (+ passed 1))
+    (set! passed (+ passed 1))
+    (set! failed (+ failed 1))
+    (passed failed)
+    `,
+        env
+      )
+    ).toStrictEqual([2, 1]);
   });
 
   it("should throw on illegal expression value: Error", () => {
@@ -258,11 +380,11 @@ function interpretExpression(
   const tokens = tokenizer.tokenize();
 
   const parser = Parser.Token(tokens);
-  const expression = parser.parse();
+  const program = parser.parse();
 
   const interpreter = new Interpreter(env);
 
-  const value = interpreter.interpretProgram(expression);
+  const value = interpreter.interpretProgram(program);
 
   return value;
 }

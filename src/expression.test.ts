@@ -98,7 +98,7 @@ describe("Expression", () => {
     it("should return procedure is list expression", () => {
       expect(
         isListExpression(
-          new Procedure([Sym.of("a")], Sym.of("a"), new Environment())
+          new Procedure([Sym.of("a")], [Sym.of("a")], new Environment())
         )
       ).toBe(true);
     });

@@ -87,6 +87,13 @@ describe("BaseParser", () => {
     ]);
   });
 
+  it("should parse short quote expressions", () => {
+    expect(parseStringToExpressions("'(+ 1 2)")).toStrictEqual([
+      Sym.Quote,
+      [Sym.of("+"), 1, 2],
+    ]);
+  });
+
   it("should parse call expressions", () => {
     expect(parseStringToExpressions("(+ 1 2)")).toStrictEqual([
       [Sym.of("+"), 1, 2],
@@ -134,6 +141,12 @@ describe("BaseParser", () => {
   it("should parse lambda expressions", () => {
     expect(parseStringToExpressions("(lambda (x) x)")).toStrictEqual([
       [Sym.Lambda, [Sym.of("x")], Sym.of("x")],
+    ]);
+  });
+
+  it("should parse lambda expressions: no body", () => {
+    expect(parseStringToExpressions("(lambda (x))")).toStrictEqual([
+      [Sym.Lambda, [Sym.of("x")]],
     ]);
   });
 

@@ -25,6 +25,10 @@ export class Sym {
     );
   }
 
+  public toString(): string {
+    return this.name;
+  }
+
   /**
    * Create symbolic variable from string
    * @param name Name for variable

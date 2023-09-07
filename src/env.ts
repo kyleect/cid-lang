@@ -40,6 +40,10 @@ export class Environment {
     env.set("+", (a, b) => a + b);
     env.set(">", (a, b) => a > b);
     env.set("boolean?", (a) => typeof a === "boolean");
+    env.set("equal?", (a, b) => Object.is(a, b));
+    env.set("list", (...args) => args);
+    env.set("display", (...args) => console.log(...args));
+    env.set("exit", (a) => process.exit(a));
 
     return env;
   }

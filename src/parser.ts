@@ -55,6 +55,10 @@ export class TokenParser implements Parser {
       expression = token.getLiteral() as AtomicExpression;
     }
 
+    if (this.#check(TokenType.Quote)) {
+      expression = Sym.Quote;
+    }
+
     if (this.#check(TokenType.Symbol)) {
       const token = this.#peek();
       const lexeme = token.getLexeme();

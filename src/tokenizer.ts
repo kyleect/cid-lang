@@ -1,6 +1,9 @@
 import { SchemeTSSyntaxError } from "./exceptions";
 import { Token, TokenType } from "./token";
 
+/**
+ * Map source input in to tokens for parser
+ */
 export abstract class Tokenizer {
   abstract tokenize(): Token[];
 
@@ -9,14 +12,19 @@ export abstract class Tokenizer {
   }
 }
 
-export class StringTokenizer {
+/**
+ * Map source string in to tokens for parser
+ */
+export class StringTokenizer extends Tokenizer {
   private lineNumber = 0;
   private charNumber = 0;
   private start = 0;
   private current = 0;
   private tokens: Token[] = [];
 
-  constructor(private source: string) {}
+  constructor(private source: string) {
+    super();
+  }
 
   /**
    * Tokenize source string

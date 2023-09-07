@@ -5,7 +5,7 @@ import { Sym } from "./symbol";
 export class Procedure {
   constructor(
     public params: Sym[],
-    public body: Expression,
+    public body: Expression[],
     public closure: Environment
   ) {}
 }
