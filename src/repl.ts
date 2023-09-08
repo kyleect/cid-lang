@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import repl from "repl";
 import { exec } from ".";
 
