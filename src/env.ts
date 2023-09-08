@@ -1,3 +1,4 @@
+import { SchemeTSError } from "./exceptions";
 import { Sym } from "./symbol";
 
 export class Environment {
@@ -41,6 +42,13 @@ export class Environment {
 
     env.set("+", (a, b) => a + b);
     env.set(">", (a, b) => a > b);
+    env.set("*", (a, b) => a * b);
+    env.set("/", (a, b) => {
+      if (a === 0 || b === 0) {
+        throw new SchemeTSError("Dividing by zero");
+      }
+      return a / b;
+    });
     env.set("boolean?", (a) => typeof a === "boolean");
     env.set("equal?", (a, b) => {
       if (Sym.is(a) && Sym.is(b)) {

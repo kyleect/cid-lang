@@ -315,6 +315,32 @@ describe("Interpreter", () => {
       expect(interpretExpression("(+ 10 15)", env)).toBe(25);
     });
 
+    it("should interpret multiply call expression", () => {
+      expect(interpretExpression("(* 10 15)", env)).toBe(150);
+    });
+
+    it("should interpret divide call expression", () => {
+      expect(interpretExpression("(/ 10 5)", env)).toBe(2);
+    });
+
+    it("should interpret divide call expression: divide by zero", () => {
+      expect(() => interpretExpression("(/ 10 0)", env)).toThrow(
+        new SchemeTSError("Dividing by zero")
+      );
+    });
+
+    it("should interpret divide call expression: divide by zero (flipped)", () => {
+      expect(() => interpretExpression("(/ 0 10)", env)).toThrow(
+        new SchemeTSError("Dividing by zero")
+      );
+    });
+
+    it("should interpret divide call expression: divide by zero (both)", () => {
+      expect(() => interpretExpression("(/ 0 0)", env)).toThrow(
+        new SchemeTSError("Dividing by zero")
+      );
+    });
+
     it("should interpret greater than call expression: is greater than", () => {
       expect(interpretExpression("(> 10 1)", env)).toBe(true);
     });
