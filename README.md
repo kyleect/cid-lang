@@ -32,7 +32,7 @@ npm start
 
 ## Differences To Scheme (So Far)
 
-- Self Evaluating Expressions
+- All Expressions Self Evaluate
 
 ## Todos
 
