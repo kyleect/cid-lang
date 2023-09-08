@@ -1,4 +1,4 @@
-import { SchemeTSSyntaxError } from "./exceptions";
+import { CIDLangSyntaxError } from "./exceptions";
 import { Token, TokenType } from "./token";
 
 /**
@@ -131,7 +131,7 @@ export class StringTokenizer extends Tokenizer {
             break;
           }
 
-          throw new SchemeTSSyntaxError(
+          throw new CIDLangSyntaxError(
             this.lineNumber,
             this.charNumber,
             `Invalid character: ${char}`

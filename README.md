@@ -1,13 +1,15 @@
-# schemee
+# The CID Programming Language
 
-[![verify](https://github.com/kyleect/scheme-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/kyleect/scheme-ts/actions/workflows/ci.yml)
+[![verify](https://github.com/kyleect/cid-lang/actions/workflows/ci.yml/badge.svg)](https://github.com/kyleect/cid-lang/actions/workflows/ci.yml)
+
+An (on going) implementation of a Scheme based language.
 
 ## Usage
 
 ### Library
 
 ```typescript
-import { exec } from "scheme-ts";
+import { exec } from "cid-lang";
 
 exec(`
 (define a 100)
@@ -21,6 +23,22 @@ exec(`
 ```bash
 npm run --silent cli -- example.scm
 ```
+
+### REPL
+
+```bash
+npm start
+```
+
+## Differences To Scheme (So Far)
+
+- Self Evaluating Expressions
+
+## Todos
+
+- Lots of stuff!
+- Most built-in functions
+- Macros
 
 ## Development
 

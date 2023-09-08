@@ -1,5 +1,5 @@
 import { Environment } from "./env";
-import { SchemeTSError } from "./exceptions";
+import { CIDLangRuntimeError } from "./exceptions";
 import {
   EmptyListExpression,
   Expression,
@@ -49,7 +49,7 @@ export class Interpreter {
       if (isAtomicExpression(expression)) {
         if (Sym.is(expression)) {
           if (Sym.isKeyword(expression)) {
-            throw new SchemeTSError(
+            throw new CIDLangRuntimeError(
               `Illegal reference to keyword: ${expression.name}`
             );
           }
@@ -57,7 +57,9 @@ export class Interpreter {
           const value = env.get(expression.name) as Expression;
 
           if (typeof value === "undefined") {
-            throw new SchemeTSError(`Undefined symbol: ${expression.name}`);
+            throw new CIDLangRuntimeError(
+              `Undefined symbol: ${expression.name}`
+            );
           }
 
           return value;
@@ -105,7 +107,7 @@ export class Interpreter {
               return;
             }
 
-            throw new SchemeTSError(
+            throw new CIDLangRuntimeError(
               `Unable to call set! on undefined symbol: ${name}`
             );
           }
@@ -133,7 +135,7 @@ export class Interpreter {
           const proc = this.#interpret(op, env);
           if (typeof proc === "function") {
             if (args.length < proc.length) {
-              throw new SchemeTSError(
+              throw new CIDLangRuntimeError(
                 `Function '${op}' expects ${
                   proc.length
                 } arguments but received ${args.length}${
@@ -187,7 +189,7 @@ export class Interpreter {
       // Handle invalid expressions
       const expressionStringValue =
         typeof expression === "symbol" ? String(expression) : expression;
-      throw new SchemeTSError(
+      throw new CIDLangRuntimeError(
         `Illegal expression. Value is not atomic or list expression: ${expressionStringValue}`
       );
     }

@@ -17,7 +17,7 @@ function run(input: string) {
 }
 
 repl.start({
-  prompt: "schemee> ",
+  prompt: "CID> ",
   eval: (input, context, filename, callback) => {
     callback(null, run(input));
   },

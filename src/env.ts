@@ -1,4 +1,4 @@
-import { SchemeTSError } from "./exceptions";
+import { CIDLangError } from "./exceptions";
 import { Sym } from "./symbol";
 
 export class Environment {
@@ -42,46 +42,46 @@ export class Environment {
 
     env.set("+", (a, b) => {
       if (typeof a !== "number" || typeof b !== "number") {
-        throw new SchemeTSError("All arguments must be numbers");
+        throw new CIDLangError("All arguments must be numbers");
       }
 
       return a + b;
     });
     env.set("-", (a, b) => {
       if (typeof a !== "number" || typeof b !== "number") {
-        throw new SchemeTSError("All arguments must be numbers");
+        throw new CIDLangError("All arguments must be numbers");
       }
 
       return a - b;
     });
     env.set(">", (a, b) => {
       if (typeof a !== "number" || typeof b !== "number") {
-        throw new SchemeTSError("All arguments must be numbers");
+        throw new CIDLangError("All arguments must be numbers");
       }
 
       return a > b;
     });
     env.set("<", (a, b) => {
       if (typeof a !== "number" || typeof b !== "number") {
-        throw new SchemeTSError("All arguments must be numbers");
+        throw new CIDLangError("All arguments must be numbers");
       }
 
       return a < b;
     });
     env.set("*", (a, b) => {
       if (typeof a !== "number" || typeof b !== "number") {
-        throw new SchemeTSError("All arguments must be numbers");
+        throw new CIDLangError("All arguments must be numbers");
       }
 
       return a * b;
     });
     env.set("/", (a, b) => {
       if (typeof a !== "number" || typeof b !== "number") {
-        throw new SchemeTSError("All arguments must be numbers");
+        throw new CIDLangError("All arguments must be numbers");
       }
 
       if (a === 0 || b === 0) {
-        throw new SchemeTSError("Dividing by zero");
+        throw new CIDLangError("Dividing by zero");
       }
       return a / b;
     });

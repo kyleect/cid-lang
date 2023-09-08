@@ -1,4 +1,4 @@
-import { SchemeTSSyntaxError } from "./exceptions";
+import { CIDLangSyntaxError } from "./exceptions";
 import {
   AtomicExpression,
   EmptyListExpression,
@@ -22,7 +22,7 @@ export class TokenParser implements Parser {
 
   parse(): Expression {
     if (this.tokens.length === 1) {
-      throw new SchemeTSSyntaxError(0, 0, "Unexpected EOF");
+      throw new CIDLangSyntaxError(0, 0, "Unexpected EOF");
     }
 
     const expression: Expression = [];
@@ -186,7 +186,7 @@ export class TokenParser implements Parser {
 
     const token = this.#peek();
 
-    throw new SchemeTSSyntaxError(
+    throw new CIDLangSyntaxError(
       token.getLineNumber(),
       token.getCharNumber(),
       `Unexpected token ${this.#peekPrevious().getTokenType()}, expected ${tokenType}`

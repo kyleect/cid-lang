@@ -2,7 +2,7 @@
 
 import { exec } from ".";
 import { readFileSync } from "fs";
-import { SchemeTSExitError, SchemeTSSyntaxError } from "./exceptions";
+import { CIDLangExitError, CIDLangSyntaxError } from "./exceptions";
 
 const filename = process.argv?.[2];
 
@@ -20,11 +20,11 @@ try {
   const results = exec(s);
   console.log(results);
 } catch (e) {
-  if (e instanceof SchemeTSExitError) {
+  if (e instanceof CIDLangExitError) {
     process.exit(e.exitCode);
   }
 
-  if (e instanceof SchemeTSSyntaxError) {
+  if (e instanceof CIDLangSyntaxError) {
     console.log(`${e}`);
     process.exit(1);
   }

@@ -1,4 +1,4 @@
-import { SchemeTSError } from "./exceptions";
+import { CIDLangError } from "./exceptions";
 
 /**
  * Symbolic Variable
@@ -69,7 +69,7 @@ export class Sym {
    */
   static of(name: string): Sym {
     if (Sym.isKeywordByName(name)) {
-      throw new SchemeTSError(`Illegal reference to keyword: ${name}`);
+      throw new CIDLangError(`Illegal reference to keyword: ${name}`);
     }
 
     return new Sym(name);

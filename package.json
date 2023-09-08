@@ -1,12 +1,12 @@
 {
-  "name": "schemee",
+  "name": "cid-lang",
   "version": "1.0.0",
-  "description": "",
+  "description": "A varient of the scheme language",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
-    "schemets": "dist/cli.js"
+    "cidlang": "dist/cli.js"
   },
   "scripts": {
     "tsup": "tsup",

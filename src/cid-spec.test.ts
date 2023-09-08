@@ -1,7 +1,7 @@
 import { exec } from ".";
 import { readFileSync } from "fs";
 
-describe("spec", () => {
+describe("cid-lang spec", () => {
   it("test.scm should pass", () => {
     const file = readFileSync("spec/test.scm");
     const fileContents = file.toString();

@@ -1,4 +1,4 @@
-import { SchemeTSSyntaxError } from "./exceptions";
+import { CIDLangSyntaxError } from "./exceptions";
 
 export enum TokenType {
   LeftBracket = "LeftBracket",
@@ -60,7 +60,7 @@ export class Token {
     const numericValue = Number.parseFloat(lexeme);
 
     if (Number.isNaN(numericValue)) {
-      throw new SchemeTSSyntaxError(
+      throw new CIDLangSyntaxError(
         lineNumber,
         charNumber,
         `Invalid number: '${lexeme}'`

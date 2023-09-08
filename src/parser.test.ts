@@ -1,4 +1,4 @@
-import { SchemeTSSyntaxError } from "./exceptions";
+import { CIDLangSyntaxError } from "./exceptions";
 import { EmptyListExpression, Expression } from "./expression";
 import { Parser } from "./parser";
 import { Sym } from "./symbol";
@@ -8,7 +8,7 @@ describe("BaseParser", () => {
   it("should throw syntax error if source is empty", () => {
     expect(() => {
       parseStringToExpressions("");
-    }).toThrow(new SchemeTSSyntaxError(0, 0, "Unexpected EOF"));
+    }).toThrow(new CIDLangSyntaxError(0, 0, "Unexpected EOF"));
   });
 
   it("should parse number expressions", () => {

@@ -1,5 +1,5 @@
 import { Environment } from "./env";
-import { SchemeTSError } from "./exceptions";
+import { CIDLangRuntimeError } from "./exceptions";
 import { EmptyListExpression, Expression } from "./expression";
 import { Interpreter } from "./interpreter";
 import { Parser } from "./parser";
@@ -94,7 +94,7 @@ describe("Interpreter", () => {
 
     it("should interpret number? call expression: zero args", () => {
       expect(() => interpretExpression(`(number?)`, env)).toThrow(
-        new SchemeTSError(
+        new CIDLangRuntimeError(
           `Function 'number?' expects 1 arguments but received 0`
         )
       );
@@ -141,7 +141,7 @@ describe("Interpreter", () => {
   describe("symbols", () => {
     it("should throw if referencing undefined symbol", () => {
       expect(() => interpretExpression("a", env)).toThrow(
-        new SchemeTSError("Undefined symbol: a")
+        new CIDLangRuntimeError("Undefined symbol: a")
       );
     });
 
@@ -155,7 +155,7 @@ describe("Interpreter", () => {
       describe("define", () => {
         it("should throw if referencing keyword define as variable", () => {
           expect(() => interpretExpression("define", env)).toThrow(
-            new SchemeTSError("Illegal reference to keyword: define")
+            new CIDLangRuntimeError("Illegal reference to keyword: define")
           );
         });
 
@@ -173,7 +173,9 @@ describe("Interpreter", () => {
 
         it("should throw on undefined symbols", () => {
           expect(() => interpretExpression("(set! x 100) x", env)).toThrow(
-            new SchemeTSError("Unable to call set! on undefined symbol: x")
+            new CIDLangRuntimeError(
+              "Unable to call set! on undefined symbol: x"
+            )
           );
         });
       });
@@ -213,7 +215,7 @@ describe("Interpreter", () => {
 
         it.skip("should throw if referencing keyword quote as variable", () => {
           expect(() => interpretExpression("quote", env)).toThrow(
-            new SchemeTSError("Illegal reference to keyword: quote")
+            new CIDLangRuntimeError("Illegal reference to keyword: quote")
           );
         });
 
@@ -313,7 +315,7 @@ describe("Interpreter", () => {
       describe("lambda", () => {
         it("should throw if referencing keyword lambda as variable", () => {
           expect(() => interpretExpression("lambda", env)).toThrow(
-            new SchemeTSError("Illegal reference to keyword: lambda")
+            new CIDLangRuntimeError("Illegal reference to keyword: lambda")
           );
         });
 
@@ -377,7 +379,7 @@ describe("Interpreter", () => {
 
         it("should throw if referencing keyword if as variable", () => {
           expect(() => interpretExpression("if", env)).toThrow(
-            new SchemeTSError("Illegal reference to keyword: if")
+            new CIDLangRuntimeError("Illegal reference to keyword: if")
           );
         });
       });
@@ -391,13 +393,17 @@ describe("Interpreter", () => {
 
     it("should interpret addition call expression: no args", () => {
       expect(() => interpretExpression(`(+)`, env)).toThrow(
-        new SchemeTSError(`Function '+' expects 2 arguments but received 0`)
+        new CIDLangRuntimeError(
+          `Function '+' expects 2 arguments but received 0`
+        )
       );
     });
 
     it("should interpret addition call expression: one arg", () => {
       expect(() => interpretExpression(`(+ 10)`, env)).toThrow(
-        new SchemeTSError(`Function '+' expects 2 arguments but received 1: 10`)
+        new CIDLangRuntimeError(
+          `Function '+' expects 2 arguments but received 1: 10`
+        )
       );
     });
 
@@ -407,7 +413,7 @@ describe("Interpreter", () => {
 
     it("should interpret addition call expression: non numbers", () => {
       expect(() => interpretExpression(`(+ "Hello" 'a)`, env)).toThrow(
-        new SchemeTSError(`All arguments must be numbers`)
+        new CIDLangRuntimeError(`All arguments must be numbers`)
       );
     });
 
@@ -417,13 +423,17 @@ describe("Interpreter", () => {
 
     it("should interpret substraction call expression: no args", () => {
       expect(() => interpretExpression(`(-)`, env)).toThrow(
-        new SchemeTSError(`Function '-' expects 2 arguments but received 0`)
+        new CIDLangRuntimeError(
+          `Function '-' expects 2 arguments but received 0`
+        )
       );
     });
 
     it("should interpret substraction call expression: one arg", () => {
       expect(() => interpretExpression(`(- 10)`, env)).toThrow(
-        new SchemeTSError(`Function '-' expects 2 arguments but received 1: 10`)
+        new CIDLangRuntimeError(
+          `Function '-' expects 2 arguments but received 1: 10`
+        )
       );
     });
 
@@ -433,7 +443,7 @@ describe("Interpreter", () => {
 
     it("should interpret substraction call expression: non numbers", () => {
       expect(() => interpretExpression(`(- "Hello" 'a)`, env)).toThrow(
-        new SchemeTSError(`All arguments must be numbers`)
+        new CIDLangRuntimeError(`All arguments must be numbers`)
       );
     });
 
@@ -443,13 +453,17 @@ describe("Interpreter", () => {
 
     it("should interpret multiply call expression: no args", () => {
       expect(() => interpretExpression(`(*)`, env)).toThrow(
-        new SchemeTSError(`Function '*' expects 2 arguments but received 0`)
+        new CIDLangRuntimeError(
+          `Function '*' expects 2 arguments but received 0`
+        )
       );
     });
 
     it("should interpret multiply call expression: one arg", () => {
       expect(() => interpretExpression(`(* 10)`, env)).toThrow(
-        new SchemeTSError(`Function '*' expects 2 arguments but received 1: 10`)
+        new CIDLangRuntimeError(
+          `Function '*' expects 2 arguments but received 1: 10`
+        )
       );
     });
 
@@ -459,7 +473,7 @@ describe("Interpreter", () => {
 
     it("should interpret multiply call expression: non numbers", () => {
       expect(() => interpretExpression(`(* "Hello" 'a)`, env)).toThrow(
-        new SchemeTSError(`All arguments must be numbers`)
+        new CIDLangRuntimeError(`All arguments must be numbers`)
       );
     });
 
@@ -469,13 +483,17 @@ describe("Interpreter", () => {
 
     it("should interpret divide call expression: no args", () => {
       expect(() => interpretExpression(`(/)`, env)).toThrow(
-        new SchemeTSError(`Function '/' expects 2 arguments but received 0`)
+        new CIDLangRuntimeError(
+          `Function '/' expects 2 arguments but received 0`
+        )
       );
     });
 
     it("should interpret divide call expression: one arg", () => {
       expect(() => interpretExpression(`(/ 10)`, env)).toThrow(
-        new SchemeTSError(`Function '/' expects 2 arguments but received 1: 10`)
+        new CIDLangRuntimeError(
+          `Function '/' expects 2 arguments but received 1: 10`
+        )
       );
     });
 
@@ -485,25 +503,25 @@ describe("Interpreter", () => {
 
     it("should interpret divide call expression: non numbers", () => {
       expect(() => interpretExpression(`(/ "Hello" 'a)`, env)).toThrow(
-        new SchemeTSError(`All arguments must be numbers`)
+        new CIDLangRuntimeError(`All arguments must be numbers`)
       );
     });
 
     it("should interpret divide call expression: divide by zero", () => {
       expect(() => interpretExpression("(/ 10 0)", env)).toThrow(
-        new SchemeTSError("Dividing by zero")
+        new CIDLangRuntimeError("Dividing by zero")
       );
     });
 
     it("should interpret divide call expression: divide by zero (flipped)", () => {
       expect(() => interpretExpression("(/ 0 10)", env)).toThrow(
-        new SchemeTSError("Dividing by zero")
+        new CIDLangRuntimeError("Dividing by zero")
       );
     });
 
     it("should interpret divide call expression: divide by zero (both)", () => {
       expect(() => interpretExpression("(/ 0 0)", env)).toThrow(
-        new SchemeTSError("Dividing by zero")
+        new CIDLangRuntimeError("Dividing by zero")
       );
     });
 
@@ -521,13 +539,17 @@ describe("Interpreter", () => {
 
     it("should interpret greater than  call expression: no args", () => {
       expect(() => interpretExpression(`(>)`, env)).toThrow(
-        new SchemeTSError(`Function '>' expects 2 arguments but received 0`)
+        new CIDLangRuntimeError(
+          `Function '>' expects 2 arguments but received 0`
+        )
       );
     });
 
     it("should interpret greater than  call expression: one arg", () => {
       expect(() => interpretExpression(`(> 10)`, env)).toThrow(
-        new SchemeTSError(`Function '>' expects 2 arguments but received 1: 10`)
+        new CIDLangRuntimeError(
+          `Function '>' expects 2 arguments but received 1: 10`
+        )
       );
     });
 
@@ -537,7 +559,7 @@ describe("Interpreter", () => {
 
     it("should interpret greater than  call expression: non numbers", () => {
       expect(() => interpretExpression(`(> "Hello" 'a)`, env)).toThrow(
-        new SchemeTSError(`All arguments must be numbers`)
+        new CIDLangRuntimeError(`All arguments must be numbers`)
       );
     });
 
@@ -555,13 +577,17 @@ describe("Interpreter", () => {
 
     it("should interpret less than call expression: no args", () => {
       expect(() => interpretExpression(`(<)`, env)).toThrow(
-        new SchemeTSError(`Function '<' expects 2 arguments but received 0`)
+        new CIDLangRuntimeError(
+          `Function '<' expects 2 arguments but received 0`
+        )
       );
     });
 
     it("should interpret less than call expression: one arg", () => {
       expect(() => interpretExpression(`(< 10)`, env)).toThrow(
-        new SchemeTSError(`Function '<' expects 2 arguments but received 1: 10`)
+        new CIDLangRuntimeError(
+          `Function '<' expects 2 arguments but received 1: 10`
+        )
       );
     });
 
@@ -571,7 +597,7 @@ describe("Interpreter", () => {
 
     it("should interpret less than call expression: non numbers", () => {
       expect(() => interpretExpression(`(< "Hello" 'a)`, env)).toThrow(
-        new SchemeTSError(`All arguments must be numbers`)
+        new CIDLangRuntimeError(`All arguments must be numbers`)
       );
     });
 
@@ -690,7 +716,7 @@ describe("Interpreter", () => {
     const error = new Error("Not a valid value");
 
     expect(() => interpreter.interpretProgram(error)).toThrow(
-      new SchemeTSError(
+      new CIDLangRuntimeError(
         `Illegal expression. Value is not atomic or list expression: ${error}`
       )
     );
@@ -702,7 +728,7 @@ describe("Interpreter", () => {
 
     // @ts-expect-error Testing
     expect(() => interpreter.interpretProgram(symbol)).toThrow(
-      new SchemeTSError(
+      new CIDLangRuntimeError(
         `Illegal expression. Value is not atomic or list expression: ${String(
           symbol
         )}`
