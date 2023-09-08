@@ -86,6 +86,7 @@ export class Environment {
       return a / b;
     });
     env.set("boolean?", (a) => typeof a === "boolean");
+    env.set("number?", (a) => typeof a === "number");
     env.set("equal?", (a, b) => {
       if (Sym.is(a) && Sym.is(b)) {
         return a.name === b.name;

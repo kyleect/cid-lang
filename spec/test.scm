@@ -17,8 +17,11 @@
       (pass (string-append a b expected))
       (fail (string-append a b expected)))))
 
-;;; equal?
+(define assert
+  (lambda (value expected)
+    (test-equal? value expected #t)))
 
+;; equal?
 (test-equal? '() '() #t)
 (test-equal? 123 123 #t)
 (test-equal? 123 '123 #t)
@@ -26,6 +29,21 @@
 (test-equal? "Hello World!" '"Hello World!" #t)
 (test-equal? (list 1 2 3) (1 2 3) #f)
 (test-equal? (list 1 2 3) '(1 2 3) #f)
+
+;; number?
+(assert (number? 123) #t)
+(assert (number? '123) #t)
+(assert (number? 123.45) #t)
+(assert (number? -123) #t)
+(assert (number? -123.45) #t)
+(assert (number? "Hello") #f)
+(assert (number? ()) #f)
+(assert (number? (1)) #f)
+(assert (number? (1 2 3)) #f)
+(assert (number? 'a) #f)
+(assert (number? +) #f)
+
+;; Results
 
 (display "-----------")
 (display "RESULTS")

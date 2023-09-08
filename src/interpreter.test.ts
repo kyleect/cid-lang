@@ -41,6 +41,62 @@ describe("Interpreter", () => {
       expect(interpretExpression("-123.45", env)).toBe(-123.45);
     });
 
+    it("should interpret number? call expression: number", () => {
+      expect(interpretExpression(`(number? 123)`, env)).toBe(true);
+    });
+
+    it("should interpret number? call expression: quoted number", () => {
+      expect(interpretExpression(`(number? '123)`, env)).toBe(true);
+    });
+
+    it("should interpret number? call expression: negative number", () => {
+      expect(interpretExpression(`(number? -123)`, env)).toBe(true);
+    });
+
+    it("should interpret number? call expression: decimal", () => {
+      expect(interpretExpression(`(number? 123.45)`, env)).toBe(true);
+    });
+
+    it("should interpret number? call expression: negative decimal", () => {
+      expect(interpretExpression(`(number? -123.45)`, env)).toBe(true);
+    });
+
+    it("should interpret number? call expression: boolean true", () => {
+      expect(interpretExpression(`(number? #t)`, env)).toBe(false);
+    });
+
+    it("should interpret number? call expression: boolean false", () => {
+      expect(interpretExpression(`(number? #f)`, env)).toBe(false);
+    });
+
+    it("should interpret number? call expression: empty list", () => {
+      expect(interpretExpression(`(number? ())`, env)).toBe(false);
+    });
+
+    it("should interpret number? call expression: list with numbers", () => {
+      expect(interpretExpression(`(number? (1 2 3))`, env)).toBe(false);
+    });
+
+    it("should interpret number? call expression: list with number", () => {
+      expect(interpretExpression(`(number? (1))`, env)).toBe(false);
+    });
+
+    it("should interpret number? call expression: symbol", () => {
+      expect(interpretExpression(`(number? 'a)`, env)).toBe(false);
+    });
+
+    it("should interpret number? call expression: string", () => {
+      expect(interpretExpression(`(number? "Hello")`, env)).toBe(false);
+    });
+
+    it("should interpret number? call expression: zero args", () => {
+      expect(() => interpretExpression(`(number?)`, env)).toThrow(
+        new SchemeTSError(
+          `Function 'number?' expects 1 arguments but received 0`
+        )
+      );
+    });
+
     it("should intrepret string expressions", () => {
       expect(interpretExpression('"Hello World"', env)).toBe("Hello World");
     });
