@@ -16,11 +16,14 @@ describe("Interpreter", () => {
 
   it("should ignore comments", () => {
     expect(
-      interpretExpression(`
+      interpretExpression(
+        `
     ; Toggle
     (if #t #f #t) ; Flip
     ; )
-    `)
+    `,
+        env
+      )
     ).toStrictEqual(false);
   });
 
@@ -318,6 +321,21 @@ describe("Interpreter", () => {
           expect(interpretExpression("(lambda (x) x)", env)).toStrictEqual(
             "(lambda (x) x)"
           );
+        });
+
+        it("should interpret defining lambda expression", () => {
+          expect(() =>
+            interpretExpression(`(define fn (lambda (a b) (+ a b)))`, env)
+          ).not.toThrow();
+        });
+
+        it("should interpret defining lambda expression then calling", () => {
+          expect(
+            interpretExpression(
+              `(define fn (lambda (a b) (+ a b)))(fn 5 10)`,
+              env
+            )
+          ).toBe(15);
         });
 
         it("should interpret lambda expression calls", () => {
@@ -695,15 +713,13 @@ describe("Interpreter", () => {
 
 function interpretExpression(
   source: string,
-  testEnv?: Environment
+  env: Environment
 ): Expression | Procedure | ((...args) => Expression) {
   const tokenizer = Tokenizer.String(source);
   const tokens = tokenizer.tokenize();
 
   const parser = Parser.Token(tokens);
   const program = parser.parse();
-
-  const env = new Environment(null, testEnv);
 
   const interpreter = new Interpreter(env);
 

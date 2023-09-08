@@ -4,31 +4,31 @@
 (define pass
   (lambda (message)
     (set! passed (+ passed 1))
-    (display "Pass!:" message)))
+    (display "Pass!" message)))
 
 (define fail
   (lambda (message)
     (set! failed (+ failed 1))
-    (display "Failed!:" message)))
-
-(define test-equal?
-  (lambda (a b expected)
-    (if (equal? expected (equal? a b))
-      (pass (string-append a b expected))
-      (fail (string-append a b expected)))))
+    (display "Fail!" message)))
 
 (define assert
   (lambda (value expected)
-    (test-equal? value expected #t)))
+    (if (equal? value expected)
+      (pass (string-append "Value was expected to be" expected))
+      (fail (string-append "Value was expected to be" expected)))))
+
+(define assert-equal?
+  (lambda (a b expected)
+    (assert (equal? a b) expected)))
 
 ;; equal?
-(test-equal? '() '() #t)
-(test-equal? 123 123 #t)
-(test-equal? 123 '123 #t)
-(test-equal? "Hello World!" "Hello World!" #t)
-(test-equal? "Hello World!" '"Hello World!" #t)
-(test-equal? (list 1 2 3) (1 2 3) #f)
-(test-equal? (list 1 2 3) '(1 2 3) #f)
+(assert-equal? '() '() #t)
+(assert-equal? 123 123 #t)
+(assert-equal? 123 '123 #t)
+(assert-equal? "Hello World!" "Hello World!" #t)
+(assert-equal? "Hello World!" '"Hello World!" #t)
+(assert-equal? (list 1 2 3) (1 2 3) #f)
+(assert-equal? (list 1 2 3) '(1 2 3) #f)
 
 ;; number?
 (assert (number? 123) #t)
@@ -52,7 +52,5 @@
 (display "Failed:" failed)
 (display "-----------")
 
-(define exit-code failed)
-
-(display "Exit with code:" exit-code)
-(exit exit-code)
+(display "Exit with code:" failed)
+(exit failed)
