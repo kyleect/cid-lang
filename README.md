@@ -1,4 +1,4 @@
-# The CID Programming Language
+# 🧩 The CID Programming Language
 
 [![verify](https://github.com/kyleect/cid-lang/actions/workflows/ci.yml/badge.svg)](https://github.com/kyleect/cid-lang/actions/workflows/ci.yml)
 
