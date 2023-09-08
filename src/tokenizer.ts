@@ -82,6 +82,17 @@ export class StringTokenizer extends Tokenizer {
 
           break;
         }
+        case ";": {
+          while (
+            this.peek() !== ";" &&
+            this.peek() !== "\n" &&
+            this.peek() !== "\r" &&
+            !this.isAtEnd()
+          ) {
+            this.advance();
+          }
+          break;
+        }
         default:
           if (char === "-") {
             if (this.isDigit(this.peek())) {

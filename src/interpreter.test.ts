@@ -14,6 +14,16 @@ describe("Interpreter", () => {
     env = Environment.Default();
   });
 
+  it("should ignore comments", () => {
+    expect(
+      interpretExpression(`
+    ; Toggle
+    (if #t #f #t) ; Flip
+    ; )
+    `)
+    ).toStrictEqual(false);
+  });
+
   describe("atomics", () => {
     it("should intrepret number expressions", () => {
       expect(interpretExpression("123", env)).toBe(123);

@@ -224,6 +224,15 @@ describe("BaseParser", () => {
 
     expect(Object.is(result[0], EmptyListExpression)).toBe(true);
   });
+
+  it("should ignore comments", () => {
+    expect(
+      parseStringToExpressions(`
+    ; Toggle
+    (if #t #f #t) ; Flip
+    `)
+    ).toStrictEqual([[Sym.If, true, false, true]]);
+  });
 });
 
 function parseStringToExpressions(source: string): Expression {

@@ -17,7 +17,7 @@
       (pass (string-append a b expected))
       (fail (string-append a b expected)))))
 
-"equal?"
+;;; equal?
 
 (test-equal? '() '() #t)
 (test-equal? 123 123 #t)

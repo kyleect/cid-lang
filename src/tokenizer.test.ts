@@ -2,6 +2,14 @@ import { StringTokenizer } from "./tokenizer";
 import { Token } from "./token";
 
 describe("StringTokenizer", () => {
+  it("should not tokenize comments", () => {
+    expect(tokenize("() ;;; Test comment")).toStrictEqual([
+      Token.LeftBracket(0, 0),
+      Token.RightBracket(0, 1),
+      Token.Eof(0, 3),
+    ]);
+  });
+
   it("should tokenize empty string as EOF", () => {
     expect(tokenize("")).toStrictEqual([Token.Eof(0, 0)]);
   });
