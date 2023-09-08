@@ -113,6 +113,16 @@ export class Interpreter {
           const proc = this.#interpret(op, env);
 
           if (typeof proc === "function") {
+            if (args.length < proc.length) {
+              throw new SchemeTSError(
+                `Function '${op}' expects ${
+                  proc.length
+                } arguments but received ${args.length}${
+                  args.length > 0 ? `: ${args.join(", ")}` : ""
+                }`
+              );
+            }
+
             const interpretedArgs = args.map((arg) =>
               this.#interpret(arg, env)
             );

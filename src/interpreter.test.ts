@@ -315,12 +315,104 @@ describe("Interpreter", () => {
       expect(interpretExpression("(+ 10 15)", env)).toBe(25);
     });
 
+    it("should interpret addition call expression: no args", () => {
+      expect(() => interpretExpression(`(+)`, env)).toThrow(
+        new SchemeTSError(`Function '+' expects 2 arguments but received 0`)
+      );
+    });
+
+    it("should interpret addition call expression: one arg", () => {
+      expect(() => interpretExpression(`(+ 10)`, env)).toThrow(
+        new SchemeTSError(`Function '+' expects 2 arguments but received 1: 10`)
+      );
+    });
+
+    it("should interpret addition call expression: three args", () => {
+      expect(interpretExpression(`(+ 10 2 100)`, env)).toBe(12);
+    });
+
+    it("should interpret addition call expression: non numbers", () => {
+      expect(() => interpretExpression(`(+ "Hello" 'a)`, env)).toThrow(
+        new SchemeTSError(`All arguments must be numbers`)
+      );
+    });
+
+    it("should interpret substraction call expression", () => {
+      expect(interpretExpression("(- 10 15)", env)).toBe(-5);
+    });
+
+    it("should interpret substraction call expression: no args", () => {
+      expect(() => interpretExpression(`(-)`, env)).toThrow(
+        new SchemeTSError(`Function '-' expects 2 arguments but received 0`)
+      );
+    });
+
+    it("should interpret substraction call expression: one arg", () => {
+      expect(() => interpretExpression(`(- 10)`, env)).toThrow(
+        new SchemeTSError(`Function '-' expects 2 arguments but received 1: 10`)
+      );
+    });
+
+    it("should interpret substraction call expression: three args", () => {
+      expect(interpretExpression(`(- 10 2 100)`, env)).toBe(8);
+    });
+
+    it("should interpret substraction call expression: non numbers", () => {
+      expect(() => interpretExpression(`(- "Hello" 'a)`, env)).toThrow(
+        new SchemeTSError(`All arguments must be numbers`)
+      );
+    });
+
     it("should interpret multiply call expression", () => {
       expect(interpretExpression("(* 10 15)", env)).toBe(150);
     });
 
+    it("should interpret multiply call expression: no args", () => {
+      expect(() => interpretExpression(`(*)`, env)).toThrow(
+        new SchemeTSError(`Function '*' expects 2 arguments but received 0`)
+      );
+    });
+
+    it("should interpret multiply call expression: one arg", () => {
+      expect(() => interpretExpression(`(* 10)`, env)).toThrow(
+        new SchemeTSError(`Function '*' expects 2 arguments but received 1: 10`)
+      );
+    });
+
+    it("should interpret multiply call expression: three args", () => {
+      expect(interpretExpression(`(* 10 2 100)`, env)).toBe(20);
+    });
+
+    it("should interpret multiply call expression: non numbers", () => {
+      expect(() => interpretExpression(`(* "Hello" 'a)`, env)).toThrow(
+        new SchemeTSError(`All arguments must be numbers`)
+      );
+    });
+
     it("should interpret divide call expression", () => {
       expect(interpretExpression("(/ 10 5)", env)).toBe(2);
+    });
+
+    it("should interpret divide call expression: no args", () => {
+      expect(() => interpretExpression(`(/)`, env)).toThrow(
+        new SchemeTSError(`Function '/' expects 2 arguments but received 0`)
+      );
+    });
+
+    it("should interpret divide call expression: one arg", () => {
+      expect(() => interpretExpression(`(/ 10)`, env)).toThrow(
+        new SchemeTSError(`Function '/' expects 2 arguments but received 1: 10`)
+      );
+    });
+
+    it("should interpret divide call expression: three args", () => {
+      expect(interpretExpression(`(/ 10 2 100)`, env)).toBe(5);
+    });
+
+    it("should interpret divide call expression: non numbers", () => {
+      expect(() => interpretExpression(`(/ "Hello" 'a)`, env)).toThrow(
+        new SchemeTSError(`All arguments must be numbers`)
+      );
     });
 
     it("should interpret divide call expression: divide by zero", () => {
@@ -351,6 +443,62 @@ describe("Interpreter", () => {
 
     it("should interpret greater than call expression: is equal", () => {
       expect(interpretExpression("(> 10 10)", env)).toBe(false);
+    });
+
+    it("should interpret greater than  call expression: no args", () => {
+      expect(() => interpretExpression(`(>)`, env)).toThrow(
+        new SchemeTSError(`Function '>' expects 2 arguments but received 0`)
+      );
+    });
+
+    it("should interpret greater than  call expression: one arg", () => {
+      expect(() => interpretExpression(`(> 10)`, env)).toThrow(
+        new SchemeTSError(`Function '>' expects 2 arguments but received 1: 10`)
+      );
+    });
+
+    it("should interpret greater than  call expression: three args", () => {
+      expect(interpretExpression(`(> 10 2 100)`, env)).toBe(true);
+    });
+
+    it("should interpret greater than  call expression: non numbers", () => {
+      expect(() => interpretExpression(`(> "Hello" 'a)`, env)).toThrow(
+        new SchemeTSError(`All arguments must be numbers`)
+      );
+    });
+
+    it("should interpret less than call expression: is less than", () => {
+      expect(interpretExpression("(< 1 10)", env)).toBe(true);
+    });
+
+    it("should interpret less than call expression: is not less than", () => {
+      expect(interpretExpression("(< 10 1)", env)).toBe(false);
+    });
+
+    it("should interpret less than call expression: is equal", () => {
+      expect(interpretExpression("(< 10 10)", env)).toBe(false);
+    });
+
+    it("should interpret less than call expression: no args", () => {
+      expect(() => interpretExpression(`(<)`, env)).toThrow(
+        new SchemeTSError(`Function '<' expects 2 arguments but received 0`)
+      );
+    });
+
+    it("should interpret less than call expression: one arg", () => {
+      expect(() => interpretExpression(`(< 10)`, env)).toThrow(
+        new SchemeTSError(`Function '<' expects 2 arguments but received 1: 10`)
+      );
+    });
+
+    it("should interpret less than call expression: three args", () => {
+      expect(interpretExpression(`(< 2 10 100)`, env)).toBe(true);
+    });
+
+    it("should interpret less than call expression: non numbers", () => {
+      expect(() => interpretExpression(`(< "Hello" 'a)`, env)).toThrow(
+        new SchemeTSError(`All arguments must be numbers`)
+      );
     });
 
     describe("display", () => {

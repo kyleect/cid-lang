@@ -40,10 +40,46 @@ export class Environment {
   static Default(): Environment {
     const env = new Environment(new Map());
 
-    env.set("+", (a, b) => a + b);
-    env.set(">", (a, b) => a > b);
-    env.set("*", (a, b) => a * b);
+    env.set("+", (a, b) => {
+      if (typeof a !== "number" || typeof b !== "number") {
+        throw new SchemeTSError("All arguments must be numbers");
+      }
+
+      return a + b;
+    });
+    env.set("-", (a, b) => {
+      if (typeof a !== "number" || typeof b !== "number") {
+        throw new SchemeTSError("All arguments must be numbers");
+      }
+
+      return a - b;
+    });
+    env.set(">", (a, b) => {
+      if (typeof a !== "number" || typeof b !== "number") {
+        throw new SchemeTSError("All arguments must be numbers");
+      }
+
+      return a > b;
+    });
+    env.set("<", (a, b) => {
+      if (typeof a !== "number" || typeof b !== "number") {
+        throw new SchemeTSError("All arguments must be numbers");
+      }
+
+      return a < b;
+    });
+    env.set("*", (a, b) => {
+      if (typeof a !== "number" || typeof b !== "number") {
+        throw new SchemeTSError("All arguments must be numbers");
+      }
+
+      return a * b;
+    });
     env.set("/", (a, b) => {
+      if (typeof a !== "number" || typeof b !== "number") {
+        throw new SchemeTSError("All arguments must be numbers");
+      }
+
       if (a === 0 || b === 0) {
         throw new SchemeTSError("Dividing by zero");
       }
