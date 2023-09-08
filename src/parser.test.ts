@@ -1,4 +1,4 @@
-import { CIDLangSyntaxError } from "./exceptions";
+import { CIDLangSyntaxError } from "./errors";
 import { EmptyListExpression, Expression } from "./expression";
 import { Parser } from "./parser";
 import { Sym } from "./symbol";

@@ -1,4 +1,4 @@
-import { CIDLangError } from "./exceptions";
+import { CIDLangError } from "./errors";
 import { Sym } from "./symbol";
 
 export class Environment {

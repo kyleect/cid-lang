@@ -1,4 +1,4 @@
-import { CIDLangSyntaxError } from "./exceptions";
+import { CIDLangSyntaxError } from "./errors";
 import {
   AtomicExpression,
   EmptyListExpression,

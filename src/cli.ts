@@ -2,7 +2,7 @@
 
 import { exec } from ".";
 import { readFileSync } from "fs";
-import { CIDLangExitError, CIDLangSyntaxError } from "./exceptions";
+import { CIDLangError } from "./errors";
 
 const filename = process.argv?.[2];
 
@@ -20,15 +20,15 @@ try {
   const results = exec(s);
   console.log(results);
 } catch (e) {
-  if (e instanceof CIDLangExitError) {
-    process.exit(e.exitCode);
-  }
+  if (CIDLangError.isError(e)) {
+    if (CIDLangError.isExitError(e)) {
+      process.exit(e.exitCode);
+    }
 
-  if (e instanceof CIDLangSyntaxError) {
     console.log(`${e}`);
     process.exit(1);
   }
 
-  console.log(`There was an error throw: ${e}`);
+  console.log(`There was an non CID error throw: ${e}`);
   process.exit(1);
 }

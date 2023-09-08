@@ -1,5 +1,5 @@
 import { Environment } from "./env";
-import { CIDLangRuntimeError } from "./exceptions";
+import { CIDLangRuntimeError } from "./errors";
 import { EmptyListExpression, Expression } from "./expression";
 import { Interpreter } from "./interpreter";
 import { Parser } from "./parser";

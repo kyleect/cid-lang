@@ -1,4 +1,4 @@
-import { CIDLangError } from "./exceptions";
+import { CIDLangError } from "./errors";
 
 /**
  * Symbolic Variable
