@@ -431,7 +431,7 @@ describe("Interpreter", () => {
     const interpreter = new Interpreter();
     const error = new Error("Not a valid value");
 
-    expect(() => interpreter.interpret(error)).toThrow(
+    expect(() => interpreter.interpretProgram(error)).toThrow(
       new SchemeTSError(
         `Illegal expression. Value is not atomic or list expression: ${error}`
       )
@@ -443,7 +443,7 @@ describe("Interpreter", () => {
     const symbol = Symbol("Not a valid value");
 
     // @ts-expect-error Testing
-    expect(() => interpreter.interpret(symbol)).toThrow(
+    expect(() => interpreter.interpretProgram(symbol)).toThrow(
       new SchemeTSError(
         `Illegal expression. Value is not atomic or list expression: ${String(
           symbol

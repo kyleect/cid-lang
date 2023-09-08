@@ -18,19 +18,16 @@ export class Interpreter {
       let result: Expression;
 
       for (const expression of program) {
-        result = this.interpret(expression);
+        result = this.#interpret(expression);
       }
 
       return result;
     }
 
-    return this.interpret(program);
+    return this.#interpret(program);
   }
 
-  public interpret(
-    expression: Expression,
-    env: Environment = this.env
-  ): Expression {
+  #interpret(expression: Expression, env: Environment = this.env): Expression {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       if (isAtomicExpression(expression)) {
@@ -71,7 +68,7 @@ export class Interpreter {
             const [symbol, expr] = args;
 
             const name = (symbol as Sym).name;
-            const value = this.interpret(expr, env);
+            const value = this.#interpret(expr, env);
 
             env.set(name, value);
             return;
@@ -83,7 +80,7 @@ export class Interpreter {
             const name = (symbol as Sym).name;
 
             if (env.has(name)) {
-              const value = this.interpret(expr, env);
+              const value = this.#interpret(expr, env);
 
               env.set(name, value);
               return;
@@ -106,17 +103,19 @@ export class Interpreter {
 
           if (op === Sym.If) {
             const [test, conseq, alt] = args;
-            const result = this.interpret(test, env);
+            const result = this.#interpret(test, env);
 
             expression = result ? conseq : alt;
             continue;
           }
 
           // Built In Functions Or Procedures
-          const proc = this.interpret(op, env);
+          const proc = this.#interpret(op, env);
 
           if (typeof proc === "function") {
-            const interpretedArgs = args.map((arg) => this.interpret(arg, env));
+            const interpretedArgs = args.map((arg) =>
+              this.#interpret(arg, env)
+            );
             return proc(...interpretedArgs);
           }
         }
@@ -137,16 +136,16 @@ export class Interpreter {
 
           if (op.body.length > 1) {
             for (const expr of op.body.slice(0, -1)) {
-              this.interpret(expr, procEnv);
+              this.#interpret(expr, procEnv);
             }
           }
 
-          return this.interpret(op.body.at(-1), procEnv);
+          return this.#interpret(op.body.at(-1), procEnv);
         }
 
         // Handle all remaining list expressions
 
-        const e = expression.map((e) => this.interpret(e, env));
+        const e = expression.map((e) => this.#interpret(e, env));
 
         if (e[0] instanceof Procedure) {
           expression = e;
