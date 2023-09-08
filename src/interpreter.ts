@@ -10,9 +10,17 @@ import {
 import { Procedure } from "./procedure";
 import { Sym } from "./symbol";
 
+/**
+ * Interprets expressions of a program in to a resulting expression
+ */
 export class Interpreter {
   constructor(public env: Environment = Environment.Default()) {}
 
+  /**
+   * Interpret program (expression/expressions) and return result expression
+   * @param {Expression} program Expression representing the program to interpret
+   * @returns Result of program's last interpreted expression
+   */
   public interpretProgram(program: Expression): Expression {
     if (isListExpression(program)) {
       let result: Expression;
@@ -27,9 +35,17 @@ export class Interpreter {
     return this.#interpret(program);
   }
 
+  /**
+   * Interpret an individual expression
+   * @param expression Expression to interpret
+   * @param env Environment to use for interpretation
+   * @returns Result of expression's interpretation
+   */
   #interpret(expression: Expression, env: Environment = this.env): Expression {
+    // This while loop is used for tail call optimization
     // eslint-disable-next-line no-constant-condition
     while (true) {
+      // Handle atomic expressions first: Sym | number | string | boolean
       if (isAtomicExpression(expression)) {
         if (Sym.is(expression)) {
           if (Sym.isKeyword(expression)) {
@@ -50,15 +66,18 @@ export class Interpreter {
         return expression;
       }
 
+      // Handle non atomic expressions as list expressions: (AtomicExpression | ListExpression)[]
       if (isListExpression(expression)) {
         const [op, ...args] = expression;
 
+        // Empty lists should return reference to empty list constant
         if (expression === EmptyListExpression) {
-          return expression;
+          return EmptyListExpression;
         }
 
+        // Handle call expressions: [Sym, ...Expression]
         if (Sym.is(op)) {
-          // Keywords
+          // Special Expression Forms
 
           if (op === Sym.Quote) {
             return args[0];
@@ -109,9 +128,9 @@ export class Interpreter {
             continue;
           }
 
-          // Built In Functions Or Procedures
-          const proc = this.#interpret(op, env);
+          // Built In Functions
 
+          const proc = this.#interpret(op, env);
           if (typeof proc === "function") {
             if (args.length < proc.length) {
               throw new SchemeTSError(
@@ -126,10 +145,12 @@ export class Interpreter {
             const interpretedArgs = args.map((arg) =>
               this.#interpret(arg, env)
             );
+
             return proc(...interpretedArgs);
           }
         }
 
+        // Handle procedure calls
         if (op instanceof Procedure) {
           const procArgValuePairs: [string, Expression][] = op.params.map(
             (sym, i) => [sym.name, args?.[i]]
@@ -154,9 +175,7 @@ export class Interpreter {
         }
 
         // Handle all remaining list expressions
-
         const e = expression.map((e) => this.#interpret(e, env));
-
         if (e[0] instanceof Procedure) {
           expression = e;
           continue;
@@ -165,11 +184,9 @@ export class Interpreter {
         }
       }
 
-      // Value passed as expression is not a valid expression
-
+      // Handle invalid expressions
       const expressionStringValue =
         typeof expression === "symbol" ? String(expression) : expression;
-
       throw new SchemeTSError(
         `Illegal expression. Value is not atomic or list expression: ${expressionStringValue}`
       );
