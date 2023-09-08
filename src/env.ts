@@ -1,9 +1,11 @@
+import { Sym } from "./symbol";
+
 export class Environment {
   constructor(
     private values?: Map<string, unknown>,
     private enclosing?: Environment
   ) {
-    if (typeof this.values === "undefined") {
+    if (typeof this.values === "undefined" || this.values === null) {
       this.values = new Map();
     }
   }
@@ -40,10 +42,17 @@ export class Environment {
     env.set("+", (a, b) => a + b);
     env.set(">", (a, b) => a > b);
     env.set("boolean?", (a) => typeof a === "boolean");
-    env.set("equal?", (a, b) => Object.is(a, b));
+    env.set("equal?", (a, b) => {
+      if (a instanceof Sym && b instanceof Sym) {
+        return a.name === b.name;
+      }
+
+      return Object.is(a, b);
+    });
     env.set("list", (...args) => args);
     env.set("display", (...args) => console.log(...args));
     env.set("exit", (a) => process.exit(a));
+    env.set("string-append", (...args) => args.join(" "));
 
     return env;
   }

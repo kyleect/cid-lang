@@ -8,7 +8,8 @@
 		"vscode": {
 			"extensions": [
 				"Orta.vscode-jest",
-				"esbenp.prettier-vscode"
+				"esbenp.prettier-vscode",
+				"eamodio.gitlens"
 			]
 		}
 	},

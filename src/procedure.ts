@@ -8,4 +8,8 @@ export class Procedure {
     public body: Expression[],
     public closure: Environment
   ) {}
+
+  toString() {
+    return "#prodedure";
+  }
 }

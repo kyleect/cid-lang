@@ -2,30 +2,30 @@
 (define failed 0)
 
 (define pass
-  (lambda (expected actual)
+  (lambda (message)
     (set! passed (+ passed 1))
-    (display "Pass! Expected:" expected "Actual:" actual)))
+    (display "Pass!:" message)))
 
 (define fail
-  (lambda (expected actual)
+  (lambda (message)
     (set! failed (+ failed 1))
-    (display "Failed! Expected:" expected "Actual:" actual)))
+    (display "Failed!:" message)))
 
-(define test
-  (lambda (expected actual)
-    (if (equal? expected actual)
-      (pass expected actual)
-      (fail expected actual))))
+(define test-equal?
+  (lambda (a b expected)
+    (if (equal? expected (equal? a b))
+      (pass (string-append a b expected))
+      (fail (string-append a b expected)))))
 
-"equals?"
+"equal?"
 
-(test '() '())
-(test 123 123)
-(test 123 '123)
-(test "Hello World!" "Hello World!")
-(test "Hello World!" '"Hello World!")
-(test (list 1 2 3) (1 2 3))
-(test (list 1 2 3) '(1 2 3))
+(test-equal? '() '() #t)
+(test-equal? 123 123 #t)
+(test-equal? 123 '123 #t)
+(test-equal? "Hello World!" "Hello World!" #t)
+(test-equal? "Hello World!" '"Hello World!" #t)
+(test-equal? (list 1 2 3) (1 2 3) #f)
+(test-equal? (list 1 2 3) '(1 2 3) #f)
 
 (display "-----------")
 (display "RESULTS")

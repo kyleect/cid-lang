@@ -1,5 +1,5 @@
 import { SchemeTSSyntaxError } from "./exceptions";
-import { Expression } from "./expression";
+import { EmptyListExpression, Expression } from "./expression";
 import { Parser } from "./parser";
 import { Sym } from "./symbol";
 import { Tokenizer } from "./tokenizer";
@@ -87,10 +87,57 @@ describe("BaseParser", () => {
     ]);
   });
 
-  it("should parse short quote expressions", () => {
+  it("should parse short quote expressions: call expression", () => {
     expect(parseStringToExpressions("'(+ 1 2)")).toStrictEqual([
-      Sym.Quote,
-      [Sym.of("+"), 1, 2],
+      [Sym.Quote, [Sym.of("+"), 1, 2]],
+    ]);
+  });
+
+  it("should parse short quote expressions: number expression", () => {
+    expect(parseStringToExpressions("'123")).toStrictEqual([[Sym.Quote, 123]]);
+  });
+
+  it("should parse short quote expressions: symbol expression", () => {
+    expect(parseStringToExpressions("'a")).toStrictEqual([
+      [Sym.Quote, Sym.of("a")],
+    ]);
+  });
+
+  it("should parse short quote expressions: string expression", () => {
+    expect(parseStringToExpressions(`'"Hello World"`)).toStrictEqual([
+      [Sym.Quote, "Hello World"],
+    ]);
+  });
+
+  it("should parse short quote expressions: list expression", () => {
+    expect(parseStringToExpressions(`'(1 a "Hello")`)).toStrictEqual([
+      [Sym.Quote, [1, Sym.of("a"), "Hello"]],
+    ]);
+  });
+
+  it("should parse short quote expressions: double quoted list expression", () => {
+    expect(parseStringToExpressions(`''(1 a "Hello")`)).toStrictEqual([
+      [Sym.Quote, [Sym.Quote, [1, Sym.of("a"), "Hello"]]],
+    ]);
+  });
+
+  it("should parse short quote expressions: boolean: true", () => {
+    expect(parseStringToExpressions(`'#t`)).toStrictEqual([[Sym.Quote, true]]);
+  });
+
+  it("should parse short quote expressions: boolean: false", () => {
+    expect(parseStringToExpressions(`'#f`)).toStrictEqual([[Sym.Quote, false]]);
+  });
+
+  it("should parse short quote expressions: if special form", () => {
+    expect(parseStringToExpressions("'(if #t #f #t)")).toStrictEqual([
+      [Sym.Quote, [Sym.If, true, false, true]],
+    ]);
+  });
+
+  it("should parse short quote expressions: define special form", () => {
+    expect(parseStringToExpressions("'(define a 100)")).toStrictEqual([
+      [Sym.Quote, [Sym.Define, Sym.of("a"), 100]],
     ]);
   });
 
@@ -172,8 +219,10 @@ describe("BaseParser", () => {
     ]);
   });
 
-  it("should parse empty parans as list expression", () => {
-    expect(parseStringToExpressions("()")).toStrictEqual([[]]);
+  it("should parse empty parans as the empty list expression", () => {
+    const result = parseStringToExpressions("()");
+
+    expect(Object.is(result[0], EmptyListExpression)).toBe(true);
   });
 });
 

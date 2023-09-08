@@ -1,6 +1,6 @@
 import { Expression } from "./expression";
 import { Interpreter } from "./interpreter";
-import { Parser, TokenParser } from "./parser";
+import { TokenParser } from "./parser";
 import { StringTokenizer, Tokenizer } from "./tokenizer";
 
 export function exec(

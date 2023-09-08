@@ -6,6 +6,8 @@ export type ListExpression = (AtomicExpression | ListExpression)[];
 export type Expression = AtomicExpression | ListExpression;
 export type Program = Expression[];
 
+export const EmptyListExpression: ListExpression = [];
+
 export function isAtomicExpression(value: unknown): value is AtomicExpression {
   if (typeof value === "number") {
     return true;

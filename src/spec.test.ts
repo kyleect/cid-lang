@@ -12,6 +12,13 @@ describe("spec", () => {
     env.set("display", displayStub);
 
     const exit = jest.fn();
+
+    exit.mockImplementation((exitCode) => {
+      if (exitCode > 0) {
+        throw new Error(`test.scm failed ${exitCode} tests`);
+      }
+    });
+
     env.set("exit", exit);
 
     expect(() => exec(fileContents, env)).not.toThrow();

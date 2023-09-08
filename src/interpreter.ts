@@ -1,6 +1,7 @@
 import { Environment } from "./env";
 import { SchemeTSError } from "./exceptions";
 import {
+  EmptyListExpression,
   Expression,
   ListExpression,
   isAtomicExpression,
@@ -10,8 +11,6 @@ import { Procedure } from "./procedure";
 import { Sym } from "./symbol";
 
 export class Interpreter {
-  #previousExpression: Expression;
-
   constructor(public env: Environment = Environment.Default()) {}
 
   public interpretProgram(program: Expression): Expression {
@@ -20,7 +19,6 @@ export class Interpreter {
 
       for (const expression of program) {
         result = this.interpret(expression);
-        this.#previousExpression = result;
       }
 
       return result;
@@ -38,10 +36,6 @@ export class Interpreter {
       if (isAtomicExpression(expression)) {
         if (expression instanceof Sym) {
           if (Sym.isKeyword(expression)) {
-            if (expression === Sym.Quote) {
-              return expression;
-            }
-
             throw new SchemeTSError(
               `Illegal reference to keyword: ${expression.name}`
             );
@@ -60,11 +54,11 @@ export class Interpreter {
       }
 
       if (isListExpression(expression)) {
-        if (this.#previousExpression === Sym.Quote) {
+        const [op, ...args] = expression;
+
+        if (expression === EmptyListExpression) {
           return expression;
         }
-
-        const [op, ...args] = expression;
 
         if (op instanceof Sym) {
           // Keywords
@@ -77,9 +71,9 @@ export class Interpreter {
             const [symbol, expr] = args;
 
             const name = (symbol as Sym).name;
-            const value = this.interpret(expr, this.env);
+            const value = this.interpret(expr, env);
 
-            this.env.set(name, value);
+            env.set(name, value);
             return;
           }
 
@@ -88,10 +82,10 @@ export class Interpreter {
 
             const name = (symbol as Sym).name;
 
-            if (this.env.has(name)) {
-              const value = this.interpret(expr, this.env);
+            if (env.has(name)) {
+              const value = this.interpret(expr, env);
 
-              this.env.set(name, value);
+              env.set(name, value);
               return;
             }
 
@@ -120,9 +114,9 @@ export class Interpreter {
 
           // Built In Functions Or Procedures
           const proc = this.interpret(op, env);
-          const interpretedArgs = args.map((arg) => this.interpret(arg, env));
 
           if (typeof proc === "function") {
+            const interpretedArgs = args.map((arg) => this.interpret(arg, env));
             return proc(...interpretedArgs);
           }
         }

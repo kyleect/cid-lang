@@ -1,5 +1,9 @@
 import { SchemeTSSyntaxError } from "./exceptions";
-import { AtomicExpression, Expression } from "./expression";
+import {
+  AtomicExpression,
+  EmptyListExpression,
+  Expression,
+} from "./expression";
 import { Sym } from "./symbol";
 import { Token, TokenType } from "./token";
 
@@ -34,12 +38,18 @@ export class TokenParser implements Parser {
   #expression(): Expression {
     let expression: Expression;
 
-    if (this.#match(TokenType.LeftBracket)) {
-      expression = [];
+    if (this.#check(TokenType.LeftBracket)) {
+      this.#advance();
 
-      while (!this.#check(TokenType.RightBracket)) {
-        const valueExpression = this.#expression();
-        expression.push(valueExpression);
+      if (this.#check(TokenType.RightBracket)) {
+        expression = EmptyListExpression;
+      } else {
+        expression = [];
+
+        while (!this.#check(TokenType.RightBracket)) {
+          const valueExpression = this.#expression();
+          expression.push(valueExpression);
+        }
       }
     }
 
@@ -55,8 +65,8 @@ export class TokenParser implements Parser {
       expression = token.getLiteral() as AtomicExpression;
     }
 
-    if (this.#check(TokenType.Quote)) {
-      expression = Sym.Quote;
+    if (this.#match(TokenType.Quote)) {
+      return [Sym.Quote, this.#expression()];
     }
 
     if (this.#check(TokenType.Symbol)) {

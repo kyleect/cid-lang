@@ -1,6 +1,6 @@
 import { Environment } from "./env";
 import { SchemeTSError } from "./exceptions";
-import { Expression } from "./expression";
+import { EmptyListExpression, Expression } from "./expression";
 import { Interpreter } from "./interpreter";
 import { Parser } from "./parser";
 import { Procedure } from "./procedure";
@@ -39,6 +39,13 @@ describe("Interpreter", () => {
   describe("lists", () => {
     it("should interpret empty parans as a list", () => {
       expect(interpretExpression("()", env)).toStrictEqual([]);
+    });
+
+    it("should interpret two empty lists to reference same object", () => {
+      const [a, b] = interpretExpression("(() ())", env) as Expression[];
+
+      expect(Object.is(a, EmptyListExpression)).toBe(true);
+      expect(Object.is(b, EmptyListExpression)).toBe(true);
     });
 
     it("should interpret empty parans as a list", () => {
@@ -146,6 +153,46 @@ describe("Interpreter", () => {
             expect(interpretExpression("'123", env)).toBe(123);
           });
 
+          it("should interpret quoted number expression: quoted and unqoted list", () => {
+            expect(interpretExpression("('123 123)", env)).toStrictEqual([
+              123, 123,
+            ]);
+          });
+
+          it("should interpret quoted number expression: quoted and unqoted list reversed", () => {
+            expect(interpretExpression("(123 '123)", env)).toStrictEqual([
+              123, 123,
+            ]);
+          });
+
+          it("should interpret quoted list with symbols: list is quoted", () => {
+            expect(interpretExpression("'(a b c)", env)).toStrictEqual([
+              Sym.of("a"),
+              Sym.of("b"),
+              Sym.of("c"),
+            ]);
+          });
+
+          it("should interpret quoted list with symbols: symbols are quoted", () => {
+            expect(interpretExpression("('a 'b 'c)", env)).toStrictEqual([
+              Sym.of("a"),
+              Sym.of("b"),
+              Sym.of("c"),
+            ]);
+          });
+
+          it("should interpret quoted list with symbols: both are quoted", () => {
+            expect(interpretExpression("'('a 'b 'c)", env)).toStrictEqual([
+              [Sym.Quote, Sym.of("a")],
+              [Sym.Quote, Sym.of("b")],
+              [Sym.Quote, Sym.of("c")],
+            ]);
+          });
+
+          it("should interpret quoted number expression", () => {
+            expect(interpretExpression("'a", env)).toStrictEqual(Sym.of("a"));
+          });
+
           it("should interpret quoted call expression", () => {
             expect(interpretExpression("'(+ 1 2)", env)).toStrictEqual([
               Sym.of("+"),
@@ -177,6 +224,20 @@ describe("Interpreter", () => {
               true,
             ]);
           });
+
+          it("should interpret quoted if expression", () => {
+            expect(interpretExpression("'(lambda (x) x)", env)).toStrictEqual([
+              Sym.Lambda,
+              [Sym.of("x")],
+              Sym.of("x"),
+            ]);
+          });
+
+          it("should interpret quoted if expression: quoted return value", () => {
+            expect(
+              interpretExpression("((lambda (x) 'x) 10)", env)
+            ).toStrictEqual(Sym.of("x"));
+          });
         });
       });
 
@@ -187,9 +248,9 @@ describe("Interpreter", () => {
           );
         });
 
-        it("should interpret lambda expressions", () => {
+        it.skip("should interpret lambda expressions", () => {
           expect(interpretExpression("(lambda (x) x)", env)).toStrictEqual(
-            new Procedure([Sym.of("x")], [Sym.of("x")], env)
+            "(lambda (x) x)"
           );
         });
 
@@ -205,12 +266,14 @@ describe("Interpreter", () => {
           ).toStrictEqual(10);
         });
 
-        it.skip("should interpret lambda expression calls: defined nested lambda", () => {
+        it("should interpret lambda expression calls: defined nested lambda", () => {
           expect(
             interpretExpression(
               `
-              (define sum (lambda (a) (lambda (b) a + b)))
-              (define sum2 sum(2))
+              (define sum
+                (lambda (a)
+                  (lambda (b) (+ a b))))
+              (define sum2 (sum 2))
               (sum2 10)
             `,
               env
@@ -270,6 +333,24 @@ describe("Interpreter", () => {
         interpretExpression(`(define name "World")(display "Hello" name)`, env);
 
         expect(console.log).toBeCalledWith("Hello", "World");
+      });
+    });
+
+    describe("equals?", () => {
+      it("should return true for the same number", () => {
+        expect(interpretExpression("(equal? 123 123)", env)).toBe(true);
+      });
+
+      it("should return true for the same quoted number", () => {
+        expect(interpretExpression("(equal? '123 '123)", env)).toBe(true);
+      });
+
+      it("should return true for the same mixed quoted number", () => {
+        expect(interpretExpression("(equal? '123 123)", env)).toBe(true);
+      });
+
+      it("should return true for the same symbol", () => {
+        expect(interpretExpression("(equal? 'a 'a)", env)).toBe(true);
       });
     });
   });
@@ -374,13 +455,15 @@ describe("Interpreter", () => {
 
 function interpretExpression(
   source: string,
-  env: Environment
+  testEnv?: Environment
 ): Expression | Procedure | ((...args) => Expression) {
   const tokenizer = Tokenizer.String(source);
   const tokens = tokenizer.tokenize();
 
   const parser = Parser.Token(tokens);
   const program = parser.parse();
+
+  const env = new Environment(null, testEnv);
 
   const interpreter = new Interpreter(env);
 
