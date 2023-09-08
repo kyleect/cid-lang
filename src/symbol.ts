@@ -8,20 +8,47 @@ export class Sym {
 
   static keywords: Sym[] = [];
 
+  /**
+   * Check if value is a Sym
+   * @param value Value to check
+   * @returns If value is an instance of Sym
+   */
   static is(value: unknown): value is Sym {
     return value instanceof Sym;
   }
 
+  /**
+   * Register a keyword sym
+   *
+   * This prevents a Sym being created of the same name as the keyword
+   *
+   * @param name Name of keyword
+   * @returns Sym for the keyword
+   */
   static keyword(name: string): Sym {
     const sym = Sym.of(name);
     Sym.keywords.push(sym);
     return sym;
   }
 
-  static isKeyword(sym: Sym): boolean {
-    return this.keywords.includes(sym);
+  /**
+   * Check if value is a keyword Sym
+   * @param value VAlue to check
+   * @returns If value is a keword Sym
+   */
+  static isKeyword(value: unknown): boolean {
+    if (!Sym.is(value)) {
+      return false;
+    }
+
+    return this.keywords.includes(value);
   }
 
+  /**
+   * Check if name matches a keyword Sym
+   * @param name Name of keyword to check
+   * @returns If name matches a keyword Sym
+   */
   static isKeywordByName(name: string): boolean {
     return (
       typeof this.keywords.find((keyword) => keyword.name === name) !==
@@ -34,9 +61,11 @@ export class Sym {
   }
 
   /**
-   * Create symbolic variable from string
-   * @param name Name for variable
-   * @returns New symbolic variable with name
+   * Create Sym from name string
+   *
+   * Will throw if name matches a keyword Sym
+   * @param name Name for Sym
+   * @returns Newly created Sym with name
    */
   static of(name: string): Sym {
     if (Sym.isKeywordByName(name)) {
@@ -47,35 +76,35 @@ export class Sym {
   }
 
   /**
-   * Symbolic variable for define
+   * Reference to define keyword Sym
    */
   static get Define(): Sym {
     return defineSymbol;
   }
 
   /**
-   * Symbolic variable for quote
+   * Reference to quote keyword Sym
    */
   static get Quote(): Sym {
     return quoteSymbol;
   }
 
   /**
-   * Symbolic variable for lambda
+   * Reference to lambda keyword Sym
    */
   static get Lambda(): Sym {
     return lambdaSymbol;
   }
 
   /**
-   * Symbolic variable for if
+   * Reference to if keyword Sym
    */
   static get If(): Sym {
     return ifSymbol;
   }
 
   /**
-   * Symbolic variable for set!
+   * Reference to set! keyword Sym
    */
   static get Set(): Sym {
     return setSymbol;
