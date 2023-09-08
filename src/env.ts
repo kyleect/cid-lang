@@ -43,7 +43,7 @@ export class Environment {
     env.set(">", (a, b) => a > b);
     env.set("boolean?", (a) => typeof a === "boolean");
     env.set("equal?", (a, b) => {
-      if (a instanceof Sym && b instanceof Sym) {
+      if (Sym.is(a) && Sym.is(b)) {
         return a.name === b.name;
       }
 

@@ -21,7 +21,7 @@ export function isAtomicExpression(value: unknown): value is AtomicExpression {
     return true;
   }
 
-  if (value instanceof Sym) {
+  if (Sym.is(value)) {
     return true;
   }
 

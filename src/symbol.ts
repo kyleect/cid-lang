@@ -8,6 +8,10 @@ export class Sym {
 
   static keywords: Sym[] = [];
 
+  static is(value: unknown): value is Sym {
+    return value instanceof Sym;
+  }
+
   static keyword(name: string): Sym {
     const sym = Sym.of(name);
     Sym.keywords.push(sym);

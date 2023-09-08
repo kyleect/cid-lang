@@ -31,7 +31,7 @@ export class Interpreter {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       if (isAtomicExpression(expression)) {
-        if (expression instanceof Sym) {
+        if (Sym.is(expression)) {
           if (Sym.isKeyword(expression)) {
             throw new SchemeTSError(
               `Illegal reference to keyword: ${expression.name}`
@@ -57,7 +57,7 @@ export class Interpreter {
           return expression;
         }
 
-        if (op instanceof Sym) {
+        if (Sym.is(op)) {
           // Keywords
 
           if (op === Sym.Quote) {
