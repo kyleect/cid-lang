@@ -21,8 +21,7 @@ exec(`
 ### CLI
 
 ```bash
-npm run build
-./dist/cli.js spec/test.scm
+npm run build && ./dist/cli.js spec/test.scm
 ```
 
 ### REPL
