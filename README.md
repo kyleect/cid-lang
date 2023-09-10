@@ -21,13 +21,17 @@ exec(`
 ### CLI
 
 ```bash
-npm run --silent cli -- example.scm
+npm run build
+./dist/cli.js spec/test.scm
 ```
 
 ### REPL
 
 ```bash
-npm start
+npm build && ./dist/repl.js
+
+CID> (+ 10 25)
+35
 ```
 
 ## Differences To Scheme (So Far)
