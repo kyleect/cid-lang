@@ -1,4 +1,5 @@
 import { CIDLangError } from "./errors";
+import { car, cdr, cons, isPairExpression } from "./expression";
 import { Sym } from "./symbol";
 
 export class Environment {
@@ -98,6 +99,10 @@ export class Environment {
     env.set("display", (...args) => console.log(...args));
     env.set("exit", (a) => process.exit(a));
     env.set("string-append", (...args) => args.join(" "));
+    env.set("car", car);
+    env.set("cdr", cdr);
+    env.set("cons", cons);
+    env.set("pair?", isPairExpression);
 
     return env;
   }

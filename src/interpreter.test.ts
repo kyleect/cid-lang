@@ -1,6 +1,11 @@
 import { Environment } from "./env";
 import { CIDLangRuntimeError } from "./errors";
-import { EmptyListExpression, Expression } from "./expression";
+import {
+  EmptyListExpression,
+  Expression,
+  IsPairSymbol,
+  isPairExpression,
+} from "./expression";
 import { Interpreter } from "./interpreter";
 import { Parser } from "./parser";
 import { Procedure } from "./procedure";
@@ -635,6 +640,119 @@ describe("Interpreter", () => {
 
       it("should return true for the same symbol", () => {
         expect(interpretExpression("(equal? 'a 'a)", env)).toBe(true);
+      });
+    });
+
+    describe("car", () => {
+      it("should interpret car call expression", () => {
+        expect(interpretExpression(`(car (1 2 3))`, env)).toBe(1);
+      });
+
+      it("should interpret car call expression: atomic expression", () => {
+        expect(() => interpretExpression(`(car 1)`, env)).toThrow(
+          new CIDLangRuntimeError("Argument must be a pair expression: 1")
+        );
+      });
+
+      it("should interpret car call expression: zero args", () => {
+        expect(() => interpretExpression(`(car)`, env)).toThrow(
+          new CIDLangRuntimeError(
+            `Function 'car' expects 1 arguments but received 0`
+          )
+        );
+      });
+    });
+
+    describe.skip("cons", () => {
+      it("should interpret cons call expression: list then atom", () => {
+        const value = interpretExpression(`(cons (list 2 3) 1)`, env);
+        const expected = [[2, 3], 1];
+        expected[IsPairSymbol] = IsPairSymbol;
+
+        expect(value).toStrictEqual(expected);
+        expect(value[IsPairSymbol]).toBe(IsPairSymbol);
+        expect(isPairExpression(value)).toBe(true);
+      });
+
+      it("should interpret cons call expression: atom then list", () => {
+        const value = interpretExpression(`(cons 1 (list 2 3))`, env);
+        const expected = [1, 2, 3];
+
+        expect(value).toStrictEqual(expected);
+        expect(isPairExpression(value)).toBe(true);
+      });
+
+      it("should interpret cons call expression: atom then atom", () => {
+        const value = interpretExpression(`(cons 1 2)`, env);
+        const expected = [1, 2];
+        expected[IsPairSymbol] = IsPairSymbol;
+
+        expect(value).toStrictEqual(expected);
+        expect(isPairExpression(value)).toBe(true);
+      });
+
+      it("should interpret cons call expression: list then list", () => {
+        const value = interpretExpression(`(cons (1) (2 3 4))`, env);
+        const expected = [[1], 2, 3, 4];
+        expected[IsPairSymbol] = IsPairSymbol;
+
+        expect(value).toStrictEqual(expected);
+        expect(isPairExpression(value)).toBe(true);
+      });
+
+      it("should interpret cons call expression: atom then empty list", () => {
+        const value = interpretExpression(`(cons 1 ())`, env);
+        const expected = [1];
+
+        expect(value).toStrictEqual(expected);
+        expect(isPairExpression(value)).toBe(true);
+      });
+
+      it("should interpret cons call expression: nested atom then empty list", () => {
+        const value = interpretExpression(`(cons 1 (cons 2 ()))`, env);
+        const expected = [1, 2];
+
+        expect(value).toStrictEqual(expected);
+        expect(isPairExpression(value)).toBe(true);
+      });
+
+      it("should interpret cons call expression: improper list", () => {
+        const value = interpretExpression(`(cons 1 (cons 2 3))`, env);
+        const inner = [2, 3];
+        inner[IsPairSymbol] = IsPairSymbol;
+        const expected = [1, inner];
+        expected[IsPairSymbol] = IsPairSymbol;
+
+        expect(value).toStrictEqual(expected);
+        expect(isPairExpression(value)).toBe(true);
+      });
+    });
+
+    describe("cdr", () => {
+      it("should interpret cdr call expression", () => {
+        expect(interpretExpression(`(cdr (1 2 3))`, env)).toStrictEqual([2, 3]);
+      });
+
+      it("should interpret cdr call expression: single item list", () => {
+        expect(interpretExpression(`(cdr (1))`, env)).toBe(EmptyListExpression);
+      });
+
+      it("should interpret cdr call expression: empty list", () => {
+        expect(interpretExpression(`(cdr ())`, env)).toBe(EmptyListExpression);
+      });
+
+      it("should interpret cdr call expression: atomic expression", () => {
+        expect(() => interpretExpression(`(cdr 1)`, env)).toThrow(
+          new CIDLangRuntimeError("Argument must be a list expression: 1")
+        );
+      });
+
+      it("should interpret cdr call expression: zero args", () => {
+        expect(() => interpretExpression(`(cdr)`, env)).toThrow(
+          new CIDLangRuntimeError(
+            `Function 'cdr' expects 1 arguments but received 0`
+          )
+        );
       });
     });
   });

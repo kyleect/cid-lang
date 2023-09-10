@@ -1,5 +1,10 @@
 import { Environment } from "./env";
-import { isAtomicExpression, isListExpression } from "./expression";
+import {
+  IsPairSymbol,
+  isAtomicExpression,
+  isListExpression,
+  isPairExpression,
+} from "./expression";
 import { Procedure } from "./procedure";
 import { Sym } from "./symbol";
 
@@ -101,6 +106,83 @@ describe("Expression", () => {
           new Procedure([Sym.of("a")], [Sym.of("a")], new Environment())
         )
       ).toBe(true);
+    });
+  });
+
+  describe("isPairExpression", () => {
+    it("should return that string are not list expressions", () => {
+      expect(isPairExpression("Hello World")).toBe(false);
+    });
+
+    it("should return that numbers are not list expressions", () => {
+      expect(isPairExpression(123)).toBe(false);
+    });
+
+    it("should return that negative numbers are not list expressions", () => {
+      expect(isPairExpression(-123)).toBe(false);
+    });
+
+    it("should return that numbers with decimals are not list expressions", () => {
+      expect(isPairExpression(123.45)).toBe(false);
+    });
+
+    it("should return that negative numbers with decimals are not list expressions", () => {
+      expect(isPairExpression(-123.45)).toBe(false);
+    });
+
+    it("should return that symbol references are not list expressions", () => {
+      expect(isPairExpression(Sym.of("Hello"))).toBe(false);
+    });
+
+    it("should return that empty arrays are not pair expressions", () => {
+      const value = [];
+      value[IsPairSymbol] = IsPairSymbol;
+
+      expect(isPairExpression(value)).toBe(false);
+    });
+
+    it("should return that filled arrays are pair expressions: 1 item", () => {
+      const value = [1];
+      value[IsPairSymbol] = IsPairSymbol;
+
+      expect(isPairExpression(value)).toBe(true);
+    });
+
+    it("should return that filled arrays are pair expressions: 2 items", () => {
+      const value = [1, 2];
+      value[IsPairSymbol] = IsPairSymbol;
+
+      expect(isPairExpression(value)).toBe(true);
+    });
+
+    it("should return that filled arrays are pair expressions: > 2 items", () => {
+      const value = [1, 2, "World"];
+      value[IsPairSymbol] = IsPairSymbol;
+
+      expect(isPairExpression(value)).toBe(true);
+    });
+
+    it("should return that objects are list expressions", () => {
+      const value = {};
+      value[IsPairSymbol] = IsPairSymbol;
+
+      expect(isPairExpression(value)).toBe(false);
+    });
+
+    it("should return that booleans are not list expressions: true", () => {
+      expect(isPairExpression(true)).toBe(false);
+    });
+
+    it("should return that booleans are not list expressions: false", () => {
+      expect(isPairExpression(false)).toBe(false);
+    });
+
+    it("should return procedure is list expression", () => {
+      expect(
+        isPairExpression(
+          new Procedure([Sym.of("a")], [Sym.of("a")], new Environment())
+        )
+      ).toBe(false);
     });
   });
 });
