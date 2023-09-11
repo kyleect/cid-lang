@@ -23,3 +23,12 @@ export function exec(
 
   return results;
 }
+
+export { Sym } from "./symbol";
+export { Cell } from "./cell";
+export * from "./expression";
+export * from "./tokenizer";
+export * from "./token";
+export * from "./env";
+export * from "./errors";
+export * from "./parser";
