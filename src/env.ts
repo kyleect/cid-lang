@@ -1,3 +1,4 @@
+import { Cell } from "./cell";
 import { CIDLangError } from "./errors";
 import { car, cdr, cons, isPairExpression } from "./expression";
 import { Sym } from "./symbol";
@@ -95,7 +96,7 @@ export class Environment {
 
       return Object.is(a, b);
     });
-    env.set("list", (...args) => args);
+    env.set("list", Cell.list);
     env.set("display", (...args) => console.log(...args));
     env.set("exit", (a) => process.exit(a));
     env.set("string-append", (...args) => args.join(" "));

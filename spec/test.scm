@@ -30,8 +30,8 @@
 (assert-equal? (list 1 2 3) (1 2 3) #f)
 (assert-equal? (list 1 2 3) '(1 2 3) #f)
 
-;(assert-equal? 1 (car (cons 1 2)) #t)
-;(assert-equal? 2 (cdr (cons 1 2)) #t)
+(assert-equal? 1 (car (cons 1 2)) #t)
+(assert-equal? 2 (cdr (cons 1 2)) #t)
 
 ;; number?
 (assert (number? 123) #t)

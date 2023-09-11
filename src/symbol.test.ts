@@ -2,6 +2,14 @@ import { CIDLangError } from "./errors";
 import { Sym } from "./symbol";
 
 describe("Sym", () => {
+  it("should return symbol's name", () => {
+    expect(Sym.of("a").toString()).toBe("a");
+  });
+
+  it("should return symbol's name: if", () => {
+    expect(Sym.If.toString()).toBe("if");
+  });
+
   it("should return true that if is keyword", () => {
     expect(Sym.isKeyword(Sym.If)).toBe(true);
   });

@@ -1,11 +1,16 @@
+import { Cell } from "./cell";
 import { Environment } from "./env";
 import { CIDLangRuntimeError } from "./errors";
 import {
   EmptyListExpression,
   Expression,
   ListExpression,
+  Program,
   isAtomicExpression,
+  isExpression,
   isListExpression,
+  isPairExpression,
+  isProgram,
 } from "./expression";
 import { Procedure } from "./procedure";
 import { Sym } from "./symbol";
@@ -21,18 +26,20 @@ export class Interpreter {
    * @param {Expression} program Expression representing the program to interpret
    * @returns Result of program's last interpreted expression
    */
-  public interpretProgram(program: Expression): Expression {
-    if (isListExpression(program)) {
-      let result: Expression;
+  public interpretProgram(program: Program): Expression {
+    let result: Expression;
 
-      for (const expression of program) {
-        result = this.#interpret(expression);
-      }
-
-      return result;
+    if (!isProgram(program)) {
+      throw new CIDLangRuntimeError(
+        `Illegal program. Program must be a sequence of expressions: ${program}`
+      );
     }
 
-    return this.#interpret(program);
+    for (const expression of program) {
+      result = this.#interpret(expression);
+    }
+
+    return result;
   }
 
   /**
@@ -68,122 +75,218 @@ export class Interpreter {
         return expression;
       }
 
-      // Handle non atomic expressions as list expressions: (AtomicExpression | ListExpression)[]
+      // Handle non atomic expressions as list expressions: PairExpression | EmptyListExpression
       if (isListExpression(expression)) {
-        const [op, ...args] = expression;
+        // Handle pair expressions (proper lists)
+        if (isPairExpression(expression)) {
+          const { car, cdr } = expression;
 
-        // Empty lists should return reference to empty list constant
-        if (expression === EmptyListExpression) {
-          return EmptyListExpression;
-        }
+          // Handle call expressions: [Sym, ...Expression]
+          if (Sym.is(car)) {
+            const op = car;
+            const args = cdr;
 
-        // Handle call expressions: [Sym, ...Expression]
-        if (Sym.is(op)) {
-          // Special Expression Forms
+            if (!isListExpression(args)) {
+              throw new CIDLangRuntimeError(""); // TODO:
+            }
 
-          if (op === Sym.Quote) {
-            return args[0];
-          }
+            // Special Expression Forms
 
-          if (op === Sym.Define) {
-            const [symbol, expr] = args;
+            if (op === Sym.Quote) {
+              if (!isPairExpression(args)) {
+                throw new CIDLangRuntimeError(""); // TODO:
+              }
 
-            const name = (symbol as Sym).name;
-            const value = this.#interpret(expr, env);
+              return args.car;
+            }
 
-            env.set(name, value);
-            return;
-          }
+            if (op === Sym.Define) {
+              const [symbol, expr] = args;
 
-          if (op === Sym.Set) {
-            const [symbol, expr] = args;
+              if (!Sym.is(symbol)) {
+                throw new CIDLangRuntimeError(""); // TODO:
+              }
 
-            const name = (symbol as Sym).name;
+              const name = symbol.name;
 
-            if (env.has(name)) {
+              if (!isExpression(expr)) {
+                throw new CIDLangRuntimeError(""); // TODO:
+              }
+
               const value = this.#interpret(expr, env);
 
               env.set(name, value);
               return;
             }
 
-            throw new CIDLangRuntimeError(
-              `Unable to call set! on undefined symbol: ${name}`
-            );
-          }
+            if (op === Sym.Set) {
+              const [symbol, expr] = args;
 
-          if (op === Sym.Lambda) {
-            const [params, ...body] = args;
+              if (!Sym.is(symbol)) {
+                throw new CIDLangRuntimeError(""); // TODO:
+              }
 
-            return new Procedure(
-              params as unknown as Sym[],
-              body,
-              env
-            ) as unknown as ListExpression;
-          }
+              const name = symbol.name;
 
-          if (op === Sym.If) {
-            const [test, conseq, alt] = args;
-            const result = this.#interpret(test, env);
+              if (!isExpression(expr)) {
+                throw new CIDLangRuntimeError(""); // TODO:
+              }
 
-            expression = result ? conseq : alt;
-            continue;
-          }
+              if (env.has(name)) {
+                const value = this.#interpret(expr, env);
 
-          // Built In Functions
+                env.set(name, value);
+                return;
+              }
 
-          const proc = this.#interpret(op, env);
-          if (typeof proc === "function") {
-            if (args.length < proc.length) {
               throw new CIDLangRuntimeError(
-                `Function '${op}' expects ${
-                  proc.length
-                } arguments but received ${args.length}${
-                  args.length > 0 ? `: ${args.join(", ")}` : ""
-                }`
+                `Unable to call set! on undefined symbol: ${name}`
               );
             }
 
-            const interpretedArgs = args.map((arg) =>
-              this.#interpret(arg, env)
-            );
+            if (op === Sym.Lambda) {
+              const [params, body] = args;
 
-            return proc(...interpretedArgs);
-          }
-        }
+              if (!isListExpression(params)) {
+                throw new CIDLangRuntimeError(
+                  `Lambda params must be a list expression: ${params}`
+                ); // TODO:
+              }
 
-        // Handle procedure calls
-        if (op instanceof Procedure) {
-          const procArgValuePairs: [string, Expression][] = op.params.map(
-            (sym, i) => [sym.name, args?.[i]]
-          );
+              if (!isListExpression(body)) {
+                throw new CIDLangRuntimeError(
+                  `Lambda body must be a list expression: ${params}`
+                ); // TODO:
+              }
 
-          const procEnv = new Environment(
-            new Map(procArgValuePairs),
-            op.closure
-          );
+              return new Procedure(
+                params,
+                body,
+                env
+              ) as unknown as ListExpression;
+            }
 
-          if (op.body.length === 0) {
-            return undefined;
-          }
+            if (op === Sym.If) {
+              const [test, conseq, alt] = args;
 
-          if (op.body.length > 1) {
-            for (const expr of op.body.slice(0, -1)) {
-              this.#interpret(expr, procEnv);
+              if (!isExpression(test)) {
+                throw new CIDLangRuntimeError(""); // TODO:
+              }
+
+              if (!isExpression(conseq)) {
+                throw new CIDLangRuntimeError(""); // TODO:
+              }
+
+              if (!isExpression(alt)) {
+                throw new CIDLangRuntimeError(""); // TODO:
+              }
+
+              const result = this.#interpret(test, env);
+
+              expression = result ? conseq : alt;
+              continue;
+            }
+
+            // Built In Functions
+
+            const proc = this.#interpret(op, env);
+            if (typeof proc === "function") {
+              const fn = proc;
+              const callFnArgs = Array.from(args);
+
+              if (callFnArgs.length < fn.length) {
+                throw new CIDLangRuntimeError(
+                  `Function '${op}' expects ${
+                    fn.length
+                  } arguments but received ${callFnArgs.length}${
+                    callFnArgs.length > 0 ? `: ${callFnArgs.join(", ")}` : ""
+                  }`
+                );
+              }
+
+              const interpretedArgs = callFnArgs.map((arg) =>
+                this.#interpret(arg as Expression, env)
+              );
+
+              return proc(...interpretedArgs);
             }
           }
 
-          return this.#interpret(op.body.at(-1), procEnv);
+          // Handle procedure calls
+          if (car instanceof Procedure) {
+            const proc = car;
+
+            if (!isListExpression(cdr)) {
+              throw new CIDLangRuntimeError(""); // TODO:
+            }
+
+            const callProcArgs = Array.from(cdr) as Expression[];
+            const procParams = Array.from(proc.params);
+
+            // Validate the number of call args matches the number of proc params
+            if (callProcArgs.length !== procParams.length) {
+              throw new CIDLangRuntimeError(
+                `Procedure expected ${procParams.length} but got ${callProcArgs.length}`
+              );
+            }
+
+            // Validate procedure params are all symbols
+            const nonSymProcParams = procParams.filter(
+              (procParam) => !Sym.is(procParam)
+            );
+            if (nonSymProcParams.length > 0) {
+              throw new CIDLangRuntimeError(
+                `All params in a lambda expression must be symbols: ${nonSymProcParams.join(
+                  ", "
+                )}`
+              );
+            }
+
+            // Map call args to proc params by index position
+            const procArgValuePairs: [string, Expression][] = (
+              procParams as Sym[]
+            ).map((procParam, paramIndex) => [
+              procParam.name,
+              this.#interpret(callProcArgs[paramIndex], env),
+            ]);
+
+            // Create environment for the procedure to run in
+            // Closure + Proc Param Args
+            const procEnv = new Environment(
+              new Map(procArgValuePairs),
+              proc.closure
+            );
+
+            if (proc.body.length === 0) {
+              return undefined;
+            }
+
+            let result: Expression;
+
+            for (const expr of proc.body) {
+              result = this.#interpret(expr as Expression, procEnv);
+            }
+
+            return result;
+          }
+
+          // Handle all remaining pair expressions
+          return Cell.list(
+            ...Array.from(expression).map((e) =>
+              this.#interpret(e as Expression, env)
+            )
+          );
         }
 
-        // Handle all remaining list expressions
-        const e = expression.map((e) => this.#interpret(e, env));
-        if (e[0] instanceof Procedure) {
-          expression = e;
-          continue;
-        } else {
-          return e;
+        // The only list expression that isn't a pair expression is an empty list
+        if (!Object.is(expression, EmptyListExpression)) {
+          throw new CIDLangRuntimeError(
+            `Invalid list expression: ${JSON.stringify(expression)}`
+          );
         }
+
+        // Return common empty list reference
+        return EmptyListExpression;
       }
 
       // Handle invalid expressions

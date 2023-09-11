@@ -1,11 +1,11 @@
 import { Environment } from "./env";
-import { Expression } from "./expression";
+import { ListExpression } from "./expression";
 import { Sym } from "./symbol";
 
 export class Procedure {
   constructor(
-    public params: Sym[],
-    public body: Expression[],
+    public params: ListExpression,
+    public body: ListExpression,
     public closure: Environment
   ) {}
 

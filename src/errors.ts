@@ -58,6 +58,16 @@ export class CIDLangSyntaxError extends CIDLangError {
 export class CIDLangRuntimeError extends CIDLangError {}
 
 /**
+ * An error occuring when constructing a list that doesn't
+ * end with an empty list
+ */
+export class CIDImproperListError extends CIDLangRuntimeError {
+  constructor(public readonly tail: unknown) {
+    super();
+  }
+}
+
+/**
  * An error thrown by the built in function `exit`
  *
  * This allows the cid language to exit the process with exit code

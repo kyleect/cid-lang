@@ -1,14 +1,16 @@
+import { Cell } from "./cell";
 import { CIDLangSyntaxError } from "./errors";
 import {
   AtomicExpression,
   EmptyListExpression,
   Expression,
+  Program,
 } from "./expression";
 import { Sym } from "./symbol";
 import { Token, TokenType } from "./token";
 
 export abstract class Parser {
-  abstract parse(): Expression;
+  abstract parse(): Program;
 
   public static Token(tokens: Token[]): TokenParser {
     return new TokenParser(tokens);
@@ -20,19 +22,23 @@ export class TokenParser implements Parser {
 
   constructor(private tokens: Token[]) {}
 
-  parse(): Expression {
+  /**
+   *
+   * @returns A program of one or more expressions from parsing tokens
+   */
+  parse(): Program {
     if (this.tokens.length === 1) {
       throw new CIDLangSyntaxError(0, 0, "Unexpected EOF");
     }
 
-    const expression: Expression = [];
+    const program: Program = [];
 
     while (!this.#isEofToken()) {
-      const expr = this.#expression();
-      expression.push(expr);
+      const expression = this.#expression();
+      program.push(expression);
     }
 
-    return expression;
+    return program;
   }
 
   #expression(): Expression {
@@ -44,12 +50,14 @@ export class TokenParser implements Parser {
       if (this.#check(TokenType.RightBracket)) {
         expression = EmptyListExpression;
       } else {
-        expression = [];
+        const values = [];
 
         while (!this.#check(TokenType.RightBracket)) {
           const valueExpression = this.#expression();
-          expression.push(valueExpression);
+          values.push(valueExpression);
         }
+
+        expression = Cell.list(...values);
       }
     }
 
@@ -66,7 +74,8 @@ export class TokenParser implements Parser {
     }
 
     if (this.#match(TokenType.Quote)) {
-      return [Sym.Quote, this.#expression()];
+      const cell = Cell.list(Sym.Quote, this.#expression());
+      return cell;
     }
 
     if (this.#check(TokenType.Symbol)) {

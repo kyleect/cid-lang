@@ -1,14 +1,15 @@
+import { Cell } from "./cell";
 import { Environment } from "./env";
 import { CIDLangRuntimeError } from "./errors";
 import {
   EmptyListExpression,
   Expression,
-  IsPairSymbol,
+  ListExpression,
+  isListExpression,
   isPairExpression,
 } from "./expression";
 import { Interpreter } from "./interpreter";
 import { Parser } from "./parser";
-import { Procedure } from "./procedure";
 import { Sym } from "./symbol";
 import { Tokenizer } from "./tokenizer";
 
@@ -112,30 +113,43 @@ describe("Interpreter", () => {
 
   describe("lists", () => {
     it("should interpret empty parans as a list", () => {
-      expect(interpretExpression("()", env)).toStrictEqual([]);
+      const result = interpretExpression("()", env);
+
+      expect(result).toBe(EmptyListExpression);
     });
 
     it("should interpret two empty lists to reference same object", () => {
-      const [a, b] = interpretExpression("(() ())", env) as Expression[];
+      const result = interpretExpression("(() ())", env);
+
+      expect(isListExpression(result)).toBe(true);
+
+      const resultArr = Array.from(result as ListExpression);
+
+      expect(resultArr).toHaveLength(2);
+
+      const [a, b] = resultArr;
 
       expect(Object.is(a, EmptyListExpression)).toBe(true);
+
       expect(Object.is(b, EmptyListExpression)).toBe(true);
     });
 
     it("should interpret empty parans as a list", () => {
-      expect(interpretExpression("(1)", env)).toStrictEqual([1]);
+      expect(interpretExpression("(1)", env)).toStrictEqual(
+        Cell.of(1, EmptyListExpression)
+      );
     });
 
     it("should interpret expressions parans as a list", () => {
       expect(
         interpretExpression(`(1 2 3 "Hello World" #t #f)`, env)
-      ).toStrictEqual([1, 2, 3, "Hello World", true, false]);
+      ).toStrictEqual(Cell.list(1, 2, 3, "Hello World", true, false));
     });
 
     it("should interpret lists starting with a non keyword, function or procedure symbol", () => {
-      expect(interpretExpression("(define a 1)(a 2 3)", env)).toStrictEqual([
-        1, 2, 3,
-      ]);
+      expect(interpretExpression("(define a 1)(a 2 3)", env)).toStrictEqual(
+        Cell.list(1, 2, 3)
+      );
     });
 
     it("should interpret lists starting with a symbol referencing a function", () => {
@@ -191,17 +205,15 @@ describe("Interpreter", () => {
         });
 
         it("should interpret quoted call expression", () => {
-          expect(interpretExpression("(quote (+ 1 2))", env)).toStrictEqual([
-            Sym.of("+"),
-            1,
-            2,
-          ]);
+          expect(interpretExpression("(quote (+ 1 2))", env)).toStrictEqual(
+            Cell.list(Sym.of("+"), 1, 2)
+          );
         });
 
         it("should interpret double quoted call expression", () => {
           expect(
             interpretExpression("(quote (quote (+ 1 2)))", env)
-          ).toStrictEqual([Sym.Quote, [Sym.of("+"), 1, 2]]);
+          ).toStrictEqual(Cell.list(Sym.Quote, Cell.list(Sym.of("+"), 1, 2)));
         });
 
         it("should interpret quoted true boolean expression", () => {
@@ -215,7 +227,7 @@ describe("Interpreter", () => {
         it("should interpret quoted if expression", () => {
           expect(
             interpretExpression("(quote (if #t #f #t))", env)
-          ).toStrictEqual([Sym.If, true, false, true]);
+          ).toStrictEqual(Cell.list(Sym.If, true, false, true));
         });
 
         it.skip("should throw if referencing keyword quote as variable", () => {
@@ -230,39 +242,37 @@ describe("Interpreter", () => {
           });
 
           it("should interpret quoted number expression: quoted and unqoted list", () => {
-            expect(interpretExpression("('123 123)", env)).toStrictEqual([
-              123, 123,
-            ]);
+            expect(interpretExpression("('123 123)", env)).toStrictEqual(
+              Cell.list(123, 123)
+            );
           });
 
           it("should interpret quoted number expression: quoted and unqoted list reversed", () => {
-            expect(interpretExpression("(123 '123)", env)).toStrictEqual([
-              123, 123,
-            ]);
+            expect(interpretExpression("(123 '123)", env)).toStrictEqual(
+              Cell.list(123, 123)
+            );
           });
 
           it("should interpret quoted list with symbols: list is quoted", () => {
-            expect(interpretExpression("'(a b c)", env)).toStrictEqual([
-              Sym.of("a"),
-              Sym.of("b"),
-              Sym.of("c"),
-            ]);
+            expect(interpretExpression("'(a b c)", env)).toStrictEqual(
+              Cell.list(Sym.of("a"), Sym.of("b"), Sym.of("c"))
+            );
           });
 
           it("should interpret quoted list with symbols: symbols are quoted", () => {
-            expect(interpretExpression("('a 'b 'c)", env)).toStrictEqual([
-              Sym.of("a"),
-              Sym.of("b"),
-              Sym.of("c"),
-            ]);
+            expect(interpretExpression("('a 'b 'c)", env)).toStrictEqual(
+              Cell.list(Sym.of("a"), Sym.of("b"), Sym.of("c"))
+            );
           });
 
           it("should interpret quoted list with symbols: both are quoted", () => {
-            expect(interpretExpression("'('a 'b 'c)", env)).toStrictEqual([
-              [Sym.Quote, Sym.of("a")],
-              [Sym.Quote, Sym.of("b")],
-              [Sym.Quote, Sym.of("c")],
-            ]);
+            expect(interpretExpression("'('a 'b 'c)", env)).toStrictEqual(
+              Cell.list(
+                Cell.list(Sym.Quote, Sym.of("a")),
+                Cell.list(Sym.Quote, Sym.of("b")),
+                Cell.list(Sym.Quote, Sym.of("c"))
+              )
+            );
           });
 
           it("should interpret quoted number expression", () => {
@@ -270,18 +280,15 @@ describe("Interpreter", () => {
           });
 
           it("should interpret quoted call expression", () => {
-            expect(interpretExpression("'(+ 1 2)", env)).toStrictEqual([
-              Sym.of("+"),
-              1,
-              2,
-            ]);
+            expect(interpretExpression("'(+ 1 2)", env)).toStrictEqual(
+              Cell.list(Sym.of("+"), 1, 2)
+            );
           });
 
           it("should interpret double quoted call expression", () => {
-            expect(interpretExpression("'(quote (+ 1 2))", env)).toStrictEqual([
-              Sym.Quote,
-              [Sym.of("+"), 1, 2],
-            ]);
+            expect(interpretExpression("'(quote (+ 1 2))", env)).toStrictEqual(
+              Cell.list(Sym.Quote, Cell.list(Sym.of("+"), 1, 2))
+            );
           });
 
           it("should interpret quoted true boolean expression", () => {
@@ -293,20 +300,15 @@ describe("Interpreter", () => {
           });
 
           it("should interpret quoted if expression", () => {
-            expect(interpretExpression("'(if #t #f #t)", env)).toStrictEqual([
-              Sym.If,
-              true,
-              false,
-              true,
-            ]);
+            expect(interpretExpression("'(if #t #f #t)", env)).toStrictEqual(
+              Cell.list(Sym.If, true, false, true)
+            );
           });
 
           it("should interpret quoted if expression", () => {
-            expect(interpretExpression("'(lambda (x) x)", env)).toStrictEqual([
-              Sym.Lambda,
-              [Sym.of("x")],
-              Sym.of("x"),
-            ]);
+            expect(interpretExpression("'(lambda (x) x)", env)).toStrictEqual(
+              Cell.list(Sym.Lambda, Cell.list(Sym.of("x")), Sym.of("x"))
+            );
           });
 
           it("should interpret quoted if expression: quoted return value", () => {
@@ -663,20 +665,18 @@ describe("Interpreter", () => {
       });
     });
 
-    describe.skip("cons", () => {
+    describe("cons", () => {
       it("should interpret cons call expression: list then atom", () => {
         const value = interpretExpression(`(cons (list 2 3) 1)`, env);
-        const expected = [[2, 3], 1];
-        expected[IsPairSymbol] = IsPairSymbol;
+        const expected = Cell.of(Cell.list(2, 3), 1);
 
         expect(value).toStrictEqual(expected);
-        expect(value[IsPairSymbol]).toBe(IsPairSymbol);
         expect(isPairExpression(value)).toBe(true);
       });
 
       it("should interpret cons call expression: atom then list", () => {
         const value = interpretExpression(`(cons 1 (list 2 3))`, env);
-        const expected = [1, 2, 3];
+        const expected = Cell.list(1, 2, 3);
 
         expect(value).toStrictEqual(expected);
         expect(isPairExpression(value)).toBe(true);
@@ -684,8 +684,7 @@ describe("Interpreter", () => {
 
       it("should interpret cons call expression: atom then atom", () => {
         const value = interpretExpression(`(cons 1 2)`, env);
-        const expected = [1, 2];
-        expected[IsPairSymbol] = IsPairSymbol;
+        const expected = Cell.of(1, 2);
 
         expect(value).toStrictEqual(expected);
         expect(isPairExpression(value)).toBe(true);
@@ -693,8 +692,7 @@ describe("Interpreter", () => {
 
       it("should interpret cons call expression: list then list", () => {
         const value = interpretExpression(`(cons (1) (2 3 4))`, env);
-        const expected = [[1], 2, 3, 4];
-        expected[IsPairSymbol] = IsPairSymbol;
+        const expected = Cell.list(Cell.list(1), 2, 3, 4);
 
         expect(value).toStrictEqual(expected);
         expect(isPairExpression(value)).toBe(true);
@@ -702,7 +700,7 @@ describe("Interpreter", () => {
 
       it("should interpret cons call expression: atom then empty list", () => {
         const value = interpretExpression(`(cons 1 ())`, env);
-        const expected = [1];
+        const expected = Cell.list(1);
 
         expect(value).toStrictEqual(expected);
         expect(isPairExpression(value)).toBe(true);
@@ -710,7 +708,7 @@ describe("Interpreter", () => {
 
       it("should interpret cons call expression: nested atom then empty list", () => {
         const value = interpretExpression(`(cons 1 (cons 2 ()))`, env);
-        const expected = [1, 2];
+        const expected = Cell.list(1, 2);
 
         expect(value).toStrictEqual(expected);
         expect(isPairExpression(value)).toBe(true);
@@ -718,10 +716,7 @@ describe("Interpreter", () => {
 
       it("should interpret cons call expression: improper list", () => {
         const value = interpretExpression(`(cons 1 (cons 2 3))`, env);
-        const inner = [2, 3];
-        inner[IsPairSymbol] = IsPairSymbol;
-        const expected = [1, inner];
-        expected[IsPairSymbol] = IsPairSymbol;
+        const expected = Cell.of(1, Cell.of(2, 3));
 
         expect(value).toStrictEqual(expected);
         expect(isPairExpression(value)).toBe(true);
@@ -730,7 +725,9 @@ describe("Interpreter", () => {
 
     describe("cdr", () => {
       it("should interpret cdr call expression", () => {
-        expect(interpretExpression(`(cdr (1 2 3))`, env)).toStrictEqual([2, 3]);
+        expect(interpretExpression(`(cdr (1 2 3))`, env)).toStrictEqual(
+          Cell.list(2, 3)
+        );
       });
 
       it("should interpret cdr call expression: single item list", () => {
@@ -809,7 +806,7 @@ describe("Interpreter", () => {
     `,
         env
       )
-    ).toStrictEqual([2, 1]);
+    ).toStrictEqual(Cell.list(2, 1));
   });
 
   it("should intepret multiple levels of env scope: no lambdas", () => {
@@ -826,39 +823,23 @@ describe("Interpreter", () => {
     `,
         env
       )
-    ).toStrictEqual([2, 1]);
+    ).toStrictEqual(Cell.list(2, 1));
   });
 
   it("should throw on illegal expression value: Error", () => {
     const interpreter = new Interpreter();
     const error = new Error("Not a valid value");
 
+    // @ts-expect-error Testing
     expect(() => interpreter.interpretProgram(error)).toThrow(
       new CIDLangRuntimeError(
-        `Illegal expression. Value is not atomic or list expression: ${error}`
-      )
-    );
-  });
-
-  it("should throw on illegal expression value: Javascript Symbol", () => {
-    const interpreter = new Interpreter();
-    const symbol = Symbol("Not a valid value");
-
-    // @ts-expect-error Testing
-    expect(() => interpreter.interpretProgram(symbol)).toThrow(
-      new CIDLangRuntimeError(
-        `Illegal expression. Value is not atomic or list expression: ${String(
-          symbol
-        )}`
+        `Illegal program. Program must be a sequence of expressions: ${error}`
       )
     );
   });
 });
 
-function interpretExpression(
-  source: string,
-  env: Environment
-): Expression | Procedure | ((...args) => Expression) {
+function interpretExpression(source: string, env: Environment): Expression {
   const tokenizer = Tokenizer.String(source);
   const tokens = tokenizer.tokenize();
 
