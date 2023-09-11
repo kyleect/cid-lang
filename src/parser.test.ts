@@ -1,6 +1,6 @@
 import { Cell } from "./cell";
 import { CIDLangSyntaxError } from "./errors";
-import { EmptyListExpression, PairExpression, Program } from "./expression";
+import { NullExpression, PairExpression, Program } from "./expression";
 import { Parser } from "./parser";
 import { Sym } from "./symbol";
 import { Tokenizer } from "./tokenizer";
@@ -233,31 +233,26 @@ describe("BaseParser", () => {
     const program = parseStringToExpressions("()");
 
     expect(program).toStrictEqual([[]]);
-    expect(program[0]).toBe(EmptyListExpression);
+    expect(program[0]).toBe(NullExpression);
   });
 
   it("should parse empty parans as the empty list expression", () => {
     const program = parseStringToExpressions("(1)");
 
-    expect(program).toStrictEqual([Cell.of(1, EmptyListExpression)]);
+    expect(program).toStrictEqual([Cell.of(1, NullExpression)]);
   });
 
   it("should parse empty parans as the empty list expression", () => {
     const program = parseStringToExpressions("(1 2)");
 
-    expect(program).toStrictEqual([
-      Cell.of(1, Cell.of(2, EmptyListExpression)),
-    ]);
+    expect(program).toStrictEqual([Cell.of(1, Cell.of(2, NullExpression))]);
   });
 
   it("should parse empty parans as the empty list expression: two empty lists in a list", () => {
     const program = parseStringToExpressions("(() ())");
 
     expect(program).toStrictEqual([
-      Cell.of(
-        EmptyListExpression,
-        Cell.of(EmptyListExpression, EmptyListExpression)
-      ),
+      Cell.of(NullExpression, Cell.of(NullExpression, NullExpression)),
     ]);
   });
 
@@ -268,6 +263,20 @@ describe("BaseParser", () => {
     (if #t #f #t) ; Flip
     `)
     ).toStrictEqual([Cell.list(Sym.If, true, false, true)]);
+  });
+
+  it("should parse defining a lambda then calling it", () => {
+    const program = parseStringToExpressions(`
+    (define id (lambda (x) x))(id 10)
+    `);
+
+    const $id = Sym.of("id");
+    const $x = Sym.of("x");
+
+    expect(program).toStrictEqual([
+      Cell.list(Sym.Define, $id, Cell.list(Sym.Lambda, Cell.list($x), $x)),
+      Cell.list($id, 10),
+    ]);
   });
 });
 

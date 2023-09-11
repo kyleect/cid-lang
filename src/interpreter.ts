@@ -2,10 +2,12 @@ import { Cell } from "./cell";
 import { Environment } from "./env";
 import { CIDLangRuntimeError } from "./errors";
 import {
-  EmptyListExpression,
   Expression,
   ListExpression,
+  NullExpression,
   Program,
+  assertIsExpression,
+  assertIsListExpression,
   isAtomicExpression,
   isExpression,
   isListExpression,
@@ -75,7 +77,7 @@ export class Interpreter {
         return expression;
       }
 
-      // Handle non atomic expressions as list expressions: PairExpression | EmptyListExpression
+      // Handle non atomic expressions as list expressions: PairExpression | NullExpression
       if (isListExpression(expression)) {
         // Handle pair expressions (proper lists)
         if (isPairExpression(expression)) {
@@ -86,9 +88,7 @@ export class Interpreter {
             const op = car;
             const args = cdr;
 
-            if (!isListExpression(args)) {
-              throw new CIDLangRuntimeError(""); // TODO:
-            }
+            assertIsListExpression(args);
 
             // Special Expression Forms
 
@@ -109,9 +109,7 @@ export class Interpreter {
 
               const name = symbol.name;
 
-              if (!isExpression(expr)) {
-                throw new CIDLangRuntimeError(""); // TODO:
-              }
+              assertIsExpression(expr);
 
               const value = this.#interpret(expr, env);
 
@@ -153,9 +151,9 @@ export class Interpreter {
                 ); // TODO:
               }
 
-              if (!isListExpression(body)) {
+              if (!isExpression(body)) {
                 throw new CIDLangRuntimeError(
-                  `Lambda body must be a list expression: ${params}`
+                  `Lambda body must be an expression: ${params}`
                 ); // TODO:
               }
 
@@ -210,83 +208,80 @@ export class Interpreter {
 
               return proc(...interpretedArgs);
             }
-          }
 
-          // Handle procedure calls
-          if (car instanceof Procedure) {
-            const proc = car;
+            // Handle procedure calls
+            if (proc instanceof Procedure) {
+              if (!isListExpression(cdr)) {
+                throw new CIDLangRuntimeError(
+                  `Procedure params must be a list expression: ${cdr}`
+                ); // TODO:
+              }
 
-            if (!isListExpression(cdr)) {
-              throw new CIDLangRuntimeError(""); // TODO:
-            }
+              const callProcArgs = Array.from(cdr) as Expression[];
+              const procParams = Array.from(proc.params);
 
-            const callProcArgs = Array.from(cdr) as Expression[];
-            const procParams = Array.from(proc.params);
+              // Validate the number of call args matches the number of proc params
+              if (callProcArgs.length !== procParams.length) {
+                throw new CIDLangRuntimeError(
+                  `Procedure expected ${procParams.length} but got ${callProcArgs.length}`
+                );
+              }
 
-            // Validate the number of call args matches the number of proc params
-            if (callProcArgs.length !== procParams.length) {
-              throw new CIDLangRuntimeError(
-                `Procedure expected ${procParams.length} but got ${callProcArgs.length}`
+              // Validate procedure params are all symbols
+              const nonSymProcParams = procParams.filter(
+                (procParam) => !Sym.is(procParam)
               );
-            }
+              if (nonSymProcParams.length > 0) {
+                throw new CIDLangRuntimeError(
+                  `All params in a lambda expression must be symbols: ${nonSymProcParams.join(
+                    ", "
+                  )}`
+                );
+              }
 
-            // Validate procedure params are all symbols
-            const nonSymProcParams = procParams.filter(
-              (procParam) => !Sym.is(procParam)
-            );
-            if (nonSymProcParams.length > 0) {
-              throw new CIDLangRuntimeError(
-                `All params in a lambda expression must be symbols: ${nonSymProcParams.join(
-                  ", "
-                )}`
+              // Map call args to proc params by index position
+              const procArgValuePairs: [string, Expression][] = (
+                procParams as Sym[]
+              ).map((procParam, paramIndex) => [
+                procParam.name,
+                this.#interpret(callProcArgs[paramIndex], env),
+              ]);
+
+              // Create environment for the procedure to run in
+              // Closure + Proc Param Args
+              const procEnv = new Environment(
+                new Map(procArgValuePairs),
+                proc.closure
               );
+
+              return this.#interpret(proc.body, procEnv);
             }
-
-            // Map call args to proc params by index position
-            const procArgValuePairs: [string, Expression][] = (
-              procParams as Sym[]
-            ).map((procParam, paramIndex) => [
-              procParam.name,
-              this.#interpret(callProcArgs[paramIndex], env),
-            ]);
-
-            // Create environment for the procedure to run in
-            // Closure + Proc Param Args
-            const procEnv = new Environment(
-              new Map(procArgValuePairs),
-              proc.closure
-            );
-
-            if (proc.body.length === 0) {
-              return undefined;
-            }
-
-            let result: Expression;
-
-            for (const expr of proc.body) {
-              result = this.#interpret(expr as Expression, procEnv);
-            }
-
-            return result;
           }
 
           // Handle all remaining pair expressions
-          return Cell.list(
+          const remainingPairExpressions = Cell.list(
             ...Array.from(expression).map((e) =>
               this.#interpret(e as Expression, env)
             )
           );
+
+          if (remainingPairExpressions[0] instanceof Procedure) {
+            expression = remainingPairExpressions;
+            continue;
+          } else {
+            return remainingPairExpressions;
+          }
         }
 
         // The only list expression that isn't a pair expression is an empty list
-        if (!Object.is(expression, EmptyListExpression)) {
+        if (!Object.is(expression, NullExpression)) {
           throw new CIDLangRuntimeError(
             `Invalid list expression: ${JSON.stringify(expression)}`
           );
         }
 
         // Return common empty list reference
-        return EmptyListExpression;
+        return NullExpression;
       }
 
       // Handle invalid expressions

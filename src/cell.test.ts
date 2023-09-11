@@ -1,11 +1,11 @@
 import { Cell } from "./cell";
 import { CIDLangRuntimeError } from "./errors";
-import { EmptyListExpression, ListExpression } from "./expression";
+import { ListExpression, NullExpression } from "./expression";
 
 describe("Cell", () => {
   describe("of", () => {
     it("should throw if car is null", () => {
-      expect(() => Cell.of(null, EmptyListExpression)).toThrow(
+      expect(() => Cell.of(null, NullExpression)).toThrow(
         new CIDLangRuntimeError(`Illegal car expression: null`)
       );
     });
@@ -31,7 +31,7 @@ describe("Cell", () => {
 
       it("should be made up of linked cells", () => {
         expect(list).toStrictEqual(
-          Cell.of(1, Cell.of(2, Cell.of(3, EmptyListExpression)))
+          Cell.of(1, Cell.of(2, Cell.of(3, NullExpression)))
         );
       });
 
@@ -50,7 +50,7 @@ describe("Cell", () => {
       });
 
       it("should return common empty list reference", () => {
-        expect(list).toBe(EmptyListExpression);
+        expect(list).toBe(NullExpression);
       });
     });
 
@@ -60,7 +60,7 @@ describe("Cell", () => {
       });
 
       it("should return common empty list reference", () => {
-        expect(list).toStrictEqual(Cell.of(1, EmptyListExpression));
+        expect(list).toStrictEqual(Cell.of(1, NullExpression));
       });
 
       it("should iterate in to an array: rest", () => {

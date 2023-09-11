@@ -2,8 +2,8 @@ import { Cell } from "./cell";
 import { CIDLangSyntaxError } from "./errors";
 import {
   AtomicExpression,
-  EmptyListExpression,
   Expression,
+  NullExpression,
   Program,
 } from "./expression";
 import { Sym } from "./symbol";
@@ -48,7 +48,7 @@ export class TokenParser implements Parser {
       this.#advance();
 
       if (this.#check(TokenType.RightBracket)) {
-        expression = EmptyListExpression;
+        expression = NullExpression;
       } else {
         const values = [];
 

@@ -1,7 +1,7 @@
 import { Cell } from "./cell";
 import { Environment } from "./env";
 import {
-  EmptyListExpression,
+  NullExpression,
   isAtomicExpression,
   isListExpression,
   isPairExpression,
@@ -86,7 +86,7 @@ describe("Expression", () => {
     });
 
     it("should return that common empty list reference is a list expression", () => {
-      expect(isListExpression(EmptyListExpression)).toBe(true);
+      expect(isListExpression(NullExpression)).toBe(true);
     });
 
     it("should return that filled arrays are not list expressions", () => {
@@ -150,7 +150,7 @@ describe("Expression", () => {
     });
 
     it("should return that common empty array reference is not pair expression", () => {
-      const value = EmptyListExpression;
+      const value = NullExpression;
 
       expect(isPairExpression(value)).toBe(false);
     });

@@ -1,9 +1,10 @@
 import { CIDLangRuntimeError } from "./errors";
 import {
-  EmptyListExpression,
   Expression,
   ListExpression,
-  isExpression,
+  NullExpression,
+  assertIsExpression,
+  isNotAnExpression,
 } from "./expression";
 
 /**
@@ -30,13 +31,8 @@ export class Cell {
    * @returns Pair of first and last value
    */
   static of(car: unknown, cdr: unknown): Cell {
-    if (!isExpression(car)) {
-      throw new CIDLangRuntimeError(`Illegal car expression: ${car}`);
-    }
-
-    if (!isExpression(cdr)) {
-      throw new CIDLangRuntimeError(`Illegal cdr expression: ${cdr}`);
-    }
+    assertIsExpression(car, `Illegal car expression: ${car}`);
+    assertIsExpression(cdr, `Illegal cdr expression: ${cdr}`);
 
     return new Cell(car, cdr);
   }
@@ -48,12 +44,10 @@ export class Cell {
    */
   static list(...values: unknown[]): ListExpression {
     if (values.length === 0) {
-      return EmptyListExpression;
+      return NullExpression;
     }
 
-    const nonExpressions: unknown[] = values.filter(
-      (value) => !isExpression(value)
-    );
+    const nonExpressions = values.filter(isNotAnExpression);
 
     if (nonExpressions.length > 0) {
       throw new CIDLangRuntimeError(
@@ -66,18 +60,18 @@ export class Cell {
     let cell: Cell;
 
     if (values.length === 0) {
-      return EmptyListExpression;
+      return NullExpression;
     }
 
     if (values.length === 1) {
-      return Cell.of(values[0], EmptyListExpression);
+      return Cell.of(values[0], NullExpression);
     }
 
     // eslint-disable-next-line no-constant-condition
     while (valuesReversed.length > 0) {
       const isFirst = values.length === valuesReversed.length;
       const car = valuesReversed.shift();
-      cell = Cell.of(car, isFirst ? EmptyListExpression : cell);
+      cell = Cell.of(car, isFirst ? NullExpression : cell);
     }
 
     return cell;
@@ -98,7 +92,7 @@ export class Cell {
   }
 
   /**
-   * Yield cell as a list
+   * Iterate a cell as an array
    */
   *[Symbol.iterator]() {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -109,7 +103,7 @@ export class Cell {
       value = value.cdr;
     }
 
-    if (value !== EmptyListExpression) {
+    if (value !== NullExpression) {
       yield value;
     }
   }

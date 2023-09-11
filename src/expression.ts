@@ -3,21 +3,29 @@ import { CIDLangRuntimeError } from "./errors";
 import { Procedure } from "./procedure";
 import { Sym } from "./symbol";
 
+export type NumericExpression = number;
+export type StringExpression = string;
+export type BooleanExpression = boolean;
+
 /**
  * Single value, non list expressions
  *
  * - 123
  * - "Hello World"
- * - 'abc
- * - #t #f
+ * - Sym.of("a")
+ * - true/false
  */
-export type AtomicExpression = number | string | Sym | boolean;
+export type AtomicExpression =
+  | NumericExpression
+  | StringExpression
+  | Sym
+  | BooleanExpression;
 
 /**
  * Tuple/pair value expression
  *
- * - (1 . 2)
- * - (1 . (2 . ()))
+ * - Cell.of(1, 2) => (1 . 2)
+ * - Cell.list(1, 2) => (1 . (2 . ())) => (1 2)
  */
 export type PairExpression = Cell;
 
@@ -27,6 +35,7 @@ export type PairExpression = Cell;
  * - ()
  * - '()
  * - (list)
+ * - Cell.list()
  */
 export type NullExpression = [];
 
@@ -53,8 +62,9 @@ export type Program = Expression[];
  * - ()
  * - '()
  * - (list)
+ * - Cell.list()
  */
-export const EmptyListExpression: NullExpression = [];
+export const NullExpression: [] = [];
 
 /**
  * Check if value is a pair expression
@@ -101,7 +111,7 @@ export function isListExpression(value: unknown): value is ListExpression {
   }
 
   if (
-    Object.is(value, EmptyListExpression) ||
+    Object.is(value, NullExpression) ||
     (Array.isArray(value) && value.length === 0)
   ) {
     return true;
@@ -112,6 +122,27 @@ export function isListExpression(value: unknown): value is ListExpression {
   }
 
   return false;
+}
+
+export function isNotAnExpression(value: unknown): value is unknown {
+  return !isExpression(value);
+}
+
+export function assertIsExpression(
+  value: unknown,
+  message = `Value must be an expression: ${value}`
+): asserts value is Expression {
+  if (!isExpression(value)) {
+    throw new CIDLangRuntimeError(message);
+  }
+}
+
+export function assertIsListExpression(
+  value: unknown
+): asserts value is ListExpression {
+  if (!isListExpression(value)) {
+    throw new CIDLangRuntimeError(`Value must be a list expression: ${value}`);
+  }
 }
 
 /**
@@ -133,6 +164,9 @@ export function isExpression(value: unknown): value is Expression {
 }
 
 export function cons(a: unknown, b: unknown) {
+  if (!isExpression(a) || !isExpression(b)) {
+    throw new CIDLangRuntimeError(`Arguments must be expressions: ${a}, ${b}`);
+  }
   return Cell.of(a, b);
 }
 
