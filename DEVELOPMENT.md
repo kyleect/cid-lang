@@ -2,9 +2,9 @@
 
 ## Navigating
 
-1. [Tokenize](#tokenizer) source code for [tokens](#tokens)
+1. [Tokenize](#tokenizer) source code in to [tokens](#tokens)
 2. [Parse](#parser) tokens in to [expressions](#expressions)
-3. [Interpret](#interpreter) and interprets expressions
+3. [Interpret](#interpreter) expressions
 
 ## Domain
 
