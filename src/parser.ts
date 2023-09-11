@@ -17,13 +17,16 @@ export abstract class Parser {
   }
 }
 
+/**
+ * Parses tokens in to expressions
+ */
 export class TokenParser implements Parser {
   #current = 0;
 
   constructor(private tokens: Token[]) {}
 
   /**
-   *
+   * Parse tokens in to expressions
    * @returns A program of one or more expressions from parsing tokens
    */
   parse(): Program {
@@ -41,6 +44,10 @@ export class TokenParser implements Parser {
     return program;
   }
 
+  /**
+   * Parse one or more tokens in to an expression
+   * @returns Parsed expression
+   */
   #expression(): Expression {
     let expression: Expression;
 
