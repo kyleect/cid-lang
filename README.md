@@ -33,6 +33,15 @@ CID> (+ 10 25)
 35
 ```
 
+or using [Docker](./Dockerfile)
+
+```bash
+npm run build-docker && npm run start-docker
+
+CID> (+ 10 25)
+35
+```
+
 ## Differences To Scheme (So Far)
 
 - All Expressions Self Evaluate

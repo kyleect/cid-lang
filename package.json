@@ -12,10 +12,12 @@
   "scripts": {
     "tsup": "tsup",
     "dev": "npm run build -- --watch --onSuccess \"npm run start\"",
-    "build": "tsup src/index.ts src/repl.ts src/cli.ts --shims --dts --sourcemap --format esm,cjs --keep-names --treeshake recommended",
+    "build": "rm -rf dist && tsup src/index.ts src/repl.ts src/cli.ts --shims --dts --sourcemap --format esm,cjs --keep-names --treeshake recommended",
+    "build-docker": "docker build . -t cidlang",
     "test": "jest",
     "coverage": "npm test -- --coverage --collectCoverageFrom=\"./src/**\"",
     "start": "node dist/repl.js",
+    "start-docker": "docker run -it cidlang",
     "cli": "node dist/cli.js",
     "format": "npx prettier --write .",
     "lint": "npx eslint .",
