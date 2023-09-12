@@ -608,6 +608,83 @@ describe("Interpreter", () => {
       );
     });
 
+    it("should interpret greater than or equal to call expression: is greater than", () => {
+      expect(interpretExpression("(>= 10 1)", env)).toBe(true);
+    });
+
+    it("should interpret greater than or equal to call expression: is not greater than", () => {
+      expect(interpretExpression("(>= 1 10)", env)).toBe(false);
+    });
+
+    it("should interpret greater than or equal to call expression: is equal", () => {
+      expect(interpretExpression("(>= 10 10)", env)).toBe(true);
+    });
+
+    it("should interpret greater than or equal to call expression: no args", () => {
+      expect(() => interpretExpression(`(>=)`, env)).toThrow(
+        new CIDLangRuntimeError(
+          `Function '>=' expects 2 arguments but received 0`
+        )
+      );
+    });
+
+    it("should interpret greater than or equal to call expression: one arg", () => {
+      expect(() => interpretExpression(`(>= 10)`, env)).toThrow(
+        new CIDLangRuntimeError(
+          `Function '>=' expects 2 arguments but received 1: 10`
+        )
+      );
+    });
+
+    it("should interpret greater than or equal to call expression: three args", () => {
+      expect(interpretExpression(`(>= 10 2 100)`, env)).toBe(true);
+    });
+
+    it("should interpret greater than or equal to call expression: non numbers", () => {
+      expect(() => interpretExpression(`(>= "Hello" 'a)`, env)).toThrow(
+        new CIDLangRuntimeError(`All arguments must be numbers`)
+      );
+    });
+    //
+
+    it("should interpret less than or equal to call expression: is less than", () => {
+      expect(interpretExpression("(<= 1 10)", env)).toBe(true);
+    });
+
+    it("should interpret less than or equal to call expression: is not less than", () => {
+      expect(interpretExpression("(<= 10 1)", env)).toBe(false);
+    });
+
+    it("should interpret less than or equal to call expression: is equal", () => {
+      expect(interpretExpression("(<= 10 10)", env)).toBe(true);
+    });
+
+    it("should interpret less than or equal to call expression: no args", () => {
+      expect(() => interpretExpression(`(<=)`, env)).toThrow(
+        new CIDLangRuntimeError(
+          `Function '<=' expects 2 arguments but received 0`
+        )
+      );
+    });
+
+    it("should interpret less than or equal to call expression: one arg", () => {
+      expect(() => interpretExpression(`(<= 10)`, env)).toThrow(
+        new CIDLangRuntimeError(
+          `Function '<=' expects 2 arguments but received 1: 10`
+        )
+      );
+    });
+
+    it("should interpret less than or equal to call expression: three args", () => {
+      expect(interpretExpression(`(<= 2 10 100)`, env)).toBe(true);
+    });
+
+    it("should interpret less than or equal to call expression: non numbers", () => {
+      expect(() => interpretExpression(`(<= "Hello" 'a)`, env)).toThrow(
+        new CIDLangRuntimeError(`All arguments must be numbers`)
+      );
+    });
+
     describe("display", () => {
       let originalConsoleLog;
 

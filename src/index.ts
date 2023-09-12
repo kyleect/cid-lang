@@ -28,6 +28,7 @@ export { Sym } from "./symbol";
 export { Cell } from "./cell";
 export * from "./expression";
 export * from "./tokenizer";
+export * from "./interpreter";
 export * from "./token";
 export * from "./env";
 export * from "./errors";

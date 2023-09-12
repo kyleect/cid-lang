@@ -81,23 +81,63 @@ export function isPairExpression(value: unknown): value is PairExpression {
  * @returns If value is an atomic expression
  */
 export function isAtomicExpression(value: unknown): value is AtomicExpression {
-  if (typeof value === "number") {
+  if (isNumericExpression(value)) {
     return true;
   }
 
-  if (typeof value === "string") {
+  if (isStringExpression(value)) {
     return true;
   }
 
-  if (typeof value === "boolean") {
+  if (isBooleanExpression(value)) {
     return true;
   }
 
-  if (Sym.is(value)) {
+  if (isSymbolExpression(value)) {
     return true;
   }
 
   return false;
+}
+
+/**
+ * Check if value is a numeric expression
+ * @param value Value to check
+ * @returns If value is a numeric expression
+ */
+export function isNumericExpression(
+  value: unknown
+): value is NumericExpression {
+  return typeof value === "number";
+}
+
+/**
+ * Check if value is a string expression
+ * @param value Value to check
+ * @returns If value is a string expression
+ */
+export function isStringExpression(value: unknown): value is NumericExpression {
+  return typeof value === "string";
+}
+
+/**
+ * Check if value is a boolean expression
+ * @param value Value to check
+ * @returns If value is a boolean expression
+ */
+export function isBooleanExpression(
+  value: unknown
+): value is BooleanExpression {
+  return typeof value === "boolean";
+}
+
+/**
+ * Check if value is a symbol expression
+ * @param value Value to check
+ * @returns If value is a symbol expression
+ */
+export function isSymbolExpression(value: unknown): value is Sym {
+  return Sym.is(value);
 }
 
 /**
@@ -124,10 +164,19 @@ export function isListExpression(value: unknown): value is ListExpression {
   return false;
 }
 
+/**
+ * Check if value is not an expression
+ * @param value Value to check
+ * @returns If value is not an list expression
+ */
 export function isNotAnExpression(value: unknown): value is unknown {
   return !isExpression(value);
 }
 
+/**
+ * Assert if value is an expression
+ * @param value Value to check
+ */
 export function assertIsExpression(
   value: unknown,
   message = `Value must be an expression: ${value}`
@@ -137,6 +186,10 @@ export function assertIsExpression(
   }
 }
 
+/**
+ * Assert value is a list expression
+ * @param value Value to check
+ */
 export function assertIsListExpression(
   value: unknown
 ): asserts value is ListExpression {
@@ -161,32 +214,4 @@ export function isProgram(value: unknown): value is Program {
  */
 export function isExpression(value: unknown): value is Expression {
   return isAtomicExpression(value) || isListExpression(value);
-}
-
-export function cons(a: unknown, b: unknown) {
-  if (!isExpression(a) || !isExpression(b)) {
-    throw new CIDLangRuntimeError(`Arguments must be expressions: ${a}, ${b}`);
-  }
-  return Cell.of(a, b);
-}
-
-export function car(value: unknown) {
-  if (!isPairExpression(value)) {
-    throw new CIDLangRuntimeError(
-      `Argument must be a pair expression: ${value}`
-    );
-  }
-  return value.car;
-}
-
-export function cdr(value: unknown) {
-  if (isListExpression(value)) {
-    if (isPairExpression(value)) {
-      return value.cdr;
-    }
-
-    return value;
-  }
-
-  throw new CIDLangRuntimeError(`Argument must be a list expression: ${value}`);
 }

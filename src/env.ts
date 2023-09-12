@@ -1,7 +1,29 @@
+import {
+  car,
+  cdr,
+  cons,
+  divide,
+  isEqual,
+  greaterThan,
+  lessThan,
+  multiply,
+  sub,
+  sum,
+  display,
+  exit,
+  stringAppend,
+  greaterThanOrEqual,
+  lessThanOrEqual,
+} from "./builtins";
 import { Cell } from "./cell";
-import { CIDLangError } from "./errors";
-import { car, cdr, cons, isPairExpression } from "./expression";
-import { Sym } from "./symbol";
+import {
+  isBooleanExpression,
+  isListExpression,
+  isNumericExpression,
+  isPairExpression,
+  isStringExpression,
+  isSymbolExpression,
+} from "./expression";
 
 export class Environment {
   constructor(
@@ -42,68 +64,33 @@ export class Environment {
   static Default(): Environment {
     const env = new Environment(new Map());
 
-    env.set("+", (a, b) => {
-      if (typeof a !== "number" || typeof b !== "number") {
-        throw new CIDLangError("All arguments must be numbers");
-      }
+    env.set("+", sum);
+    env.set("-", sub);
+    env.set("*", multiply);
+    env.set("/", divide);
 
-      return a + b;
-    });
-    env.set("-", (a, b) => {
-      if (typeof a !== "number" || typeof b !== "number") {
-        throw new CIDLangError("All arguments must be numbers");
-      }
+    env.set(">", greaterThan);
+    env.set("<", lessThan);
+    env.set(">=", greaterThanOrEqual);
+    env.set("<=", lessThanOrEqual);
 
-      return a - b;
-    });
-    env.set(">", (a, b) => {
-      if (typeof a !== "number" || typeof b !== "number") {
-        throw new CIDLangError("All arguments must be numbers");
-      }
-
-      return a > b;
-    });
-    env.set("<", (a, b) => {
-      if (typeof a !== "number" || typeof b !== "number") {
-        throw new CIDLangError("All arguments must be numbers");
-      }
-
-      return a < b;
-    });
-    env.set("*", (a, b) => {
-      if (typeof a !== "number" || typeof b !== "number") {
-        throw new CIDLangError("All arguments must be numbers");
-      }
-
-      return a * b;
-    });
-    env.set("/", (a, b) => {
-      if (typeof a !== "number" || typeof b !== "number") {
-        throw new CIDLangError("All arguments must be numbers");
-      }
-
-      if (a === 0 || b === 0) {
-        throw new CIDLangError("Dividing by zero");
-      }
-      return a / b;
-    });
-    env.set("boolean?", (a) => typeof a === "boolean");
-    env.set("number?", (a) => typeof a === "number");
-    env.set("equal?", (a, b) => {
-      if (Sym.is(a) && Sym.is(b)) {
-        return a.name === b.name;
-      }
-
-      return Object.is(a, b);
-    });
     env.set("list", Cell.list);
-    env.set("display", (...args) => console.log(...args));
-    env.set("exit", (a) => process.exit(a));
-    env.set("string-append", (...args) => args.join(" "));
     env.set("car", car);
     env.set("cdr", cdr);
     env.set("cons", cons);
+
+    env.set("equal?", isEqual);
+    env.set("boolean?", isBooleanExpression);
+    env.set("number?", isNumericExpression);
+    env.set("string?", isStringExpression);
+    env.set("symbol?", isSymbolExpression);
     env.set("pair?", isPairExpression);
+    env.set("list?", isListExpression);
+
+    env.set("string-append", stringAppend);
+
+    env.set("display", display);
+    env.set("exit", exit);
 
     return env;
   }
