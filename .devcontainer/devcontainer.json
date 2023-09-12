@@ -10,7 +10,8 @@
 				"Orta.vscode-jest",
 				"esbenp.prettier-vscode",
 				"eamodio.gitlens",
-				"ms-azuretools.vscode-docker"
+				"ms-azuretools.vscode-docker",
+				"ritwickdey.LiveServer"
 			]
 		}
 	},
