@@ -1,13 +1,16 @@
-FROM node:16.14.2
+FROM node:16.14.2-alpine as builder
 
 WORKDIR /usr/src/cidlang
-
 COPY package*.json ./
+RUN npm ci --production
+RUN rm -rf node_modules
 
-RUN npm ci
+FROM builder as installer
+
 RUN npm shrinkwrap
-
 COPY . .
 RUN npm install -g .
 
-ENTRYPOINT cidrepl
+FROM installer as repl
+
+CMD /bin/sh --login

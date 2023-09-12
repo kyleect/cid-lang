@@ -33,7 +33,45 @@ CID> (+ 10 25)
 35
 ```
 
-or using [Docker](./Dockerfile)
+### Docker
+
+#### Repl
+
+```bash
+npm run build-docker
+npm run repl-docker
+
+CID> (+ 10 25)
+35
+```
+
+#### Cli
+
+```bash
+npm run build-docker
+npm run cli-docker
+
+# Loading from filename: spec/test.scm
+# -----------
+# RESULTS
+# -----------
+# Passed: 20
+# Failed: 0
+# -----------
+```
+
+#### Terminal
+
+```bash
+npm run build-docker
+npm run start-docker
+
+550f...:/usr/src/cidlang# cidlang spec/test.scm
+550f...:/usr/src/cidlang# cidrepl
+
+CID> (+ 10 25)
+35
+```
 
 ```bash
 npm run build-docker && npm run start-docker
