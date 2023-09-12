@@ -1,0 +1,28 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "outputs": ["dist/**"]
+    },
+    "build-src": {
+      "inputs": ["src/**/*.ts"],
+      "outputs": ["dist/**"]
+    },
+    "build-bins": {
+      "inputs": ["dist/**/*.js"],
+      "outputs": [
+        "dist/cidlang-linux",
+        "dist/cidlang-macos",
+        "dist/cidlang-win.exe",
+        "dist/cidrepl-linux",
+        "dist/cidrepl-macos",
+        "dist/cidrepl-win.exe"
+      ]
+    },
+    "lint": {},
+    "test": {},
+    "coverage": {
+      "outputs": ["coverage/**"]
+    }
+  }
+}
