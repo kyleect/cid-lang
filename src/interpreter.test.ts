@@ -12,6 +12,7 @@ import { Interpreter } from "./interpreter";
 import { Parser } from "./parser";
 import { Sym } from "./symbol";
 import { Tokenizer } from "./tokenizer";
+import { vi } from "vitest";
 
 describe("Interpreter", () => {
   let env: Environment;
@@ -690,7 +691,7 @@ describe("Interpreter", () => {
 
       beforeEach(() => {
         originalConsoleLog = console.log;
-        console.log = jest.fn();
+        console.log = vi.fn();
       });
 
       afterEach(() => {

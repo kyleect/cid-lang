@@ -7,7 +7,6 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"Orta.vscode-jest",
 				"esbenp.prettier-vscode",
 				"eamodio.gitlens",
 				"ms-azuretools.vscode-docker",

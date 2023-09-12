@@ -1,17 +1,18 @@
 import { exec } from ".";
 import { readFileSync } from "fs";
+import { vi } from "vitest";
 
 describe("cid-lang spec", () => {
   it("test.scm should pass", () => {
     const file = readFileSync("spec/test.scm");
     const fileContents = file.toString();
 
-    const displayStub = jest.fn();
+    const displayStub = vi.fn();
 
     const env = new Map();
     env.set("display", displayStub);
 
-    const exit = jest.fn();
+    const exit = vi.fn();
 
     exit.mockImplementation((exitCode) => {
       if (exitCode > 0) {
