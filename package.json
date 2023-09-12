@@ -12,7 +12,8 @@
   "scripts": {
     "tsup": "tsup",
     "dev": "npm run build -- --watch --onSuccess \"npm run start\"",
-    "build": "rm -rf dist && tsup src/index.ts src/repl.ts src/cli.ts --shims --dts --sourcemap --format esm,cjs --keep-names --treeshake recommended",
+    "prebuild": "rm -rf dist",
+    "build": "tsup src/index.ts src/repl.ts src/cli.ts --shims --dts --sourcemap --format esm,cjs --keep-names --treeshake recommended",
     "test": "jest",
     "coverage": "npm test -- --coverage --collectCoverageFrom=\"./src/**\"",
     "build-docker": "docker build . -t cidlang",
@@ -21,10 +22,13 @@
     "repl-docker": "npm run start-docker -- /bin/sh --login -c cidrepl",
     "cli-docker": "npm run start-docker -- /bin/sh --login -c \"cidlang spec/test.scm\"",
     "cli": "node dist/cli.js",
+    "build-cli": "npx pkg dist/cli.js --out-path=dist",
+    "build-repl": "npx pkg dist/repl.js --out-path=dist",
     "format": "npx prettier --write .",
     "lint": "npx eslint .",
     "verify": "npm run test && npm run lint && npm run build",
-    "docs": "npx typedoc src/index.ts"
+    "docs": "npx typedoc src/index.ts",
+    "build-all": "npm run build && npm run build-cli && npm run build-repl && npm run docs"
   },
   "author": "Kylee Tilley",
   "license": "MIT",
