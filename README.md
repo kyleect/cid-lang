@@ -82,7 +82,7 @@ CID> (+ 10 25)
 
 ## Differences To Scheme (So Far)
 
-- All Expressions Self Evaluate
+- Quoting lists is not required
 
 ## Todos
 
