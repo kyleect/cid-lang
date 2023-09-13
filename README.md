@@ -37,8 +37,8 @@ CID> (+ 10 25)
 
 The `build-bins` script will build out a set of binaries. You must run `build-src` first!
 
-- `{linux|macos|windows}-cidlang[.exe]`
-- `{linux|macos|windows}-cidrepl[.exe]`
+- `dist/{linux|macos|windows}-cidlang[.exe]`
+- `dist/{linux|macos|windows}-cidrepl[.exe]`
 
 ```bash
 npx turbo build-src build-bins

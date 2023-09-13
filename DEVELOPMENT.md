@@ -1,5 +1,32 @@
 # Development
 
+## Building
+
+- `npx turbo build-src` Builds the project in to `dist/`
+- `npx turbo build-bins` Builds the `cidlang.js` & `cidrepl.js` files in `dist/` in to executable binaries
+  - `dist/{linux|macos|windows}-cidlang[.exe]`
+  - `dist/{linux|macos|windows}-cidrepl[.exe]`
+- `npm run build-docker` Builds the [Dockerfile](./Dockerfile) in to the image `cidlang`
+- `npm run docs` Builds the documentation files in to `docs/`
+
+## Tests
+
+- `npx turbo test` Runs all tests
+- `npx turbo coverage` Runs all tests with coverage
+- `npm run test:watch` Run tests and watch for changes
+
+## Formatting/Linting
+
+- `npx turbo lint` Runs eslint
+- `npm run format` Format code with prettier
+
+## Running
+
+- `npm run cli` Runs `dist/cidlang.js`
+- `npm run repl` Runs `dist/cidrepl.js`
+- `npm run cli-docker` Runs `cidlang` inside a docker container
+- `npm run repl-docker` Runs `cidrepl` inside a docker container
+
 ## Navigating
 
 1. [Tokenize](#tokenizer) source code in to [tokens](#tokens)
