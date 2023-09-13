@@ -12,8 +12,7 @@
   "scripts": {
     "tsup": "tsup",
     "dev": "npm run build -- --watch --onSuccess \"npm run start\"",
-    "prebuild": "rm -rf dist",
-    "build-src": "tsup src/index.ts src/cidrepl.ts src/cidlang.ts --shims --dts --sourcemap --format esm,cjs --keep-names --treeshake recommended",
+    "build-src": "rm -rf dist/lib && tsup src/index.ts src/cidrepl.ts src/cidlang.ts -d dist/lib --minify --shims --dts --sourcemap --format esm,cjs --keep-names --treeshake recommended --no-splitting",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "npm test -- --coverage",
@@ -23,7 +22,7 @@
     "repl-docker": "npm run start-docker -- /bin/sh --login -c cidrepl",
     "cli-docker": "npm run start-docker -- /bin/sh --login -c \"cidlang spec/test.scm\"",
     "cli": "node dist/cidlang.js",
-    "build-bins": "npx pkg dist/cidlang.js --out-path=dist && npx pkg dist/cidrepl.js --out-path=dist",
+    "build-bins": "rm -rf dist/bins && npx pkg dist/lib/cidlang.js --out-path=dist/bins && npx pkg dist/lib/cidrepl.js --out-path=dist/bins",
     "format": "npx prettier --write .",
     "lint": "npx eslint .",
     "docs": "npx typedoc src/index.ts"

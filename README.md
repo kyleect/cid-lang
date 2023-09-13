@@ -21,13 +21,13 @@ exec(`
 ### CLI
 
 ```bash
-npx turbo build-src && ./dist/cidlang.js spec/test.scm
+npx turbo build-src && ./dist/lib/cidlang.js spec/test.scm
 ```
 
 ### REPL
 
 ```bash
-npx turbo build-src && ./dist/cidrepl.js
+npx turbo build-src && ./dist/lib/cidrepl.js
 
 CID> (+ 10 25)
 35
@@ -37,15 +37,15 @@ CID> (+ 10 25)
 
 The `build-bins` script will build out a set of binaries. You must run `build-src` first!
 
-- `dist/{linux|macos|windows}-cidlang[.exe]`
-- `dist/{linux|macos|windows}-cidrepl[.exe]`
+- `dist/bins/cidlang-{linux|macos|windows.exe}`
+- `dist/bins/cidrepl-{linux|macos|windows.exe}`
 
 ```bash
 npx turbo build-src build-bins
 
-./dist/linux-cidlang spec/test.scm
+./dist/bins/cidlang-linux spec/test.scm
 
-./dist/linux-cidrepl
+./dist/bins/cidrepl-linux
 
 CID> (+ 10 25)
 35
@@ -76,26 +76,6 @@ npm run cli-docker
 # Passed: 20
 # Failed: 0
 # -----------
-```
-
-#### Terminal
-
-```bash
-npm run build-docker
-npm run start-docker
-
-550f...:/usr/src/cidlang# cidlang spec/test.scm
-550f...:/usr/src/cidlang# cidrepl
-
-CID> (+ 10 25)
-35
-```
-
-```bash
-npm run build-docker && npm run start-docker
-
-CID> (+ 10 25)
-35
 ```
 
 ## Differences To Scheme (So Far)

@@ -3,17 +3,17 @@
   "pipeline": {
     "build-src": {
       "inputs": ["src/**/*.ts"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/lib/**"]
     },
     "build-bins": {
-      "inputs": ["dist/**/*.js"],
+      "inputs": ["dist/lib/*.js"],
       "outputs": [
-        "dist/cidlang-linux",
-        "dist/cidlang-macos",
-        "dist/cidlang-win.exe",
-        "dist/cidrepl-linux",
-        "dist/cidrepl-macos",
-        "dist/cidrepl-win.exe"
+        "dist/bins/cidlang-linux",
+        "dist/bins/cidlang-macos",
+        "dist/bins/cidlang-win.exe",
+        "dist/bins/cidrepl-linux",
+        "dist/bins/cidrepl-macos",
+        "dist/bins/cidrepl-win.exe"
       ]
     },
     "lint": {},

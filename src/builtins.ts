@@ -1,6 +1,12 @@
 import { Cell } from "./cell";
 import { CIDLangError, CIDLangRuntimeError } from "./errors";
-import { isExpression, isListExpression, isPairExpression } from "./expression";
+import {
+  isExpression,
+  isListExpression,
+  isNotAnExpression,
+  isNumericExpression,
+  isPairExpression,
+} from "./expression";
 import { Sym } from "./symbol";
 
 // Math
@@ -13,7 +19,7 @@ import { Sym } from "./symbol";
  * @returns Sum to `a` and `b`
  */
 export function sum(a: unknown, b: unknown) {
-  if (typeof a !== "number" || typeof b !== "number") {
+  if (!isNumericExpression(a) || !isNumericExpression(b)) {
     throw new CIDLangError("All arguments must be numbers");
   }
 
@@ -28,7 +34,7 @@ export function sum(a: unknown, b: unknown) {
  * @returns Subtraction of `a` and `b`
  */
 export function sub(a: unknown, b: unknown) {
-  if (typeof a !== "number" || typeof b !== "number") {
+  if (!isNumericExpression(a) || !isNumericExpression(b)) {
     throw new CIDLangError("All arguments must be numbers");
   }
 
@@ -43,7 +49,7 @@ export function sub(a: unknown, b: unknown) {
  * @returns Multiplication of `a` and `b`
  */
 export function multiply(a: unknown, b: unknown) {
-  if (typeof a !== "number" || typeof b !== "number") {
+  if (!isNumericExpression(a) || !isNumericExpression(b)) {
     throw new CIDLangError("All arguments must be numbers");
   }
 
@@ -58,7 +64,7 @@ export function multiply(a: unknown, b: unknown) {
  * @returns Division of `a` and `b`
  */
 export function divide(a: unknown, b: unknown) {
-  if (typeof a !== "number" || typeof b !== "number") {
+  if (!isNumericExpression(a) || !isNumericExpression(b)) {
     throw new CIDLangError("All arguments must be numbers");
   }
 
@@ -77,7 +83,7 @@ export function divide(a: unknown, b: unknown) {
  * @returns Division of `a` and `b`
  */
 export function greaterThan(a: unknown, b: unknown) {
-  if (typeof a !== "number" || typeof b !== "number") {
+  if (!isNumericExpression(a) || !isNumericExpression(b)) {
     throw new CIDLangError("All arguments must be numbers");
   }
 
@@ -92,7 +98,7 @@ export function greaterThan(a: unknown, b: unknown) {
  * @returns Division of `a` and `b`
  */
 export function lessThan(a: unknown, b: unknown) {
-  if (typeof a !== "number" || typeof b !== "number") {
+  if (!isNumericExpression(a) || !isNumericExpression(b)) {
     throw new CIDLangError("All arguments must be numbers");
   }
 
@@ -107,7 +113,7 @@ export function lessThan(a: unknown, b: unknown) {
  * @returns Division of `a` and `b`
  */
 export function greaterThanOrEqual(a: unknown, b: unknown) {
-  if (typeof a !== "number" || typeof b !== "number") {
+  if (!isNumericExpression(a) || !isNumericExpression(b)) {
     throw new CIDLangError("All arguments must be numbers");
   }
 
@@ -122,7 +128,7 @@ export function greaterThanOrEqual(a: unknown, b: unknown) {
  * @returns Division of `a` and `b`
  */
 export function lessThanOrEqual(a: unknown, b: unknown) {
-  if (typeof a !== "number" || typeof b !== "number") {
+  if (!isNumericExpression(a) || !isNumericExpression(b)) {
     throw new CIDLangError("All arguments must be numbers");
   }
 
@@ -183,6 +189,13 @@ export function cdr(value: unknown) {
  * @returns String of appended values
  */
 export function stringAppend(...values: unknown[]) {
+  const nonExpressionValues = values.filter(isNotAnExpression);
+
+  if (nonExpressionValues.length > 0) {
+    throw new CIDLangRuntimeError(
+      `All arguments must be an expression: ${nonExpressionValues.join(", ")}`
+    );
+  }
   return values.join(" ");
 }
 
@@ -196,6 +209,14 @@ export function stringAppend(...values: unknown[]) {
  * @returns If `a` and `b` are equal
  */
 export function isEqual(a: unknown, b: unknown) {
+  const nonExpressionValues = [a, b].filter(isNotAnExpression);
+
+  if (nonExpressionValues.length > 0) {
+    throw new CIDLangRuntimeError(
+      `All arguments must be an expression: ${nonExpressionValues.join(", ")}`
+    );
+  }
+
   if (Sym.is(a) && Sym.is(b)) {
     return a.name === b.name;
   }
