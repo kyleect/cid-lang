@@ -21,13 +21,31 @@ exec(`
 ### CLI
 
 ```bash
-npm run build && ./dist/cli.js spec/test.scm
+npx turbo build-src && ./dist/cidlang.js spec/test.scm
 ```
 
 ### REPL
 
 ```bash
-npm build && ./dist/repl.js
+npx turbo build-src && ./dist/cidrepl.js
+
+CID> (+ 10 25)
+35
+```
+
+### Binaries
+
+The `build-bins` script will build out a set of binaries. You must run `build-src` first!
+
+- {linux|macos|windows}-cidlang[.exe]
+- {linux|macos|windows}-cidrepl[.exe]
+
+```bash
+npx turbo build-src build-bins
+
+./dist/linux-cidlang spec/test.scm
+
+./dist/linux-cidrepl
 
 CID> (+ 10 25)
 35
