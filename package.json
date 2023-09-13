@@ -2,12 +2,12 @@
   "name": "cid-lang",
   "version": "1.0.0",
   "description": "An (on going) implementation of a Scheme based language",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "main": "dist/lib/index.js",
+  "module": "dist/lib/index.mjs",
+  "types": "dist/lib/index.d.ts",
   "bin": {
-    "cidlang": "dist/cidlang.js",
-    "cidrepl": "dist/cidrepl.js"
+    "cidlang": "dist/lib/cidlang.js",
+    "cidrepl": "dist/lib/cidrepl.js"
   },
   "scripts": {
     "tsup": "tsup",
