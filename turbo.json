@@ -18,6 +18,9 @@
     },
     "lint": {},
     "test": {},
+    "typecheck": {
+      "inputs": ["src/**/*.ts"]
+    },
     "coverage": {
       "outputs": ["coverage/**"]
     }

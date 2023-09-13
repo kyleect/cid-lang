@@ -8,6 +8,7 @@
   - `dist/bins/cidrepl-{linux|macos|windows.exe}`
 - `npm run build-docker` Builds the [Dockerfile](./Dockerfile) in to the image `cidlang`
 - `npm run docs` Builds the documentation files in to `docs/`
+- `npm run build` Runs `npx turbo build-src build-bins`
 
 ## Tests
 
@@ -17,8 +18,10 @@
 
 ## Formatting/Linting
 
+- `npm run typecheck` Typecheck code in `src`
 - `npx turbo lint` Runs eslint
 - `npm run format` Format code with prettier
+- `npm run verify` Runs `npx turbo typecheck test lint`
 
 ## Running
 

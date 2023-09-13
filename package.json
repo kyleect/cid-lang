@@ -25,7 +25,10 @@
     "build-bins": "rm -rf dist/bins && npx pkg dist/lib/cidlang.js --out-path=dist/bins && npx pkg dist/lib/cidrepl.js --out-path=dist/bins",
     "format": "npx prettier --write .",
     "lint": "npx eslint .",
-    "docs": "npx typedoc src/index.ts"
+    "docs": "npx typedoc src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "turbo run build-src build-bins",
+    "verify": "turbo run typecheck test lint"
   },
   "author": "Kylee Tilley",
   "license": "MIT",
