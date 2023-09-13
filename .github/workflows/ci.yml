@@ -24,7 +24,10 @@ jobs:
         run: npm ci
 
       - name: Verify
-        run: npx turbo test lint
+        run: npm run verify
+      
+      - name: Build
+        run: npm run build
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.4
