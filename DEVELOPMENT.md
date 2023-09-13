@@ -70,9 +70,53 @@ enum TokenType {
 The `Parser` will take an input `Token[]` and generate expressions `Expr[]` for the `Interpreter`.
 
 ```typescript
-type AtomicExpression = number | string | Sym | boolean;
-type ListExpression = (AtomicExpression | ListExpression)[];
+/**
+ * Single value, non list expressions
+ *
+ * - 123
+ * - "Hello World"
+ * - Sym.of("a")
+ * - true/false
+ */
+type AtomicExpression =
+  | NumericExpression
+  | StringExpression
+  | Sym
+  | BooleanExpression;
+
+/**
+ * Tuple/pair value expression
+ *
+ * - Cell.of(1, 2) => (1 . 2)
+ * - Cell.list(1, 2) => (1 . (2 . ())) => (1 2)
+ */
+type PairExpression = Cell;
+
+/**
+ * Null/empty list expression
+ *
+ * - ()
+ * - '()
+ * - (list)
+ * - Cell.list()
+ */
+type NullExpression = [];
+
+/**
+ * Pair or empty list expression
+ *
+ * () '() (1 . 2) (1 2 3) (list 1 2 3)
+ */
+type ListExpression = PairExpression | NullExpression;
+
+/**
+ * Atomic or list expression
+ */
 type Expression = AtomicExpression | ListExpression;
+
+/**
+ * One or more expressions
+ */
 type Program = Expression[];
 ```
 
