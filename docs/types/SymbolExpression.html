@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Interpreter | cid-lang</title><meta name="description" content="Documentation for cid-lang"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>SymbolExpression | cid-lang</title><meta name="description" content="Documentation for cid-lang"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
 <div class="tsd-toolbar-contents container">
 <div class="table-cell" id="tsd-search" data-base="..">
 <div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><use href="#icon-search"></use></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
@@ -13,105 +13,11 @@
 <div class="tsd-page-title">
 <ul class="tsd-breadcrumb">
 <li><a href="../modules.html">cid-lang</a></li>
-<li><a href="Interpreter.html">Interpreter</a></li></ul>
-<h1>Class Interpreter</h1></div>
-<section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Interprets expressions of a program in to a resulting expression</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></section>
-<section class="tsd-panel tsd-hierarchy">
-<h4>Hierarchy</h4>
-<ul class="tsd-hierarchy">
-<li><span class="target">Interpreter</span></li></ul></section><aside class="tsd-sources">
+<li><a href="SymbolExpression.html">SymbolExpression</a></li></ul>
+<h1>Type alias SymbolExpression</h1></div>
+<div class="tsd-signature"><span class="tsd-kind-type-alias">Symbol<wbr/>Expression</span><span class="tsd-signature-symbol">:</span> <a href="../classes/Sym.html" class="tsd-signature-type tsd-kind-class">Sym</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/kyleect/scheme-ts/blob/ce7f5e2/src/interpreter.ts#L23">src/interpreter.ts:23</a></li></ul></aside>
-<section class="tsd-panel-group tsd-index-group">
-<section class="tsd-panel tsd-index-panel">
-<details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
-<h5 class="tsd-index-heading uppercase" role="button" aria-expanded="false" tabIndex=0><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><use href="#icon-chevronSmall"></use></svg> Index</h5></summary>
-<div class="tsd-accordion-details">
-<section class="tsd-index-section">
-<h3 class="tsd-index-heading">Constructors</h3>
-<div class="tsd-index-list"><a href="Interpreter.html#constructor" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a>
-</div></section>
-<section class="tsd-index-section">
-<h3 class="tsd-index-heading">Properties</h3>
-<div class="tsd-index-list"><a href="Interpreter.html#env" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>env</span></a>
-</div></section>
-<section class="tsd-index-section">
-<h3 class="tsd-index-heading">Methods</h3>
-<div class="tsd-index-list"><a href="Interpreter.html#_interpret" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#interpret</span></a>
-<a href="Interpreter.html#interpretProgram" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>interpret<wbr/>Program</span></a>
-</div></section></div></details></section></section>
-<section class="tsd-panel-group tsd-member-group">
-<h2>Constructors</h2>
-<section class="tsd-panel tsd-member"><a id="constructor" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="constructor.new_Interpreter"><span class="tsd-kind-constructor-signature">new <wbr/>Interpreter</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">env</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="Interpreter.html" class="tsd-signature-type tsd-kind-class">Interpreter</a><a href="#constructor.new_Interpreter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">env</span>: <a href="Environment.html" class="tsd-signature-type tsd-kind-class">Environment</a><span class="tsd-signature-symbol"> = ...</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="Interpreter.html" class="tsd-signature-type tsd-kind-class">Interpreter</a></h4><aside class="tsd-sources">
-<ul>
-<li>Defined in <a href="https://github.com/kyleect/scheme-ts/blob/ce7f5e2/src/interpreter.ts#L24">src/interpreter.ts:24</a></li></ul></aside></li></ul></section></section>
-<section class="tsd-panel-group tsd-member-group">
-<h2>Properties</h2>
-<section class="tsd-panel tsd-member"><a id="env" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>env</span><a href="#env" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">env</span><span class="tsd-signature-symbol">:</span> <a href="Environment.html" class="tsd-signature-type tsd-kind-class">Environment</a><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
-<ul>
-<li>Defined in <a href="https://github.com/kyleect/scheme-ts/blob/ce7f5e2/src/interpreter.ts#L24">src/interpreter.ts:24</a></li></ul></aside></section></section>
-<section class="tsd-panel-group tsd-member-group">
-<h2>Methods</h2>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_interpret" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>#interpret</span><a href="#_interpret" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_interpret._interpret-1"><span class="tsd-kind-call-signature">#interpret</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">expression</span>, <span class="tsd-kind-parameter">env</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/Expression.html" class="tsd-signature-type tsd-kind-type-alias">Expression</a><a href="#_interpret._interpret-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Interpret an individual expression</p>
-</div>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">expression</span>: <a href="../types/Expression.html" class="tsd-signature-type tsd-kind-type-alias">Expression</a></h5>
-<div class="tsd-comment tsd-typography"><p>Expression to interpret</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li>
-<li>
-<h5><span class="tsd-kind-parameter">env</span>: <a href="Environment.html" class="tsd-signature-type tsd-kind-class">Environment</a><span class="tsd-signature-symbol"> = ...</span></h5>
-<div class="tsd-comment tsd-typography"><p>Environment to use for interpretation</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="../types/Expression.html" class="tsd-signature-type tsd-kind-type-alias">Expression</a></h4><p>Result of expression&#39;s interpretation</p>
-
-<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
-<ul>
-<li>Defined in <a href="https://github.com/kyleect/scheme-ts/blob/ce7f5e2/src/interpreter.ts#L53">src/interpreter.ts:53</a></li></ul></aside></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="interpretProgram" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>interpret<wbr/>Program</span><a href="#interpretProgram" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="interpretProgram.interpretProgram-1"><span class="tsd-kind-call-signature">interpret<wbr/>Program</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">program</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/Expression.html" class="tsd-signature-type tsd-kind-type-alias">Expression</a><a href="#interpretProgram.interpretProgram-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Interpret program (expression/expressions) and return result expression</p>
-</div>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">program</span>: <a href="../types/Program.html" class="tsd-signature-type tsd-kind-type-alias">Program</a></h5>
-<div class="tsd-comment tsd-typography"><p>Expression representing the program to interpret</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="../types/Expression.html" class="tsd-signature-type tsd-kind-type-alias">Expression</a></h4><p>Result of program&#39;s last interpreted expression</p>
-
-<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
-<ul>
-<li>Defined in <a href="https://github.com/kyleect/scheme-ts/blob/ce7f5e2/src/interpreter.ts#L31">src/interpreter.ts:31</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/kyleect/scheme-ts/blob/ce7f5e2/src/expression.ts#L9">src/expression.ts:9</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -126,39 +32,31 @@
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><use href="#icon-checkbox"></use></svg><span>Inherited</span></label></li>
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><use href="#icon-checkbox"></use></svg><span>External</span></label></li></ul></form></div>
 <div class="tsd-theme-toggle">
-<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
-<details open class="tsd-index-accordion tsd-page-navigation"><summary class="tsd-accordion-summary">
-<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg>On This Page</h3></summary>
-<div class="tsd-accordion-details">
-<ul>
-<li><a href="#constructor" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a></li>
-<li><a href="#env" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>env</span></a></li>
-<li><a href="#_interpret" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#interpret</span></a></li>
-<li><a href="#interpretProgram" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>interpret<wbr/>Program</span></a></li></ul></div></details></div>
+<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../modules.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1"></use></svg><span>cid-lang</span></a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container" data-base="..">
 <li><a href="../enums/TokenType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg>TokenType</a></li>
-<li><a href="CIDImproperListError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>CIDImproperListError</a></li>
-<li><a href="CIDLangError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>CIDLangError</a></li>
-<li><a href="CIDLangExitError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>CIDLangExitError</a></li>
-<li><a href="CIDLangRuntimeError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>CIDLangRuntimeError</a></li>
-<li><a href="CIDLangSyntaxError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>CIDLangSyntaxError</a></li>
-<li><a href="Cell.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Cell</a></li>
-<li><a href="Environment.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Environment</a></li>
-<li><a href="Interpreter.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Interpreter</a></li>
-<li><a href="Parser.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Parser</a></li>
-<li><a href="StringTokenizer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>StringTokenizer</a></li>
-<li><a href="Sym.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Sym</a></li>
-<li><a href="Token.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Token</a></li>
-<li><a href="TokenParser.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>TokenParser</a></li>
-<li><a href="Tokenizer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Tokenizer</a></li>
-<li><a href="../types/AtomicExpression.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>AtomicExpression</a></li>
-<li><a href="../types/BooleanExpression.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>BooleanExpression</a></li>
-<li><a href="../types/Expression.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>Expression</a></li>
-<li><a href="../types/ListExpression.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>ListExpression</a></li>
-<li><a href="../types/NullExpression.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>NullExpression</a></li>
-<li><a href="../types/NumericExpression.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>NumericExpression</a></li>
+<li><a href="../classes/CIDImproperListError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>CIDImproperListError</a></li>
+<li><a href="../classes/CIDLangError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>CIDLangError</a></li>
+<li><a href="../classes/CIDLangExitError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>CIDLangExitError</a></li>
+<li><a href="../classes/CIDLangRuntimeError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>CIDLangRuntimeError</a></li>
+<li><a href="../classes/CIDLangSyntaxError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>CIDLangSyntaxError</a></li>
+<li><a href="../classes/Cell.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Cell</a></li>
+<li><a href="../classes/Environment.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Environment</a></li>
+<li><a href="../classes/Interpreter.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Interpreter</a></li>
+<li><a href="../classes/Parser.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Parser</a></li>
+<li><a href="../classes/StringTokenizer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>StringTokenizer</a></li>
+<li><a href="../classes/Sym.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Sym</a></li>
+<li><a href="../classes/Token.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Token</a></li>
+<li><a href="../classes/TokenParser.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>TokenParser</a></li>
+<li><a href="../classes/Tokenizer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Tokenizer</a></li>
+<li><a href="AtomicExpression.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>AtomicExpression</a></li>
+<li><a href="BooleanExpression.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>BooleanExpression</a></li>
+<li><a href="Expression.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>Expression</a></li>
+<li><a href="ListExpression.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>ListExpression</a></li>
+<li><a href="NullExpression.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>NullExpression</a></li>
+<li><a href="NumericExpression.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>NumericExpression</a></li>
 <li>Loading...</li></ul></nav></div></div></div>
 <div class="tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" rel="noopener" target="_blank">TypeDoc</a></p></div>
