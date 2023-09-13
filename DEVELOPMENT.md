@@ -73,6 +73,7 @@ The `Parser` will take an input `Token[]` and generate expressions `Expression[]
 export type NumericExpression = number;
 export type StringExpression = string;
 export type BooleanExpression = boolean;
+export type SymbolExpression = Sym;
 
 /**
  * Single value, non list expressions
@@ -85,7 +86,7 @@ export type BooleanExpression = boolean;
 type AtomicExpression =
   | NumericExpression
   | StringExpression
-  | Sym
+  | SymbolExpression
   | BooleanExpression;
 
 /**

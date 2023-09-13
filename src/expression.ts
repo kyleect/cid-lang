@@ -6,6 +6,7 @@ import { Sym } from "./symbol";
 export type NumericExpression = number;
 export type StringExpression = string;
 export type BooleanExpression = boolean;
+export type SymbolExpression = Sym;
 
 /**
  * Single value, non list expressions
@@ -18,7 +19,7 @@ export type BooleanExpression = boolean;
 export type AtomicExpression =
   | NumericExpression
   | StringExpression
-  | Sym
+  | SymbolExpression
   | BooleanExpression;
 
 /**
@@ -136,7 +137,7 @@ export function isBooleanExpression(
  * @param value Value to check
  * @returns If value is a symbol expression
  */
-export function isSymbolExpression(value: unknown): value is Sym {
+export function isSymbolExpression(value: unknown): value is SymbolExpression {
   return Sym.is(value);
 }
 
