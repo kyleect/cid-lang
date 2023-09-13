@@ -70,6 +70,10 @@ enum TokenType {
 The `Parser` will take an input `Token[]` and generate expressions `Expression[]` for the `Interpreter`.
 
 ```typescript
+export type NumericExpression = number;
+export type StringExpression = string;
+export type BooleanExpression = boolean;
+
 /**
  * Single value, non list expressions
  *
