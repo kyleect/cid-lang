@@ -67,7 +67,7 @@ enum TokenType {
 
 ### Expressions
 
-The `Parser` will take an input `Token[]` and generate expressions `Expr[]` for the `Interpreter`.
+The `Parser` will take an input `Token[]` and generate expressions `Expression[]` for the `Interpreter`.
 
 ```typescript
 /**
