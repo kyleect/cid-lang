@@ -10,7 +10,8 @@
 				"esbenp.prettier-vscode",
 				"eamodio.gitlens",
 				"ms-azuretools.vscode-docker",
-				"ritwickdey.LiveServer"
+				"ritwickdey.LiveServer",
+				"ZixuanChen.vitest-explorer"
 			]
 		}
 	},

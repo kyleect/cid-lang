@@ -188,6 +188,7 @@ export class Interpreter {
             // Built In Functions
 
             const proc = this.#interpret(op, env);
+
             if (typeof proc === "function") {
               const fn = proc;
               const callFnArgs = Array.from(args);
@@ -258,18 +259,70 @@ export class Interpreter {
             }
           }
 
+          if (car instanceof Procedure) {
+            const proc = car;
+
+            if (!isListExpression(cdr)) {
+              throw new CIDLangRuntimeError(
+                `Procedure params must be a list expression: ${cdr}`
+              ); // TODO:
+            }
+
+            const callProcArgs = Array.from(cdr) as Expression[];
+            const procParams = Array.from(proc.params);
+
+            // Validate the number of call args matches the number of proc params
+            if (callProcArgs.length !== procParams.length) {
+              throw new CIDLangRuntimeError(
+                `Procedure expected ${procParams.length} but got ${callProcArgs.length}`
+              );
+            }
+
+            // Validate procedure params are all symbols
+            const nonSymProcParams = procParams.filter(
+              (procParam) => !Sym.is(procParam)
+            );
+            if (nonSymProcParams.length > 0) {
+              throw new CIDLangRuntimeError(
+                `All params in a lambda expression must be symbols: ${nonSymProcParams.join(
+                  ", "
+                )}`
+              );
+            }
+
+            // Map call args to proc params by index position
+            const procArgValuePairs: [string, Expression][] = (
+              procParams as Sym[]
+            ).map((procParam, paramIndex) => [
+              procParam.name,
+              this.#interpret(callProcArgs[paramIndex], env),
+            ]);
+
+            // Create environment for the procedure to run in
+            // Closure + Proc Param Args
+            const procEnv = new Environment(
+              new Map(procArgValuePairs),
+              proc.closure
+            );
+
+            return this.#interpret(proc.body, procEnv);
+          }
+
           // Handle all remaining pair expressions
-          const remainingPairExpressions = Cell.list(
+          const remainingPairExpression = Cell.list(
             ...Array.from(expression).map((e) =>
               this.#interpret(e as Expression, env)
             )
           );
 
-          if (remainingPairExpressions[0] instanceof Procedure) {
-            expression = remainingPairExpressions;
+          if (
+            remainingPairExpression instanceof Cell &&
+            remainingPairExpression.car instanceof Procedure
+          ) {
+            expression = remainingPairExpression;
             continue;
           } else {
-            return remainingPairExpressions;
+            return remainingPairExpression;
           }
         }
 

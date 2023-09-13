@@ -312,7 +312,7 @@ describe("Interpreter", () => {
             );
           });
 
-          it.skip("should interpret quoted if expression: quoted return value", () => {
+          it("should interpret quoted if expression: quoted return value", () => {
             expect(
               interpretExpression("((lambda (x) 'x) 10)", env)
             ).toStrictEqual(Sym.of("x"));
@@ -348,7 +348,7 @@ describe("Interpreter", () => {
           ).toBe(15);
         });
 
-        it.skip("should interpret lambda expression calls", () => {
+        it("should interpret lambda expression calls", () => {
           expect(interpretExpression("((lambda (x) x) 10)", env)).toStrictEqual(
             10
           );

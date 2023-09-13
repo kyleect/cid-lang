@@ -46,6 +46,30 @@
 (assert (number? 'a) #f)
 (assert (number? +) #f)
 
+;; lambda
+
+;; Calling Defined Lambda
+(define id (lambda (x) x))
+(assert (id 10) 10)
+
+;; Calling Inline Lambda
+(assert ((lambda (x) x) 10) 10)
+
+;; Single Expression Body Only
+(define id2 (lambda (x) 'x x))
+(assert (id2 10) 'x)
+
+;; Nested Defined Lambda
+(define nestedFn (lambda (a)
+    (lambda (b)
+      (+ a b))))
+(assert ((nestedFn 10) 15) 25)
+
+;; Nested Inline Lambda
+(assert (((lambda (a)
+    (lambda (b)
+      (+ a b))) 10) 15) 25)
+
 ;; Results
 
 (display "-----------")
