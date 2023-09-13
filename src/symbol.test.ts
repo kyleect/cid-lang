@@ -30,6 +30,10 @@ describe("Sym", () => {
     expect(Sym.isKeyword(Sym.Set)).toBe(true);
   });
 
+  it("should return true that set is keyword", () => {
+    expect(Sym.isKeyword(Sym.Begin)).toBe(true);
+  });
+
   it("should throw if creating symbol matching keyword: define", () => {
     expect(() => Sym.of("define")).toThrow(
       new CIDLangError(`Illegal reference to keyword: define`)
@@ -57,6 +61,12 @@ describe("Sym", () => {
   it("should throw if creating symbol matching keyword: set!", () => {
     expect(() => Sym.of("set!")).toThrow(
       new CIDLangError(`Illegal reference to keyword: set!`)
+    );
+  });
+
+  it("should throw if creating symbol matching keyword: set!", () => {
+    expect(() => Sym.of("begin")).toThrow(
+      new CIDLangError(`Illegal reference to keyword: begin`)
     );
   });
 });

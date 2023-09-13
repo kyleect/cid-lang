@@ -109,6 +109,13 @@ export class Sym {
   static get Set(): Sym {
     return setSymbol;
   }
+
+  /**
+   * Reference to begin keyword Sym
+   */
+  static get Begin(): Sym {
+    return beginSymbol;
+  }
 }
 
 const defineSymbol = Sym.keyword("define");
@@ -116,3 +123,4 @@ const quoteSymbol = Sym.keyword("quote");
 const lambdaSymbol = Sym.keyword("lambda");
 const ifSymbol = Sym.keyword("if");
 const setSymbol = Sym.keyword("set!");
+const beginSymbol = Sym.keyword("begin");

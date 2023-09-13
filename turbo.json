@@ -14,7 +14,8 @@
         "dist/bins/cidrepl-linux",
         "dist/bins/cidrepl-macos",
         "dist/bins/cidrepl-win.exe"
-      ]
+      ],
+      "dependsOn": ["build-src"]
     },
     "lint": {},
     "test": {},

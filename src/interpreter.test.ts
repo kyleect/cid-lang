@@ -391,6 +391,35 @@ describe("Interpreter", () => {
           );
         });
       });
+
+      describe("begin", () => {
+        it("should interpret begin expression: no body", () => {
+          expect(interpretExpression("(begin)", env)).toBe(Cell.list());
+        });
+
+        it("should interpret begin expression: one expression", () => {
+          expect(interpretExpression("(begin 150)", env)).toBe(150);
+        });
+
+        it("should interpret begin expression: multiple expressions", () => {
+          expect(interpretExpression("(begin 150 25)", env)).toBe(25);
+        });
+
+        it("should interpret begin expression: nested begins", () => {
+          expect(
+            interpretExpression(
+              `
+            (define x 100)
+            (begin
+              (set! x 50)
+              (begin
+                (* x x)))
+          `,
+              env
+            )
+          ).toBe(2500);
+        });
+      });
     });
   });
 

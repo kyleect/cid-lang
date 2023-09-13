@@ -185,6 +185,20 @@ export class Interpreter {
               continue;
             }
 
+            if (op === Sym.Begin) {
+              let result: Expression;
+
+              if (args.length === 0) {
+                return Cell.list();
+              }
+
+              for (const arg of args) {
+                result = this.#interpret(arg as Expression, env);
+              }
+
+              return result;
+            }
+
             // Built In Functions
 
             const proc = this.#interpret(op, env);

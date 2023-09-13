@@ -278,6 +278,30 @@ describe("BaseParser", () => {
       Cell.list($id, 10),
     ]);
   });
+
+  it("should parse begin expressions: no expression test", () => {
+    expect(parseStringToExpressions("(begin)")).toStrictEqual([
+      Cell.list(Sym.Begin),
+    ]);
+  });
+
+  it("should parse begin expressions: one expression test", () => {
+    expect(parseStringToExpressions("(begin 123)")).toStrictEqual([
+      Cell.list(Sym.Begin, 123),
+    ]);
+  });
+
+  it("should parse begin expressions: multiple expressions test", () => {
+    expect(
+      parseStringToExpressions("(begin (set! x 100) (* 5 x))")
+    ).toStrictEqual([
+      Cell.list(
+        Sym.Begin,
+        Cell.list(Sym.Set, Sym.of("x"), 100),
+        Cell.list(Sym.of("*"), 5, Sym.of("x"))
+      ),
+    ]);
+  });
 });
 
 function parseStringToExpressions(source: string): Program {

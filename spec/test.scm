@@ -3,19 +3,21 @@
 
 (define pass
   (lambda (message)
-    (set! passed (+ passed 1))
-    (display "Pass!" message)))
+    (begin
+      (set! passed (+ passed 1))
+      (display "Pass!" message))))
 
 (define fail
   (lambda (message)
-    (set! failed (+ failed 1))
-    (display "Fail!" message)))
+    (begin
+      (set! failed (+ failed 1))
+      (display "Fail!" message))))
 
 (define assert
   (lambda (value expected)
     (if (equal? value expected)
-      (pass (string-append "Value was expected to be" expected))
-      (fail (string-append "Value was expected to be" expected)))))
+      (pass (string-append "Value" value "was expected to be" expected))
+      (fail (string-append "Value" value "was expected to be" expected)))))
 
 (define assert-equal?
   (lambda (a b expected)
@@ -69,6 +71,14 @@
 (assert (((lambda (a)
     (lambda (b)
       (+ a b))) 10) 15) 25)
+
+;; begin
+(define begin_val 0)
+(assert 
+  (begin
+    (set! begin_val 5)
+    (+ begin_val 1))
+  6)
 
 ;; Results
 
