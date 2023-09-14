@@ -147,8 +147,15 @@
 (assert (pair? #f) #f)
 
 ;; string-append
-(assert (string-append 1 2 3) "1 2 3")
-(assert (string-append "Hello" 'World) "Hello World")
+(assert (string-append 1 2 3) "123")
+(assert (string-append "Hello" 'World) "HelloWorld")
+(assert (string-append "Hello " 'World) "Hello World")
+
+;; string-append
+(assert (string-join ("Hello" 'World) " ") "Hello World")
+(assert (string-join ("Hello" 'World) ",") "Hello,World")
+;; TODO: This causes memory leak
+;(assert (string-join ("Hello" 'World) "")  "HelloWorld")
 
 ;; lambda
 

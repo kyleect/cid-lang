@@ -6,6 +6,7 @@ import {
   isNotAnExpression,
   isNumericExpression,
   isPairExpression,
+  isStringExpression,
 } from "./expression";
 import { Sym } from "./symbol";
 
@@ -189,14 +190,37 @@ export function cdr(value: unknown) {
  * @returns String of appended values
  */
 export function stringAppend(...values: unknown[]) {
-  const nonExpressionValues = values.filter(isNotAnExpression);
+  return stringJoin(Cell.list(...values), "");
+}
+
+/**
+ * Join values in to a string using a joiner string
+ * @param values Values to append as a string
+ * @param joiner String to use as a joiner
+ * @returns String of joined values
+ */
+export function stringJoin(values: unknown, joiner: unknown) {
+  if (!isListExpression(values)) {
+    throw new CIDLangRuntimeError("Values arugment must be a list expression");
+  }
+
+  const valuesArr = Array.from(values);
+
+  const nonExpressionValues = valuesArr.filter(isNotAnExpression);
 
   if (nonExpressionValues.length > 0) {
     throw new CIDLangRuntimeError(
       `All arguments must be an expression: ${nonExpressionValues.join(", ")}`
     );
   }
-  return values.join(" ");
+
+  if (!isStringExpression(joiner)) {
+    throw new CIDLangRuntimeError(
+      `Joiner must be a string expression: ${joiner}`
+    );
+  }
+
+  return valuesArr.join(joiner);
 }
 
 // Compare

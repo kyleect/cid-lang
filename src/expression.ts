@@ -117,7 +117,7 @@ export function isNumericExpression(
  * @param value Value to check
  * @returns If value is a string expression
  */
-export function isStringExpression(value: unknown): value is NumericExpression {
+export function isStringExpression(value: unknown): value is StringExpression {
   return typeof value === "string";
 }
 

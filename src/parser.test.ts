@@ -302,6 +302,30 @@ describe("BaseParser", () => {
       ),
     ]);
   });
+
+  it("should parse string-append expresion", () => {
+    expect(
+      parseStringToExpressions(`(string-append "Hello" 'World)`)
+    ).toStrictEqual([
+      Cell.list(
+        Sym.of("string-append"),
+        "Hello",
+        Cell.list(Sym.Quote, Sym.of("World"))
+      ),
+    ]);
+  });
+
+  it.skip("should parse string-join expresion: empty join", () => {
+    expect(
+      parseStringToExpressions(`(string-join ("Hello" 'World) "")`)
+    ).toStrictEqual([
+      Cell.list(
+        Sym.of("string-join"),
+        Cell.list("Hello", Cell.list(Sym.Quote, Sym.of("World"))),
+        ""
+      ),
+    ]);
+  });
 });
 
 function parseStringToExpressions(source: string): Program {

@@ -14,6 +14,7 @@ import {
   stringAppend,
   greaterThanOrEqual,
   lessThanOrEqual,
+  stringJoin,
 } from "./builtins";
 import { Cell } from "./cell";
 import {
@@ -88,6 +89,7 @@ export class Environment {
     env.set("list?", isListExpression);
 
     env.set("string-append", stringAppend);
+    env.set("string-join", stringJoin);
 
     env.set("display", display);
     env.set("exit", exit);

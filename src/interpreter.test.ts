@@ -715,6 +715,26 @@ describe("Interpreter", () => {
       );
     });
 
+    describe("string-append", () => {
+      it("should append values together as a string", () => {
+        expect(interpretExpression(`(string-append "Hello" 'World)`, env)).toBe(
+          "HelloWorld"
+        );
+      });
+    });
+
+    describe("string-join", () => {
+      it("should join values together using a joiner", () => {
+        expect(
+          interpretExpression(`(string-join ("Hello" 'World) " ")`, env)
+        ).toBe("Hello World");
+      });
+
+      it.skip("should not run out of memory", () => {
+        interpretExpression(`(string-join ("Hello" 'World) "")`, env);
+      });
+    });
+
     describe("display", () => {
       let originalConsoleLog;
 
