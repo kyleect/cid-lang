@@ -33,3 +33,4 @@ export * from "./token";
 export * from "./env";
 export * from "./errors";
 export * from "./parser";
+export * as builtins from "./builtins";
