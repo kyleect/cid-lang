@@ -15,6 +15,8 @@ import {
   greaterThanOrEqual,
   lessThanOrEqual,
   stringJoin,
+  isEquivalent,
+  isEq,
 } from "./builtins";
 import { Cell } from "./cell";
 import {
@@ -80,7 +82,10 @@ export class Environment {
     env.set("cdr", cdr);
     env.set("cons", cons);
 
+    env.set("eq?", isEq);
+    env.set("eqv?", isEquivalent);
     env.set("equal?", isEqual);
+
     env.set("boolean?", isBooleanExpression);
     env.set("number?", isNumericExpression);
     env.set("string?", isStringExpression);

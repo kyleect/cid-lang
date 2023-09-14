@@ -754,6 +754,50 @@ describe("Interpreter", () => {
       });
     });
 
+    describe("eq?", () => {
+      it("should return true for the same number", () => {
+        expect(interpretExpression("(eq? 123 123)", env)).toBe(true);
+      });
+
+      it("should return true for the same quoted number", () => {
+        expect(interpretExpression("(eq? '123 '123)", env)).toBe(true);
+      });
+
+      it("should return true for the same mixed quoted number", () => {
+        expect(interpretExpression("(eq? '123 123)", env)).toBe(true);
+      });
+
+      it("should return true for the same symbol", () => {
+        expect(interpretExpression("(eq? 'a 'a)", env)).toBe(true);
+      });
+
+      it("should return false for identical list", () => {
+        expect(interpretExpression("(eq? (1 2 3) (1 2 3))", env)).toBe(false);
+      });
+    });
+
+    describe("eqv?", () => {
+      it("should return true for the same number", () => {
+        expect(interpretExpression("(eqv? 123 123)", env)).toBe(true);
+      });
+
+      it("should return true for the same quoted number", () => {
+        expect(interpretExpression("(eqv? '123 '123)", env)).toBe(true);
+      });
+
+      it("should return true for the same mixed quoted number", () => {
+        expect(interpretExpression("(eqv? '123 123)", env)).toBe(true);
+      });
+
+      it("should return true for the same symbol", () => {
+        expect(interpretExpression("(eqv? 'a 'a)", env)).toBe(true);
+      });
+
+      it("should return false for identical list", () => {
+        expect(interpretExpression("(eqv? (1 2 3) (1 2 3))", env)).toBe(false);
+      });
+    });
+
     describe("equals?", () => {
       it("should return true for the same number", () => {
         expect(interpretExpression("(equal? 123 123)", env)).toBe(true);
@@ -769,6 +813,20 @@ describe("Interpreter", () => {
 
       it("should return true for the same symbol", () => {
         expect(interpretExpression("(equal? 'a 'a)", env)).toBe(true);
+      });
+
+      it("should return true for identical list", () => {
+        expect(interpretExpression("(equal? (1 2 3) (1 2 3))", env)).toBe(true);
+      });
+
+      it("should return false for lists of different lengths", () => {
+        expect(interpretExpression("(equal? (1 2 3) (1 2 3 4))", env)).toBe(
+          false
+        );
+      });
+
+      it("should return false for lists and an atom", () => {
+        expect(interpretExpression("(equal? (1 2 3) 1)", env)).toBe(false);
       });
     });
 
@@ -851,6 +909,11 @@ describe("Interpreter", () => {
     });
 
     describe("cdr", () => {
+      it("should..", () => {
+        expect(interpretExpression(`(cdr (1 2 3))`, env)).toStrictEqual(
+          Cell.list(2, 3)
+        );
+      });
       it("should interpret cdr call expression", () => {
         expect(interpretExpression(`(cdr (1 2 3))`, env)).toStrictEqual(
           Cell.list(2, 3)

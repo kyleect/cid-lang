@@ -226,13 +226,13 @@ export function stringJoin(values: unknown, joiner: unknown) {
 // Compare
 
 /**
- * Check if value is equal to value
+ * Check if two values are the same reference
  *
  * @param a Value to check
  * @param b Value to compare
- * @returns If `a` and `b` are equal
+ * @returns If the two values are the same reference in memory
  */
-export function isEqual(a: unknown, b: unknown) {
+export function isEq(a: unknown, b: unknown) {
   const nonExpressionValues = [a, b].filter(isNotAnExpression);
 
   if (nonExpressionValues.length > 0) {
@@ -246,6 +246,50 @@ export function isEqual(a: unknown, b: unknown) {
   }
 
   return Object.is(a, b);
+}
+
+/**
+ * Check if two values are the same reference
+ *
+ * @param a Value to check
+ * @param b Value to compare
+ * @returns If the two values are the same reference in memory
+ */
+export function isEquivalent(a: unknown, b: unknown): boolean {
+  return isEq(a, b);
+}
+
+/**
+ * Check if two values are the same reference
+ *
+ * Will check lists recursively
+ *
+ * @param a Value to check
+ * @param b Value to compare
+ * @returns If the two values (recursively for lists) are the same reference in memory
+ */
+export function isEqual(a: unknown, b: unknown): boolean {
+  if (isListExpression(a) && isListExpression(b)) {
+    if (a.length !== b.length) {
+      return false;
+    }
+
+    const aArr = Array.from(a);
+    const bArr = Array.from(b);
+
+    for (let i = 0; i < aArr.length; i++) {
+      const expressionA = aArr[i];
+      const expressionB = bArr[i];
+
+      if (!isEqual(expressionA, expressionB)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  return isEquivalent(a, b);
 }
 
 // System

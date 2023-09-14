@@ -16,8 +16,8 @@
 (define assert
   (lambda (value expected)
     (if (equal? value expected)
-      (pass (string-append "Value" value "was expected to be" expected))
-      (fail (string-append "Value" value "was expected to be" expected)))))
+      (pass (string-append "Value " value " was expected to be " expected))
+      (fail (string-append "Value " value " was expected to be " expected)))))
 
 (define assert-equal?
   (lambda (a b expected)
@@ -44,15 +44,38 @@
 (assert (<= 5 10) #t)
 (assert (<= 5  5) #t)
 
-;; equal?
-(assert-equal? '() '() #t)
-(assert-equal? 123 123 #t)
-(assert-equal? 123 '123 #t)
-(assert-equal? "Hello World!" "Hello World!" #t)
-(assert-equal? "Hello World!" '"Hello World!" #t)
-(assert-equal? (list 1 2 3) (1 2 3) #f)
-(assert-equal? (list 1 2 3) '(1 2 3) #f)
+;; eq?
+(assert (eq? '() '()) #t)
+(assert (eq? 123 123) #t)
+(assert (eq? 123 '123) #t)
+(assert (eq? "Hello World" "Hello World") #t)
+(assert (eq? "Hello World" '"Hello World") #t)
+(assert (eq? (list 1 2 3) (1 2 3)) #f)
+(assert (eq? (list 1 2 3) '(1 2 3)) #f)
 
+;; eqv?
+(assert (eqv? '() '()) #t)
+(assert (eqv? 123 123) #t)
+(assert (eqv? 123 '123) #t)
+(assert (eqv? "Hello World" "Hello World") #t)
+(assert (eqv? "Hello World" '"Hello World") #t)
+(assert (eqv? (list 1 2 3) (1 2 3)) #f)
+(assert (eqv? (list 1 2 3) '(1 2 3)) #f)
+
+;; equal?
+(assert (equal? '() '()) #t)
+(assert (equal? 123 123) #t)
+(assert (equal? 123 '123) #t)
+(assert (equal? "Hello World" "Hello World") #t)
+(assert (equal? "Hello World" '"Hello World") #t)
+(assert (equal? (list 1 2 3) (1 2 3)) #t)
+(assert (equal? (list 1 2 3) '(1 2 3)) #t)
+(assert (equal? (list 1 2 3) (1 1 1)) #f)
+(assert (equal? (list 1 2 3) (1)) #f)
+
+;; car, cdr, cons
+(assert (car (1 2)) 1)
+(assert (cdr (1 2 3)) (2 3))
 (assert-equal? 1 (car (cons 1 2)) #t)
 (assert-equal? 2 (cdr (cons 1 2)) #t)
 
