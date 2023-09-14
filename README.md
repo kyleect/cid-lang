@@ -80,7 +80,13 @@ npm run cli-docker
 
 ## Spec
 
-Language spec tests are found in [./spec](./spec)
+Language spec tests are found in [./spec](./spec) and can be ran:
+
+```bash
+npm run build
+
+dist/bins/cidlang-linux spec/test.scm
+```
 
 ## Differences To Scheme (So Far)
 
