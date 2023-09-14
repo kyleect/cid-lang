@@ -134,14 +134,6 @@ export class TokenParser implements Parser {
     return this.tokens[this.#current];
   }
 
-  debugPeek(): Token {
-    return this.#peek();
-  }
-
-  debugIsEof(): boolean {
-    return this.#isEofToken();
-  }
-
   /**
    * Returns what the next token will be
    * @returns Next token being to be worked
