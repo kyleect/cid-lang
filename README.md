@@ -78,9 +78,14 @@ npm run cli-docker
 # -----------
 ```
 
+## Spec
+
+Language spec tests are found in [./spec](./spec)
+
 ## Differences To Scheme (So Far)
 
 - Quoting lists is not required
+- Case sensitive identifiers
 
 ## Todos
 
