@@ -23,6 +23,27 @@
   (lambda (a b expected)
     (assert (equal? a b) expected)))
 
+;; Math
+
+(assert (+ 10 5) 15)
+(assert (- 10 5)  5)
+(assert (* 10 5) 50)
+(assert (/ 10 5)  2)
+
+(assert (>  10 5) #t)
+(assert (>  5 10) #f)
+(assert (>  5  5) #f)
+(assert (>= 10 5) #t)
+(assert (>= 5 10) #f)
+(assert (>= 5  5) #t)
+
+(assert (<  10 5) #f)
+(assert (<  5 10) #t)
+(assert (<  5  5) #f)
+(assert (<= 10 5) #f)
+(assert (<= 5 10) #t)
+(assert (<= 5  5) #t)
+
 ;; equal?
 (assert-equal? '() '() #t)
 (assert-equal? 123 123 #t)
@@ -47,6 +68,87 @@
 (assert (number? (1 2 3)) #f)
 (assert (number? 'a) #f)
 (assert (number? +) #f)
+(assert (number? #t) #f)
+(assert (number? #f) #f)
+
+;; string?
+(assert (string? 123) #f)
+(assert (string? '123) #f)
+(assert (string? 123.45) #f)
+(assert (string? -123) #f)
+(assert (string? -123.45) #f)
+(assert (string? "Hello") #t)
+(assert (string? ()) #f)
+(assert (string? (1)) #f)
+(assert (string? (1 2 3)) #f)
+(assert (string? 'a) #f)
+(assert (string? +) #f)
+(assert (string? #t) #f)
+(assert (string? #f) #f)
+
+;; boolean?
+(assert (boolean? 123) #f)
+(assert (boolean? '123) #f)
+(assert (boolean? 123.45) #f)
+(assert (boolean? -123) #f)
+(assert (boolean? -123.45) #f)
+(assert (boolean? "Hello") #f)
+(assert (boolean? ()) #f)
+(assert (boolean? (1)) #f)
+(assert (boolean? (1 2 3)) #f)
+(assert (boolean? 'a) #f)
+(assert (boolean? +) #f)
+(assert (boolean? #t) #t)
+(assert (boolean? #f) #t)
+
+;; symbol?
+(assert (symbol? 123) #f)
+(assert (symbol? '123) #f)
+(assert (symbol? 123.45) #f)
+(assert (symbol? -123) #f)
+(assert (symbol? -123.45) #f)
+(assert (symbol? "Hello") #f)
+(assert (symbol? ()) #f)
+(assert (symbol? (1)) #f)
+(assert (symbol? (1 2 3)) #f)
+(assert (symbol? 'a) #t)
+(assert (symbol? +) #f)
+(assert (symbol? #t) #f)
+(assert (symbol? #f) #f)
+
+;; list?
+(assert (list? 123) #f)
+(assert (list? '123) #f)
+(assert (list? 123.45) #f)
+(assert (list? -123) #f)
+(assert (list? -123.45) #f)
+(assert (list? "Hello") #f)
+(assert (list? ()) #t)
+(assert (list? (1)) #t)
+(assert (list? (1 2 3)) #t)
+(assert (list? 'a) #f)
+(assert (list? +) #f)
+(assert (list? #t) #f)
+(assert (list? #f) #f)
+
+;; pair?
+(assert (pair? 123) #f)
+(assert (pair? '123) #f)
+(assert (pair? 123.45) #f)
+(assert (pair? -123) #f)
+(assert (pair? -123.45) #f)
+(assert (pair? "Hello") #f)
+(assert (pair? ()) #f)
+(assert (pair? (1)) #t)
+(assert (pair? (1 2 3)) #t)
+(assert (pair? 'a) #f)
+(assert (pair? +) #f)
+(assert (pair? #t) #f)
+(assert (pair? #f) #f)
+
+;; string-append
+(assert (string-append 1 2 3) "1 2 3")
+(assert (string-append "Hello" 'World) "Hello World")
 
 ;; lambda
 
