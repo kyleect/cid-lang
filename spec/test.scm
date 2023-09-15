@@ -46,6 +46,7 @@
 
 ;; eq?
 (assert (eq? '() '()) #t)
+(assert (eq? () '()) #t)
 (assert (eq? 123 123) #t)
 (assert (eq? 123 '123) #t)
 (assert (eq? "Hello World" "Hello World") #t)
@@ -57,6 +58,7 @@
 
 ;; eqv?
 (assert (eqv? '() '()) #t)
+(assert (eqv? () '()) #t)
 (assert (eqv? 123 123) #t)
 (assert (eqv? 123 '123) #t)
 (assert (eqv? "Hello World" "Hello World") #t)
@@ -68,6 +70,7 @@
 
 ;; equal?
 (assert (equal? '() '()) #t)
+(assert (equal? () '()) #t)
 (assert (equal? 123 123) #t)
 (assert (equal? 123 '123) #t)
 (assert (equal? "Hello World" "Hello World") #t)
