@@ -73,6 +73,7 @@
 (assert (equal? "Hello World" "Hello World") #t)
 (assert (equal? "Hello World" '"Hello World") #t)
 (assert (equal? (list 1 2 3) (1 2 3)) #t)
+;(assert (equal? (list 1 (2 3)) (1 '(2 '3))) #t) TODO: Fix
 (assert (equal? (list 1 2 3) '(1 2 3)) #t)
 (assert (equal? (list 1 2 3) (1 1 1)) #f)
 (assert (equal? (list 1 2 3) (1)) #f)
