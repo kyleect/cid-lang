@@ -976,6 +976,32 @@ describe("Interpreter", () => {
     });
   });
 
+  describe("let", () => {
+    it("should interpret let expressions: simple", () => {
+      expect(
+        interpretExpression(
+          `
+      (let ((a 10) (b 15)) (+ a b))
+      `,
+          env
+        )
+      ).toBe(25);
+    });
+
+    it("should interpret let expressions: complex", () => {
+      expect(
+        interpretExpression(
+          `
+      (let ((a 10))
+          (let ((b (+ 5 10)))
+            (+ a b)))
+      `,
+          env
+        )
+      ).toBe(25);
+    });
+  });
+
   it("should intepret multiple levels of env scope: lambdas", () => {
     expect(
       interpretExpression(

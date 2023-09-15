@@ -204,6 +204,22 @@
     (lambda (b)
       (+ a b))) 10) 15) 25)
 
+;; let
+
+(define let_val 0)
+(let ((a 10) (b 15))
+  (set! let_val (+ a b)))
+(assert let_val 25)
+
+(assert (let ((a 10))
+          (let ((b (+ 5 10)))
+            (+ a b))) 25)
+
+(assert (let ((a 10))
+          (let ((b (+ 5 10)))
+            (set! a (+ a 10))
+            (+ a b))) 35)
+
 ;; begin
 (define begin_val 0)
 (assert 

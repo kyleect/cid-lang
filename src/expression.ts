@@ -200,6 +200,18 @@ export function assertIsListExpression(
 }
 
 /**
+ * Assert value is a apir expression
+ * @param value Value to check
+ */
+export function assertIsPairExpression(
+  value: unknown
+): asserts value is PairExpression {
+  if (!isPairExpression(value)) {
+    throw new CIDLangRuntimeError(`Value must be a pair expression: ${value}`);
+  }
+}
+
+/**
  * Checks if value is a program
  * @param value Value to check
  * @returns If value is a program

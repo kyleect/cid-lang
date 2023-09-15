@@ -326,6 +326,20 @@ describe("BaseParser", () => {
       ),
     ]);
   });
+
+  it("should let expresion", () => {
+    expect(
+      parseStringToExpressions(`
+      (let ((a 10) (b 15)) (+ a b))
+      `)
+    ).toStrictEqual([
+      Cell.list(
+        Sym.Let,
+        Cell.list(Cell.list(Sym.of("a"), 10), Cell.list(Sym.of("b"), 15)),
+        Cell.list(Sym.of("+"), Sym.of("a"), Sym.of("b"))
+      ),
+    ]);
+  });
 });
 
 function parseStringToExpressions(source: string): Program {

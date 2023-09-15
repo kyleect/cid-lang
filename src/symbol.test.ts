@@ -81,4 +81,16 @@ describe("Sym", () => {
       );
     });
   });
+
+  describe("Let", () => {
+    it("should return true that let is keyword", () => {
+      expect(Sym.isKeyword(Sym.Let)).toBe(true);
+    });
+
+    it("should throw if creating symbol matching keyword: let", () => {
+      expect(() => Sym.of("let")).toThrow(
+        new CIDLangError(`Illegal reference to keyword: let`)
+      );
+    });
+  });
 });

@@ -116,6 +116,10 @@ export class Sym {
   static get Begin(): Sym {
     return beginSymbol;
   }
+
+  static get Let(): Sym {
+    return letSymbol;
+  }
 }
 
 const defineSymbol = Sym.keyword("define");
@@ -124,3 +128,4 @@ const lambdaSymbol = Sym.keyword("lambda");
 const ifSymbol = Sym.keyword("if");
 const setSymbol = Sym.keyword("set!");
 const beginSymbol = Sym.keyword("begin");
+const letSymbol = Sym.keyword("let");

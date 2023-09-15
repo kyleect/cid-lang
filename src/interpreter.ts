@@ -1,3 +1,4 @@
+import { PairExpression } from "../dist/lib";
 import { Cell } from "./cell";
 import { Environment } from "./env";
 import { CIDLangRuntimeError } from "./errors";
@@ -8,6 +9,7 @@ import {
   Program,
   assertIsExpression,
   assertIsListExpression,
+  assertIsPairExpression,
   isAtomicExpression,
   isExpression,
   isListExpression,
@@ -197,6 +199,55 @@ export class Interpreter {
               }
 
               return result;
+            }
+
+            if (op === Sym.Let) {
+              const [paramPairs, ...body] = args;
+
+              assertIsListExpression(paramPairs);
+
+              const paramPairsArr = Array.from(paramPairs);
+
+              const invalidParamPairs = paramPairsArr.filter((paramPair) => {
+                return !isPairExpression(paramPair);
+              });
+
+              if (invalidParamPairs.length > 0) {
+                throw new CIDLangRuntimeError(
+                  `All let variables must be pairs`
+                );
+              }
+
+              const params = (paramPairsArr as PairExpression[]).map(
+                (paramPair) => {
+                  return paramPair.car;
+                }
+              );
+              const values = (paramPairsArr as PairExpression[]).map(
+                (paramPair) => {
+                  assertIsPairExpression(paramPair.cdr);
+                  return paramPair.cdr.car;
+                }
+              );
+
+              if (params.length != values.length) {
+                throw new CIDLangRuntimeError(
+                  `Mismatch let params and values: (${params.join(
+                    ", "
+                  )}): (${values.join(", ")})`
+                );
+              }
+
+              expression = Cell.list(
+                new Procedure(
+                  Cell.list(...params),
+                  Cell.list(Sym.Begin, ...body),
+                  env
+                ),
+                ...values
+              );
+
+              continue;
             }
 
             // Built In Functions
