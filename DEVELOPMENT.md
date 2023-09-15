@@ -2,35 +2,26 @@
 
 ## Building
 
-- `npx turbo build-src` Builds the project in to `dist/lib`
-- `npx turbo build-bins` Builds the `cidlang.js` & `cidrepl.js` files in `dist/bins` in to executable binaries
-  - `dist/bins/cidlang-{linux|macos|windows.exe}`
-  - `dist/bins/cidrepl-{linux|macos|windows.exe}`
-- `npm run build-docker` Builds the [Dockerfile](./Dockerfile) in to the image `cidlang`
-- `npm run docs` Builds the documentation files in to `docs/`
 - `npm run build` Runs `npx turbo build-src build-bins`
 
 ## Tests
 
 - `npx turbo test` Runs all tests
 - `npx turbo coverage` Runs all tests with coverage
-- `npm run test:watch` Run tests and watch for changes
 
 ## Formatting/Linting
 
-- `npm run typecheck` Typecheck code in `src`
+- `npx turbo typecheck` Typecheck code
 - `npx turbo lint` Runs eslint
-- `npm run format` Format code with prettier
+- `npx turbo format` Format code with prettier
 - `npm run verify` Runs `npx turbo typecheck test lint`
 
 ## Running
 
-- `npm run cli` Runs `dist/lib/cidlang.js`. Must run `npx turbo build-src` first.
-- `npm run repl` Runs `dist/lib/cidrepl.js`. Must run `npx turbo build-src` first.
-- `dist/bins/cidlang-{linux|macos|windows.exe}` Runs cidlang binary. Must run `npx turbo build-src build-bins` first.
-- `dist/bins/cidrepl-{linux|macos|windows.exe}` Runs cidrepl binary. Must run `npx turbo build-src build-bins` first.
-- `npm run cli-docker` Runs `cidlang` inside a docker container. Must run `npm run build-docker` first.
-- `npm run repl-docker` Runs `cidrepl` inside a docker container. Must run `npm run build-docker` first.
+- `npm run cli` Runs `apps/cidlang/dist/lib/cidlang.js`. Must run `npm run build` first.
+- `npm run repl` Runs `apps/cidrepl/dist/lib/cidrepl.js`. Must run `npm run build` first.
+- `apps/cidlang/dist/bins/cidlang-{linux|macos|windows.exe}` Runs cidlang binary. Must run `npm run build` first.
+- `apps/cidrepl/dist/bins/cidrepl-{linux|macos|windows.exe}` Runs cidrepl binary. Must run `npm run build` first.
 
 ## Navigating
 

@@ -1,52 +1,17 @@
 {
-  "name": "cid-lang",
+  "name": "cidlang-monorepo",
   "version": "1.0.0",
-  "description": "An (on going) implementation of a Scheme based language",
-  "main": "dist/lib/index.js",
-  "module": "dist/lib/index.mjs",
-  "types": "dist/lib/index.d.ts",
-  "bin": {
-    "cidlang": "dist/lib/cidlang.js",
-    "cidrepl": "dist/lib/cidrepl.js"
-  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "tsup": "tsup",
-    "dev": "npm run build -- --watch --onSuccess \"npm run start\"",
-    "build-src": "rm -rf dist/lib && tsup src/index.ts src/cidrepl.ts src/cidlang.ts -d dist/lib --minify --shims --dts --sourcemap --format esm,cjs --keep-names --treeshake recommended --no-splitting",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "coverage": "npm test -- --coverage",
+    "verify": "npx turbo test lint typecheck",
+    "build": "npx turbo build",
+    "cli": "apps/cidlang/dist/lib/cidlang.js",
+    "repl": "apps/cidrepl/dist/lib/cidrepl.js",
+    "spec": "npm run cli -- spec/test.scm",
     "build-docker": "docker build . -t cidlang",
-    "start-docker": "docker run -it -v $PWD/spec:/usr/src/cidlang/spec",
-    "repl": "node dist/cidrepl.js",
-    "repl-docker": "npm run start-docker -- /bin/sh --login -c cidrepl",
-    "cli-docker": "npm run start-docker -- /bin/sh --login -c \"cidlang spec/test.scm\"",
-    "cli": "node dist/cidlang.js",
-    "build-bins": "rm -rf dist/bins && npx pkg dist/lib/cidlang.js --out-path=dist/bins && npx pkg dist/lib/cidrepl.js --out-path=dist/bins",
-    "format": "npx prettier --write .",
-    "lint": "npx eslint .",
-    "docs": "npx typedoc src/index.ts",
-    "typecheck": "tsc --noEmit",
-    "build": "turbo run build-src build-bins",
-    "verify": "turbo run typecheck test lint"
-  },
-  "author": "Kylee Tilley",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^17.0.21",
-    "@typescript-eslint/eslint-plugin": "^5.55.0",
-    "@typescript-eslint/parser": "^5.55.0",
-    "@vitest/coverage-v8": "^0.34.4",
-    "c8": "^8.0.1",
-    "eslint": "^8.36.0",
-    "expect": "^27.5.1",
-    "jsdom": "^22.1.0",
-    "prettier": "^2.8.4",
-    "ts-node": "^10.7.0",
-    "tsup": "^6.0.1",
-    "turbo": "^1.10.13",
-    "typedoc": "^0.25.1",
-    "typescript": "^4.9.5",
-    "vitest": "^0.34.4"
+    "start-docker": "docker run -it -v $PWD/spec:/usr/src/cidlang/spec"
   }
 }

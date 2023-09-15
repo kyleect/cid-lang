@@ -1,0 +1,39 @@
+{
+  "name": "cidlib",
+  "version": "1.0.0",
+  "description": "An (on going) implementation of a Scheme based language",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "tsup": "tsup",
+    "dev": "npm run build -- --watch --onSuccess \"npm run start\"",
+    "build": "rm -rf dist && tsup src/index.ts -d dist --minify --shims --dts --sourcemap --format esm,cjs --keep-names --treeshake recommended --no-splitting",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "npm test -- --coverage",
+    "format": "npx prettier --write .",
+    "lint": "npx eslint .",
+    "typecheck": "tsc --noEmit",
+    "verify": "turbo run typecheck test lint"
+  },
+  "author": "Kylee Tilley",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^17.0.21",
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
+    "@typescript-eslint/parser": "^5.55.0",
+    "@vitest/coverage-v8": "^0.34.4",
+    "c8": "^8.0.1",
+    "eslint": "^8.36.0",
+    "expect": "^27.5.1",
+    "jsdom": "^22.1.0",
+    "prettier": "^2.8.4",
+    "ts-node": "^10.7.0",
+    "tsup": "^6.0.1",
+    "turbo": "^1.10.13",
+    "typedoc": "^0.25.1",
+    "typescript": "^4.9.5",
+    "vitest": "^0.34.4"
+  }
+}

@@ -21,13 +21,13 @@ exec(`
 ### CLI
 
 ```bash
-npm run build && ./dist/lib/cidlang.js spec/test.scm
+npm run build && npm run cli -- spec/test.scm
 ```
 
 ### REPL
 
 ```bash
-npm run build && ./dist/lib/cidrepl.js
+npm run build && npm run repl
 
 CID> (+ 10 25)
 35
@@ -35,47 +35,17 @@ CID> (+ 10 25)
 
 ### Binaries
 
-The `build-bins` script will build out a set of binaries. You must run `build-src` first or run `npm run build`.
-
-- `dist/bins/cidlang-{linux|macos|windows.exe}`
-- `dist/bins/cidrepl-{linux|macos|windows.exe}`
-
 ```bash
 npm run build
 
-./dist/bins/cidlang-linux spec/test.scm
+apps/cidlang/dist/bins/cidlang-{linux|macos|windows.exe} spec/test.scm
 
-./dist/bins/cidrepl-linux
+# .....
 
-CID> (+ 10 25)
-35
-```
-
-### Docker
-
-#### Repl
-
-```bash
-npm run build-docker
-npm run repl-docker
+apps/cidrepl/dist/bins/cidrep-{linux|macos|windows.exe}
 
 CID> (+ 10 25)
 35
-```
-
-#### Cli
-
-```bash
-npm run build-docker
-npm run cli-docker
-
-# Loading from filename: spec/test.scm
-# -----------
-# RESULTS
-# -----------
-# Passed: 20
-# Failed: 0
-# -----------
 ```
 
 ## Spec

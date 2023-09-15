@@ -1,10 +1,11 @@
 import { exec } from ".";
 import { readFileSync } from "fs";
+import { join } from "path";
 import { vi } from "vitest";
 
 describe("cid-lang spec", () => {
   it("test.scm should pass", () => {
-    const file = readFileSync("spec/test.scm");
+    const file = readFileSync(join("..", "..", "spec", "test.scm"));
     const fileContents = file.toString();
 
     const displayStub = vi.fn();
