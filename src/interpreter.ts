@@ -1,9 +1,9 @@
-import { PairExpression } from "../dist/lib";
 import { Cell } from "./cell";
 import { Environment } from "./env";
 import { CIDLangRuntimeError } from "./errors";
 import {
   Expression,
+  PairExpression,
   ListExpression,
   NullExpression,
   Program,
