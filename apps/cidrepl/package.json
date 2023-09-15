@@ -12,7 +12,6 @@
     "build-bins": "npx pkg dist/lib/cidrepl.js --out-path=dist/bins",
     "format": "npx prettier --write .",
     "lint": "npx eslint .",
-    "typecheck": "tsc --noEmit",
     "build": "npm run build-src && npm run build-bins"
   },
   "author": "Kylee Tilley",

@@ -6,7 +6,7 @@
     "apps/*"
   ],
   "scripts": {
-    "verify": "npx turbo test lint",
+    "verify": "npx turbo test lint typecheck",
     "build": "npx turbo build",
     "cli": "apps/cidlang/dist/lib/cidlang.js",
     "repl": "apps/cidrepl/dist/lib/cidrepl.js",
