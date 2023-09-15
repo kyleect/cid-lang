@@ -10,8 +10,6 @@
     "build": "npx turbo build",
     "cli": "apps/cidlang/dist/lib/cidlang.js",
     "repl": "apps/cidrepl/dist/lib/cidrepl.js",
-    "spec": "npm run cli -- spec/test.scm",
-    "build-docker": "docker build . -t cidlang",
-    "start-docker": "docker run -it -v $PWD/spec:/usr/src/cidlang/spec"
+    "spec": "npm run cli -- spec/test.scm"
   }
 }
