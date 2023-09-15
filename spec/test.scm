@@ -52,6 +52,8 @@
 (assert (eq? "Hello World" '"Hello World") #t)
 (assert (eq? (list 1 2 3) (1 2 3)) #f)
 (assert (eq? (list 1 2 3) '(1 2 3)) #f)
+(assert (eq? 'a 'a) #t)
+(assert (eq? 'a 'A) #f)
 
 ;; eqv?
 (assert (eqv? '() '()) #t)
@@ -61,6 +63,8 @@
 (assert (eqv? "Hello World" '"Hello World") #t)
 (assert (eqv? (list 1 2 3) (1 2 3)) #f)
 (assert (eqv? (list 1 2 3) '(1 2 3)) #f)
+(assert (eqv? 'a 'a) #t)
+(assert (eqv? 'a 'A) #f)
 
 ;; equal?
 (assert (equal? '() '()) #t)
@@ -72,6 +76,8 @@
 (assert (equal? (list 1 2 3) '(1 2 3)) #t)
 (assert (equal? (list 1 2 3) (1 1 1)) #f)
 (assert (equal? (list 1 2 3) (1)) #f)
+(assert (equal? 'a 'a) #t)
+(assert (equal? 'a 'A) #f)
 
 ;; car, cdr, cons
 (assert (car (1 2)) 1)
