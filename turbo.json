@@ -2,11 +2,15 @@
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "build-src": {
-      "inputs": ["src/**/*.ts"],
+      "inputs": ["src/**/*[!.test].ts"],
       "outputs": ["dist/lib/**"]
     },
     "build-bins": {
-      "inputs": ["dist/lib/*.js"],
+      "inputs": [
+        "dist/lib/index.js",
+        "dist/lib/cidlang.js",
+        "dist/lib/cidlang.js"
+      ],
       "outputs": [
         "dist/bins/cidlang-linux",
         "dist/bins/cidlang-macos",
@@ -17,10 +21,14 @@
       ],
       "dependsOn": ["build-src"]
     },
-    "lint": {},
-    "test": {},
-    "typecheck": {
+    "lint": {
       "inputs": ["src/**/*.ts"]
+    },
+    "test": {
+      "inputs": ["src/**/*.ts", "spec/**/*.scm"]
+    },
+    "typecheck": {
+      "inputs": ["src/**/*[!.test].ts"]
     },
     "coverage": {
       "outputs": ["coverage/**"]
