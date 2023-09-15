@@ -215,10 +215,10 @@
           (let ((b (+ 5 10)))
             (+ a b))) 25)
 
-(assert (let ((a 10))
+(assert (let ((a let_val))
           (let ((b (+ 5 10)))
             (set! a (+ a 10))
-            (+ a b))) 35)
+            (+ a b))) 50)
 
 ;; begin
 (define begin_val 0)
