@@ -220,6 +220,9 @@
             (set! a (+ a 10))
             (+ a b))) 50)
 
+(assert (let ((let_val 10)) let_val) 10)
+(assert (let ((let_val let_val)) let_val) 25)
+
 ;; begin
 (define begin_val 0)
 (assert 
