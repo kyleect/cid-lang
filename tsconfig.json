@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/lib" },
+    { "path": "apps/cidlang" },
+    {" path": "apps/cidrepl" }
+  ]
+}
