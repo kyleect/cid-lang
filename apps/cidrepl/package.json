@@ -1,7 +1,7 @@
 {
   "name": "cidrepl",
   "version": "1.0.0",
-  "description": "An (on going) implementation of a Scheme based language",
+  "description": "CID Language REPL",
   "bin": {
     "cidrepl": "dist/lib/cidrepl.js"
   },
