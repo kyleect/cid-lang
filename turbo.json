@@ -13,7 +13,7 @@
       "inputs": ["src/**/*.ts", "spec/**/*.scm"]
     },
     "typecheck": {
-      "inputs": ["src/**/*[!.test].ts"]
+      "inputs": ["src/**/*[!.test].ts", "tsconfig.json"]
     },
     "coverage": {
       "outputs": ["coverage/**"]
