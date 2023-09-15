@@ -1,0 +1,6 @@
+{
+  "entryPoints": ["packages/*"],
+  "name": "cid",
+  "entryPointStrategy": "packages",
+  "includeVersion": true
+}

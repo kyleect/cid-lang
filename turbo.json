@@ -17,6 +17,10 @@
     },
     "coverage": {
       "outputs": ["coverage/**"]
+    },
+    "docs": {
+      "inputs": ["src/**"],
+      "outputs": ["docs/**"]
     }
   }
 }
