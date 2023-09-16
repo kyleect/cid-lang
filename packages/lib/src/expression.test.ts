@@ -144,7 +144,7 @@ describe("Expression", () => {
     });
 
     it("should return that empty arrays are not pair expressions", () => {
-      const value = [];
+      const value: unknown[] = [];
 
       expect(isPairExpression(value)).toBe(false);
     });

@@ -126,6 +126,7 @@ export class TokenParser implements Parser {
       this.#advance();
     }
 
+    // @ts-expect-error WIP
     return expression;
   }
 

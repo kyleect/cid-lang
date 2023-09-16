@@ -1,6 +1,7 @@
 {
   "name": "cidlang-monorepo",
   "version": "1.0.0",
+  "private": true,
   "workspaces": [
     "packages/*",
     "apps/*"
@@ -8,6 +9,7 @@
   "scripts": {
     "verify": "npx turbo test lint typecheck",
     "build": "npx turbo build",
+    "build:ts": "tsc -b tsconfig.project.json",
     "cli": "apps/cidlang/dist/lib/cidlang.js",
     "repl": "apps/cidrepl/dist/lib/cidrepl.js",
     "spec": "npm run cli -- spec/test.scm",

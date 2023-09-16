@@ -8,7 +8,7 @@
   "scripts": {
     "tsup": "tsup",
     "dev": "npm run build -- --watch --onSuccess \"npm run start\"",
-    "build": "rm -rf dist && tsup src/index.ts -d dist --minify --shims --dts --sourcemap --format esm,cjs --keep-names --treeshake recommended --no-splitting",
+    "build": "tsup",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "npm test -- --coverage",
@@ -34,6 +34,7 @@
     "turbo": "^1.10.13",
     "typedoc": "^0.25.1",
     "typescript": "^4.9.5",
-    "vitest": "^0.34.4"
+    "vitest": "^0.34.4",
+    "cid-tsconfig": "*"
   }
 }

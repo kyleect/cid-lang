@@ -19,6 +19,9 @@ jobs:
 
       - name: Verify
         run: npm run verify
+
+      - name: Build TS Project
+        run: npm run build:ts
       
       - name: Build
         run: npm run build

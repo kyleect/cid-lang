@@ -30,13 +30,9 @@ import {
 
 export class Environment {
   constructor(
-    private values?: Map<string, unknown>,
+    private values: Map<string, unknown> = new Map(),
     private enclosing?: Environment
-  ) {
-    if (typeof this.values === "undefined" || this.values === null) {
-      this.values = new Map();
-    }
-  }
+  ) {}
 
   // Sets the variable value in the
   // environment where it was defined

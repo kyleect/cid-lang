@@ -57,10 +57,10 @@ export class Cell {
 
     const valuesReversed = [...values].reverse();
 
-    let cell: Cell;
+    let cell: ListExpression = NullExpression;
 
     if (values.length === 0) {
-      return NullExpression;
+      return cell;
     }
 
     if (values.length === 1) {

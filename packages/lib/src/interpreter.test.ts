@@ -736,7 +736,7 @@ describe("Interpreter", () => {
     });
 
     describe("display", () => {
-      let originalConsoleLog;
+      let originalConsoleLog: typeof console.log;
 
       beforeEach(() => {
         originalConsoleLog = console.log;

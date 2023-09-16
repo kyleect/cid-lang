@@ -8,7 +8,7 @@
   "scripts": {
     "tsup": "tsup",
     "dev": "npm run build -- --watch --onSuccess \"npm run start\"",
-    "build-src": "rm -rf dist/lib && tsup src/cidrepl.ts -d dist/lib --minify --shims --format cjs --treeshake recommended --no-splitting",
+    "build-src": "tsup",
     "build-bins": "npx pkg dist/lib/cidrepl.js --out-path=dist/bins",
     "format": "npx prettier --write .",
     "lint": "npx eslint .",

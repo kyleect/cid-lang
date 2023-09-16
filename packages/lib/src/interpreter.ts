@@ -31,7 +31,7 @@ export class Interpreter {
    * @returns Result of program's last interpreted expression
    */
   public interpretProgram(program: Program): Expression {
-    let result: Expression;
+    let result: Expression = NullExpression;
 
     if (!isProgram(program)) {
       throw new CIDLangRuntimeError(
@@ -116,7 +116,7 @@ export class Interpreter {
               const value = this.#interpret(expr, env);
 
               env.set(name, value);
-              return;
+              return value;
             }
 
             if (op === Sym.Set) {
@@ -136,7 +136,7 @@ export class Interpreter {
                 const value = this.#interpret(expr, env);
 
                 env.set(name, value);
-                return;
+                return value;
               }
 
               throw new CIDLangRuntimeError(
@@ -191,13 +191,14 @@ export class Interpreter {
               let result: Expression;
 
               if (args.length === 0) {
-                return Cell.list();
+                return NullExpression;
               }
 
               for (const arg of args) {
                 result = this.#interpret(arg as Expression, env);
               }
 
+              // @ts-expect-error WIP
               return result;
             }
 
